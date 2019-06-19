@@ -76,7 +76,7 @@ spawner_main = projectile.bulletSpawner(screen=screen, spawningDelay=250, minSiz
 spawner_main.setSpawningBox(spawningArea=[0,0,w, 0], spawningVels=[-1, h/3, 1, h/2])
 
 spawner_pattern = projectile.bulletSpawner(screen=screen, spawningDelay=20, minSize=8)
-spawner_pattern.setSpawningPoint(coords=[w/2, h/2], dir=[0,0], speed=[180,180])
+spawner_pattern.setSpawningPoint(coords=[w/2, h/2], dir=[0,0], speed=[150,150])
 while not done:
 
     # Event management
@@ -132,7 +132,8 @@ while not done:
         spawner_pattern.draw()
 
         # This all needs to be integrated into the spawner
-        t = math.pi * (time/1000)
+        c = 0.5 # Doing a circle takes 1 second with c = 2, 2 seconds with c = 1 and 4 seconds with c = 0.5 (etc.)
+        t = c * math.pi * (time/1000)
         direction = int((t + (1 * math.pi)) * 180 / math.pi)
         spawner_pattern.x = int(0.5 * w * (1+math.cos(t)))
         spawner_pattern.y = int(0.5 * h * (1+math.sin(t)))

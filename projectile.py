@@ -1,8 +1,7 @@
 from base import *
 
 class bulletSpawner():
-    def __init__(self, spawningDelay: int, minSize: int, maxSize: int, screen, safeTime: int = 0):
-        print(playerSize)
+    def __init__(self, screen, spawningDelay: int = 90, minSize: int = 16, maxSize: int = 0, safeTime: int = 0):
         self.spawnCounter = 0 # Amount of bullets this spawner has created in its lifetime
         self.delay = spawningDelay # Delay in ms between created bullets
         self.time = 0 # Time since this object is created in seconds
@@ -10,7 +9,10 @@ class bulletSpawner():
         self.safeTime = safeTime #Passing down the bullet fuse
         self.spawningStyle = SPAWNINGSTYLE.NONE
         self.minSize = minSize
-        self.maxSize = maxSize
+        if maxSize == 0:
+            self.maxSize = self.minSize
+        else:
+            self.maxSize = maxSize
         self.scr = screen
 
     def setSpawningBox(self, spawningArea: list, spawningVels: list ):

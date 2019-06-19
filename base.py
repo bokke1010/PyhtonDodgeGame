@@ -1,7 +1,6 @@
 from enum import Enum
 import pygame, random, math
 
-print("hi")
 w, h = 800, 600
 
 class PROJECTILETYPE(Enum):

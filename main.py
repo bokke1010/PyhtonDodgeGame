@@ -32,7 +32,7 @@ class Player():
         healthCS = self.size + 3
         rect = pygame.Rect(int(dPos[0]-healthCS),int(dPos[1]-healthCS),int(2*healthCS),int(2*healthCS))
         # Health bar
-        pygame.draw.arc(scr, self.color, rect, 0, 2*3.14*self.lives / self.mLives)
+        pygame.draw.arc(scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives)
         # Collision marker
         pygame.draw.circle(scr, self.secCol, dPos, self.size)
     def update(self, xInp, yInp, dt):
@@ -65,16 +65,17 @@ class Player():
 
         # End game when dead
         if self.lives <= 0:
+            global done
             done = True
     def sPos(self):
         return (int(self.x),int(self.y))
 
 player = Player(playerSize, [w/2, h/2], WHITE, acceleration, drag, 32)
 
-spawner_main = projectile.bulletSpawner(250, 24, 32,screen)
-spawner_main.setSpawningBox([0,0,w, 0], [-1, h/3, 1, h/2])
+spawner_main = projectile.bulletSpawner(screen=screen, spawningDelay=250, minSize=24, maxSize=32)
+spawner_main.setSpawningBox(spawningArea=[0,0,w, 0], spawningVels=[-1, h/3, 1, h/2])
 
-spawner_pattern = projectile.bulletSpawner(20, 8, 8, screen)
+spawner_pattern = projectile.bulletSpawner(screen=screen, spawningDelay=20, minSize=8)
 spawner_pattern.setSpawningPoint(coords=[w/2, h/2], dir=[0,0], speed=[180,180])
 while not done:
 
@@ -135,8 +136,8 @@ while not done:
         direction = int((t + (1 * math.pi)) * 180 / math.pi)
         spawner_pattern.x = int(0.5 * w * (1+math.cos(t)))
         spawner_pattern.y = int(0.5 * h * (1+math.sin(t)))
-        spawner_pattern.angleMin = direction-10
-        spawner_pattern.angleMax = direction+10
+        spawner_pattern.angleMin = direction
+        spawner_pattern.angleMax = direction
 
 
 

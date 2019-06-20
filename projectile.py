@@ -32,8 +32,8 @@ class bulletSpawner():
         self.spawningStyle = SPAWNINGSTYLE.EXP
         t = 0
         # Defining the spawning area as a box with x1y1 - x2y2
-        self.x = spawningArea[0]
-        self.y = spawningArea[1]
+        self.x = coords[0]
+        self.y = coords[1]
         # Defining the base velocity of projectiles with a minimum and maximumvalue for both x and y
         # If randomness is wanted in a expression-function, it can be implemented manually
         self.dx = spawningVels[0]

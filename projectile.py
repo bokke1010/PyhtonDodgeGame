@@ -1,13 +1,18 @@
 from base import *
 
 class bulletSpawner():
-    def __init__(self, screen, spawningDelay: int = 90, minSize: int = 16, maxSize: int = 0, safeTime: int = 0):
+    def __init__(self, screen, spawningDelay: int = 90, minSize: int = 16,
+                 maxSize: int = 0, preTime: int = 0, lifeTime: int = -1,
+                 borderWidth: int = 3, visible: bool = True):
         self.spawnCounter = 0 # Amount of bullets this spawner has created in its lifetime
         self.delay = spawningDelay # Delay in ms between created bullets
         self.time = 0 # Time since this object is created in seconds
         self.bullets = [] # locally referencing all bullets
-        self.safeTime = safeTime #Passing down the bullet fuse
+        self.preTime = preTime #Passing down the bullet fuse
+        self.lifeTime = lifeTime
         self.spawningStyle = SPAWNINGSTYLE.NONE
+        self.bulletBorderWidth = borderWidth
+        self.bulletVisible = visible
         self.minSize = minSize
         if maxSize == 0:
             self.maxSize = self.minSize
@@ -62,15 +67,16 @@ class bulletSpawner():
         self.speed = speed
 
     def draw(self):
-        for blt in self.bullets:
-            blt.draw(self.scr)
+        if self.bulletVisible:
+            for blt in self.bullets:
+                blt.draw(self.scr)
 
     def update(self, dt, player):
         self.time += dt*1000 # We get dt in seconds for simulation purposes
         # Bullet creation
         while (self.time - self.spawnCounter * self.delay) >= self.delay:
             x, y, dx, dy = 0, 0, 0, 0
-            bs = random.randint(self.minSize, self.maxSize)
+            ballSize = random.randint(self.minSize, self.maxSize)
             if self.spawningStyle == SPAWNINGSTYLE.NONE:
                 raise Exception("Spawning style not set")
 
@@ -104,7 +110,7 @@ class bulletSpawner():
                 dx = math.cos(angle) * speed
                 dy = math.sin(angle) * speed
 
-            self.bullets.append(Bullet((x, y), (dx, dy), PINK, bs, 5, self.safeTime))
+            self.bullets.append(Bullet(pos = (x, y), vel = (dx, dy), color = PINK, size = ballSize, preTime = self.preTime, lifeTime = self.lifeTime, borderWidth = self.bulletBorderWidth))
             self.spawnCounter += 1
         # Bullet update
         cleanupQue = set()
@@ -113,7 +119,9 @@ class bulletSpawner():
             blt.update(dt, player)
 
             # Bullet cleanup (out of bounds & movement check)
-            if blt.dx == 0 and blt.dy == 0:
+            if blt.dx == 0 and blt.dy == 0 and blt.lifeTime == -1:
+                cleanupQue.add(blt)
+            if blt.time > blt.lifeTime and blt.lifeTime > 0:
                 cleanupQue.add(blt)
             if blt.dx > 0:
                 if blt.x > w:
@@ -133,7 +141,7 @@ class bulletSpawner():
 
 
 class Bullet():
-    def __init__(self, pos: (int, int), vel: (int,int), color: tuple = PINK, size: int = 12, bdw: int = 2, actTime: int = 0, active: bool = True):
+    def __init__(self, pos: (int, int), vel: (int,int), color: tuple = PINK, size: int = 12, borderWidth: int = 2, preTime: int = 0, active: bool = True, lifeTime: int = -1):
         self.x = pos[0]
         self.y = pos[1]
         self.dx = vel[0]
@@ -142,20 +150,21 @@ class Bullet():
         self.style = PROJECTILETYPE.BALL
         self.fadedColor = (self.color[0] * 0.5, self.color[1] * 0.5, self.color[2] * 0.5)
         self.size = size # projectile size
-        self.bdw = bdw # Border width
+        self.borderWidth = borderWidth # Border width
         self.active = active
         self.time = 0 # Time since creation
-        self.actTime = actTime
+        self.preTime = preTime
+        self.lifeTime = lifeTime
 
     def draw(self, scr):
         pos = (int(self.x), int(self.y))
-        innerSize = int(self.size-0.5 * self.bdw)# prevent the border from exceeding the circle
-        if self.active and self.time >= self.actTime:
-            pygame.draw.circle(scr, self.color, pos, innerSize, self.bdw)
+        innerSize = int(self.size-0.5 * self.borderWidth)# prevent the border from exceeding the circle
+        if self.active and self.time >= self.preTime:
+            pygame.draw.circle(scr, self.color, pos, innerSize, self.borderWidth)
         elif not self.active:
-            pygame.draw.circle(scr, self.fadedColor, pos, innerSize, self.bdw)
+            pygame.draw.circle(scr, self.fadedColor, pos, innerSize, self.borderWidth)
         else:
-            pygame.draw.circle(scr, WHITE, pos, innerSize, self.bdw)
+            pygame.draw.circle(scr, WHITE, pos, innerSize, self.borderWidth)
     def update(self, dt, player):
         # Movement
         self.time += dt
@@ -163,7 +172,7 @@ class Bullet():
         self.y += self.dy * dt
 
         # Player collision
-        if(distance((self.x, self.y), player.sPos()) < self.size + player.size) and self.active and self.time >= self.actTime:
+        if(distance((self.x, self.y), player.sPos()) < self.size + player.size) and self.active and self.time >= self.preTime:
             # print("collision: (" + str(self.x) + ", " + str(self.y) + ") and " + str(pl.sPos()) + ".")
             player.lives -= 1
             self.active = False

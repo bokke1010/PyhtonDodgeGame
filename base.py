@@ -1,7 +1,7 @@
 from enum import Enum
 import pygame, random, math
 
-w, h = 700, 700
+w, h = 500, 500
 
 class PROJECTILETYPE(Enum):
     BALL = 0

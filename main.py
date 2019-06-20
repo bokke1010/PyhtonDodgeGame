@@ -1,4 +1,4 @@
-import projectile, fun_patterns
+import projectile, fun_patterns, menu
 from base import *
 pygame.init()
 
@@ -70,19 +70,27 @@ class Player():
     def sPos(self):
         return (int(self.x),int(self.y))
 
-player = Player(playerSize, [w/3, h/3], WHITE, acceleration, drag, 64)
+player = Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64)
 
-# fun_patterns.pattern_dualFan(screen)
-fun_patterns.pattern_quadFan(screen)
-# fun_patterns.pattern_dual_central_spiral(screen)
-# fun_patterns.pattern_enclosing_circle(screen)
+UIElements = {}
+UIElements["testButton"] = menu.Button(screen=screen)
+UI = []
+
+# fun_patterns.pattern_fast_spin(screen)
+# fun_patterns.pattern_sudden(screen, 0.2)
+fun_patterns.pattern_dual_central_spiral(screen)
+# fun_patterns.pattern_dodgeball(screen)
 
 while not done:
-
     # Event management
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
+        if event.type == pygame.MOUSEBUTTONUP:
+            pos = pygame.mouse.get_pos()
+            for UIElement in UI:
+                if type(UIElement == 'menu.Button'):
+                    UIElement.getClick(pos)
         if event.type == pygame.KEYDOWN:
             if event.key == 27: # Esc. key
                 done = True
@@ -118,6 +126,9 @@ while not done:
         time += deltaTime # time and deltatime in milliseconds
         dt = deltaTime/1000 # deltatime in seconds
 
+        if UIElements["testButton"] in UI:
+            UI.remove(UIElements["testButton"])
+
         # Reset screen to start drawing frame
         screen.fill(BLACK)
 
@@ -132,9 +143,15 @@ while not done:
         clock.tick(20)
         screen.fill(DARKGRAY)
         fun_patterns.draw()
-
+        if not UIElements["testButton"] in UI:
+            UI.append(UIElements["testButton"])
         player.draw(screen)
 
+    # UI layer
+    # UI uses a seperate system from object drawing.
+    # it is created and rendered last and not affected by gamestate
+    for UIElement in UI:
+        UIElement.draw()
 
     pygame.display.flip()
 pygame.quit()

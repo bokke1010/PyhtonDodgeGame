@@ -1,8 +1,25 @@
 import projectile, fun_patterns, menu
 from base import *
+
+# All initialization
+
 pygame.init()
 
-gameState = GAMESTATE.MMENU
+gameState = None
+
+def gameStateActive():
+    global gameState
+    if not gameState == GAMESTATE.ACTIVE:
+        gameState = GAMESTATE.ACTIVE
+        deactivateUIElement(UI, UIElements["testButton"])
+        deactivateUIElement(UI, UIElements["Title"])
+
+def gameStateMenu():
+    global gameState
+    if not gameState == GAMESTATE.MMENU:
+        gameState = GAMESTATE.MMENU
+        activateUIElement(UI, UIElements["testButton"])
+        activateUIElement(UI, UIElements["Title"])
 
 screen = pygame.display.set_mode((w, h))
 clock = pygame.time.Clock()
@@ -75,7 +92,7 @@ class Player():
 player = Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64)
 
 UIElements = {}
-UIElements["testButton"] = menu.Button(screen=screen, coords = [w/10,3*h/10,8*w/10,6*h/10], result="gameState = GAMESTATE.ACTIVE")
+UIElements["testButton"] = menu.Button(screen=screen, coords = [w/10,3*h/10,8*w/10,6*h/10], result="gameStateActive()")
 UIElements["Title"] = menu.Text(screen=screen, coords = [w/10,h/10,8*w/10,h/10], text = "Game Title")
 UI = []
 
@@ -84,6 +101,10 @@ UI = []
 fun_patterns.pattern_dual_central_spiral(screen)
 # fun_patterns.pattern_dodgeball(screen)
 
+# Initialization done, loading gameState
+gameStateMenu()
+
+# Starting game loop
 while not done:
     # Event management
     for event in pygame.event.get():
@@ -97,8 +118,6 @@ while not done:
                     if not res == None:
                         eval(res)
         if event.type == pygame.KEYDOWN:
-            if event.key == 27: # Esc. key
-                done = True
             if event.unicode == 'w':
                 keysDown['w'] = True
             if event.unicode == 'a':
@@ -109,10 +128,14 @@ while not done:
                 keysDown['d'] = True
             if gameState == GAMESTATE.MMENU: # All menu keyEvents
                 if event.key == 275: # Right arrow
-                    gameState = GAMESTATE.ACTIVE
+                    gameStateActive()
+                if event.key == 27: # Esc. key
+                    done = True
             if gameState == GAMESTATE.ACTIVE: # All game keyEvents
                 if event.key == 276: # Left arrow
-                    gameState = GAMESTATE.MMENU
+                    gameStateMenu()
+                if event.key == 27: # Esc. key
+                    gameStateMenu()
         if event.type == pygame.KEYUP:
             if event.key == 119: # W-key (event.unicode doesn't exist for KEYUP)
                 keysDown['w'] = False
@@ -130,9 +153,6 @@ while not done:
         deltaTime = clock.tick(60)
         time += deltaTime # time and deltatime in milliseconds
         dt = deltaTime/1000 # deltatime in seconds
-
-        deactivateUIElement(UI, UIElements["testButton"])
-        deactivateUIElement(UI, UIElements["Title"])
 
         # Reset screen to start drawing frame
         screen.fill(BLACK)

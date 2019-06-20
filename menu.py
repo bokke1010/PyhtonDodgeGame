@@ -14,7 +14,7 @@ class Button():
         self.textRenderer.draw()
 
     def getClick(self, pos):
-        if self.coords[0] <= pos[0] <= self.coords[2] and self.coords[1] <= pos[1] <= self.coords[3]:
+        if self.coords[0] <= pos[0] <= (self.coords[0]+self.coords[2]) and self.coords[1] <= pos[1] <= (self.coords[1] + self.coords[3]):
             return self.onClick()
 
     def onClick(self):

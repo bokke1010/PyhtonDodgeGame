@@ -75,8 +75,8 @@ player = Player(playerSize, [w/2, h/2], WHITE, acceleration, drag, 32)
 spawner_main = projectile.bulletSpawner(screen=screen, spawningDelay=250, minSize=24, maxSize=32)
 spawner_main.setSpawningBox(spawningArea=[0,0,w, 0], spawningVels=[-1, h/3, 1, h/2])
 
-spawner_pattern = projectile.bulletSpawner(screen=screen, spawningDelay=20, minSize=8)
-spawner_pattern.setSpawningPoint(coords=[w/2, h/2], dir=[0,0], speed=[150,150])
+spawner_pattern = projectile.bulletSpawner(screen=screen, spawningDelay=50, minSize=8)
+spawner_pattern.setSpawningPointExp(coords=["0", "h/2"], dir=" 0.25 * math.pi * math.sin(math.pi * t)", speed="90")
 while not done:
 
     # Event management
@@ -130,17 +130,6 @@ while not done:
 
         spawner_pattern.update(dt, player)
         spawner_pattern.draw()
-
-        # This all needs to be integrated into the spawner
-        c = 0.5 # Doing a circle takes 1 second with c = 2, 2 seconds with c = 1 and 4 seconds with c = 0.5 (etc.)
-        t = c * math.pi * (time/1000)
-        direction = int((t + (1 * math.pi)) * 180 / math.pi)
-        spawner_pattern.x = int(0.5 * w * (1+math.cos(t)))
-        spawner_pattern.y = int(0.5 * h * (1+math.sin(t)))
-        spawner_pattern.angleMin = direction
-        spawner_pattern.angleMax = direction
-
-
 
     elif gameState == GAMESTATE.MMENU:
         clock.tick(20)

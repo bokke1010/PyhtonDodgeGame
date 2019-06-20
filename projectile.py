@@ -18,15 +18,26 @@ class bulletSpawner():
     def setSpawningBox(self, spawningArea: list, spawningVels: list ):
         self.spawningStyle = SPAWNINGSTYLE.BOX
         # Defining the spawning area as a box with x1y1 - x2y2
-        self.spawnXMin = spawningArea[0]
-        self.spawnYMin = spawningArea[1]
-        self.spawnXMax = spawningArea[2]
-        self.spawnYMax = spawningArea[3]
+        self.xMin = spawningArea[0]
+        self.yMin = spawningArea[1]
+        self.xMax = spawningArea[2]
+        self.yMax = spawningArea[3]
         # Defining the base velocity of projectiles with a minimum and maximumvalue for both x and y
-        self.velXMin = spawningVels[0]
-        self.velYMin = spawningVels[1]
-        self.velXMax = spawningVels[2]
-        self.velYMax = spawningVels[3]
+        self.dxMin = spawningVels[0]
+        self.dyMin = spawningVels[1]
+        self.dxMax = spawningVels[2]
+        self.dyMax = spawningVels[3]
+
+    def setSpawningExp(self, coords: list, spawningVels: list ):
+        self.spawningStyle = SPAWNINGSTYLE.EXP
+        t = 0
+        # Defining the spawning area as a box with x1y1 - x2y2
+        self.x = spawningArea[0]
+        self.y = spawningArea[1]
+        # Defining the base velocity of projectiles with a minimum and maximumvalue for both x and y
+        # If randomness is wanted in a expression-function, it can be implemented manually
+        self.dx = spawningVels[0]
+        self.dy = spawningVels[1]
 
     def setSpawningPoint(self, coords: list, dir: list, speed: list ):
         self.spawningStyle = SPAWNINGSTYLE.POINT
@@ -36,9 +47,19 @@ class bulletSpawner():
         # Getting the allowed angles
         self.angleMin = dir[0]
         self.angleMax = dir[1]
-        # Defining the base velocity of projectiles with a minimum and maximumvalue for both x and y
+        # Defining the base velocity of projectiles with a minimum and maximum
         self.speedMin = speed[0]
         self.speedMax = speed[1]
+
+    def setSpawningPointExp(self, coords: list, dir: str, speed: str ):
+        self.spawningStyle = SPAWNINGSTYLE.POINTEXP
+        # Defining the spawning point
+        self.x = coords[0]
+        self.y = coords[1]
+        # Getting the allowed angle formula
+        self.angle = dir
+        # Defining the base velocity of the projectile
+        self.speed = speed
 
     def draw(self):
         for blt in self.bullets:
@@ -52,17 +73,35 @@ class bulletSpawner():
             bs = random.randint(self.minSize, self.maxSize)
             if self.spawningStyle == SPAWNINGSTYLE.NONE:
                 raise Exception("Spawning style not set")
+
             elif self.spawningStyle == SPAWNINGSTYLE.BOX:
-                x = random.randint(self.spawnXMin, self.spawnXMax)
-                y = random.randint(self.spawnYMin, self.spawnYMax)
-                dx = random.randint(self.velXMin, self.velXMax)
-                dy = random.randint(self.velYMin, self.velYMax)
+                x = random.randint(self.xMin, self.xMax)
+                y = random.randint(self.yMin, self.yMax)
+                dx = randomBetween(self.dxMin, self.dxMax)
+                dy = randomBetween(self.dyMin, self.dyMax)
+
+            elif self.spawningStyle == SPAWNINGSTYLE.EXP:
+                t = self.time/1000
+                x = eval(self.x)
+                y = eval(self.y)
+                dx = eval(self.dx)
+                dy = eval(self.dy)
+
             elif self.spawningStyle == SPAWNINGSTYLE.POINT:
                 x, y = self.x, self.y
-                speed = random.randint(self.speedMin, self.speedMax)
-                angle = math.pi * random.randint(self.angleMin, self.angleMax) / 180
+                speed = randomBetween(self.speedMin, self.speedMax)
+                angle = randomBetween(self.angleMin, self.angleMax)
                 dx = math.cos(angle) * speed
                 dy = math.sin(angle) * speed
+
+            elif self.spawningStyle == SPAWNINGSTYLE.POINTEXP:
+                t = self.time / 1000
+                x, y = eval(self.x), eval(self.y)
+                speed = eval(self.speed)
+                angle = eval(self.angle)
+                dx = math.cos(angle) * speed
+                dy = math.sin(angle) * speed
+
             self.bullets.append(Bullet((x, y), (dx, dy), PINK, bs, 5, self.safeTime))
             self.spawnCounter += 1
         # Bullet update

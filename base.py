@@ -1,7 +1,7 @@
 from enum import Enum
 import pygame, random, math
 
-w, h = 800, 600
+w, h = 700, 700
 
 class PROJECTILETYPE(Enum):
     BALL = 0
@@ -10,7 +10,10 @@ class PROJECTILETYPE(Enum):
 class SPAWNINGSTYLE(Enum):
     NONE = 0
     BOX = 1
-    POINT = 2
+    EXP = 2
+    POINT = 3
+    POINTEXP = 4
+
 
 class GAMESTATE(Enum):
     ACTIVE = 0
@@ -39,3 +42,6 @@ def distance(p1, p2):
 
 def randomColor():
     return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+def randomBetween(a, b):
+    return a + (random.random() * (b-a))

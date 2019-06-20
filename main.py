@@ -72,7 +72,7 @@ class Player():
 
 player = Player(playerSize, [w/2, h/2], WHITE, acceleration, drag, 32)
 
-spawner_main = projectile.bulletSpawner(screen=screen, spawningDelay=250, minSize=24, maxSize=32)
+spawner_main = projectile.bulletSpawner(screen=screen, spawningDelay=25, minSize=8)
 spawner_main.setSpawningExp(["w*(t-math.floor(t))","h*(t-math.floor(t))"], ["(random.randint(0,1)*2-1)*80","0"])
 
 spawner_pattern = projectile.bulletSpawner(screen=screen, spawningDelay=50, minSize=8)

@@ -19,8 +19,6 @@ class GAMESTATE(Enum):
     ACTIVE = 0
     MMENU = 1
 
-gameState = GAMESTATE.ACTIVE
-
 # Some default colors:
 BLACK     = (0  ,0  ,0  )
 DARKGRAY  = (63 ,63 ,63 )
@@ -45,3 +43,11 @@ def randomColor():
 
 def randomBetween(a, b):
     return a + (random.random() * (b-a))
+
+def deactivateUIElement(UI, UIElement):
+    if UIElement in UI:
+        UI.remove(UIElement)
+
+def activateUIElement(UI, UIElement):
+    if not UIElement in UI:
+        UI.append(UIElement)

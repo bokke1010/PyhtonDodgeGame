@@ -3,11 +3,10 @@ from pygame import freetype
 freetype.init()
 
 class Button():
-    def __init__(self, screen, coords: list = [40,40,w-80,h-80], text: str = "click here!", obj = None, result: str = "print('works')"):
+    def __init__(self, screen, coords: list = [40,40,w-80,h-80], text: str = "click here!", result: str = "print('works')"):
         self.screen = screen
         self.coords = coords
         self.text = text
-        self.object = obj
         self.result = result
         self.textRenderer = Text(screen, coords, text)
 
@@ -16,11 +15,10 @@ class Button():
 
     def getClick(self, pos):
         if self.coords[0] <= pos[0] <= self.coords[2] and self.coords[1] <= pos[1] <= self.coords[3]:
-            self.onClick()
+            return self.onClick()
 
     def onClick(self):
-        o = self.object
-        eval(self.result)
+        return self.result
 
 class Text():
     def __init__(self, screen, coords: list = [40,40,w-80,h-80], text: str = "click here!"):
@@ -29,7 +27,7 @@ class Text():
         self.text = text
         self.font = freetype.Font(None, 20)
 
-    def draw(self, color: tuple = BlACK):
+    def draw(self, color: tuple = (0  ,0  ,0  )):
         pygame.draw.rect(self.screen, color, self.coords, 1)
         # First we calculate the central position of the Button
         # Then we get the size of the text we're rendering

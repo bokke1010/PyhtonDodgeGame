@@ -2,6 +2,8 @@ import projectile, fun_patterns, menu
 from base import *
 pygame.init()
 
+gameState = GAMESTATE.MMENU
+
 screen = pygame.display.set_mode((w, h))
 clock = pygame.time.Clock()
 
@@ -73,7 +75,8 @@ class Player():
 player = Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64)
 
 UIElements = {}
-UIElements["testButton"] = menu.Button(screen=screen)
+UIElements["testButton"] = menu.Button(screen=screen, coords = [w/10,3*h/10,8*w/10,6*h/10], result="gameState = GAMESTATE.ACTIVE")
+UIElements["Title"] = menu.Text(screen=screen, coords = [w/10,h/10,8*w/10,h/10], text = "Game Title")
 UI = []
 
 # fun_patterns.pattern_fast_spin(screen)
@@ -90,7 +93,9 @@ while not done:
             pos = pygame.mouse.get_pos()
             for UIElement in UI:
                 if type(UIElement == 'menu.Button'):
-                    UIElement.getClick(pos)
+                    res = UIElement.getClick(pos)
+                    if not res == None:
+                        eval(res)
         if event.type == pygame.KEYDOWN:
             if event.key == 27: # Esc. key
                 done = True
@@ -126,8 +131,8 @@ while not done:
         time += deltaTime # time and deltatime in milliseconds
         dt = deltaTime/1000 # deltatime in seconds
 
-        if UIElements["testButton"] in UI:
-            UI.remove(UIElements["testButton"])
+        deactivateUIElement(UI, UIElements["testButton"])
+        deactivateUIElement(UI, UIElements["Title"])
 
         # Reset screen to start drawing frame
         screen.fill(BLACK)
@@ -143,8 +148,8 @@ while not done:
         clock.tick(20)
         screen.fill(DARKGRAY)
         fun_patterns.draw()
-        if not UIElements["testButton"] in UI:
-            UI.append(UIElements["testButton"])
+        activateUIElement(UI, UIElements["testButton"])
+        activateUIElement(UI, UIElements["Title"])
         player.draw(screen)
 
     # UI layer

@@ -68,7 +68,7 @@ class bulletSpawner():
 
     # Has both Exp and Bexp in the name to signify that both the spawn point
     # and the bullet pattern behave according to a mathematical expression
-    def setSpawningPointExpBexp(self, coords: tuple, bulletPattern: (str, str) = None):
+    def setSpawningExpBexp(self, coords: tuple, bulletPattern: (str, str) = None):
         self.spawningStyle = SPAWNINGSTYLE.EXPBEXP
         (self.x, self.y) = coords
         (self.dx, self.dy) = bulletPattern
@@ -220,6 +220,7 @@ class Bullet():
         elif self.movementMode == BULLETPATTERN.EXPREL:
             t = self.time
             x, y = self.x, self.y
+            px, py = player.x, player.y
             self.x += eval(self.dx) * dt
             self.y += eval(self.dy) * dt
 

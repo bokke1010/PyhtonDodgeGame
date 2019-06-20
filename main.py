@@ -104,11 +104,16 @@ UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10),
 UI = []
 
 # fun_patterns.pattern_fast_spin(screen)
-fun_patterns.pattern_sudden(screen, 0.1)
-fun_patterns.pattern_dual_central_spiral(screen)
+# fun_patterns.pattern_sudden(screen, 0.1)
+# fun_patterns.pattern_dual_central_spiral(screen)
 # fun_patterns.pattern_dodgeball(screen)
+
+p2 = projectile.bulletSpawner(screen=screen, spawningDelay=1000, minSize=8)
+p2.setSpawningExpBexp(coords=("3", "3"), bulletPattern = ("x","y"))
+fun_patterns.add_pattern(p2)
+
 # p1 = projectile.bulletSpawner(screen=screen, spawningDelay=120, minSize=8)
-# p1.setSpawningPointExpBexp(coords=("w/2", "0"), bulletPattern = ("400*math.cos(t*math.pi)","20"))
+# p1.setSpawningExpBexp(coords=("w/2", "0"), bulletPattern = ("400*math.cos(t*math.pi)","20"))
 # fun_patterns.add_pattern(p1)
 
 # Initialization done, loading gameState

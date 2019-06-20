@@ -57,3 +57,6 @@ def deactivateUIElement(UI, UIElement):
 def activateUIElement(UI, UIElement):
     if not UIElement in UI:
         UI.append(UIElement)
+
+def sgn(a):
+    return (a > 0) - (a < 0)

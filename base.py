@@ -7,13 +7,19 @@ class PROJECTILETYPE(Enum):
     BALL = 0
     BOX = 1
 
+class BULLETPATTERN(Enum):
+    NONE = 0
+    LINE = 1
+    EXPREL = 2
+    EXPABS = 3
+
 class SPAWNINGSTYLE(Enum):
     NONE = 0
     BOX = 1
     EXP = 2
     POINT = 3
     POINTEXP = 4
-
+    EXPBEXP = 5 # This also allows the projectiles to evaluate their course
 
 class GAMESTATE(Enum):
     ACTIVE = 0

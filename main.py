@@ -11,15 +11,22 @@ def gameStateActive():
     global gameState
     if not gameState == GAMESTATE.ACTIVE:
         gameState = GAMESTATE.ACTIVE
-        deactivateUIElement(UI, UIElements["testButton"])
+        deactivateUIElement(UI, UIElements["Resume"])
         deactivateUIElement(UI, UIElements["Title"])
+        deactivateUIElement(UI, UIElements["Exit"])
+
 
 def gameStateMenu():
     global gameState
     if not gameState == GAMESTATE.MMENU:
         gameState = GAMESTATE.MMENU
-        activateUIElement(UI, UIElements["testButton"])
+        activateUIElement(UI, UIElements["Resume"])
         activateUIElement(UI, UIElements["Title"])
+        activateUIElement(UI, UIElements["Exit"])
+
+def stopMainLoop():
+    global done
+    done = True
 
 screen = pygame.display.set_mode((w, h))
 clock = pygame.time.Clock()
@@ -84,22 +91,25 @@ class Player():
 
         # End game when dead
         if self.lives <= 0:
-            global done
-            done = True
+            stopMainLoop()
     def sPos(self):
         return (int(self.x),int(self.y))
 
 player = Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64)
 
 UIElements = {}
-UIElements["testButton"] = menu.Button(screen=screen, coords = [w/10,3*h/10,8*w/10,6*h/10], result="gameStateActive()")
-UIElements["Title"] = menu.Text(screen=screen, coords = [w/10,h/10,8*w/10,h/10], text = "Game Title")
+UIElements["Resume"] = menu.Button(screen=screen, coords = (w/10,3*h/10,8*w/10,h/10), text = "resume", result="gameStateActive()")
+UIElements["Exit"] = menu.Button(screen=screen, coords = (w/10,5*h/10,8*w/10,h/10), text = "exit", result="stopMainLoop()")
+UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10), text = "Game Title")
 UI = []
 
 # fun_patterns.pattern_fast_spin(screen)
-# fun_patterns.pattern_sudden(screen, 0.2)
+fun_patterns.pattern_sudden(screen, 0.1)
 fun_patterns.pattern_dual_central_spiral(screen)
 # fun_patterns.pattern_dodgeball(screen)
+# p1 = projectile.bulletSpawner(screen=screen, spawningDelay=120, minSize=8)
+# p1.setSpawningPointExpBexp(coords=("w/2", "0"), bulletPattern = ("400*math.cos(t*math.pi)","20"))
+# fun_patterns.add_pattern(p1)
 
 # Initialization done, loading gameState
 gameStateMenu()
@@ -109,7 +119,7 @@ while not done:
     # Event management
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            done = True
+            stopMainLoop()
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             for UIElement in UI:
@@ -130,7 +140,7 @@ while not done:
                 if event.key == 275: # Right arrow
                     gameStateActive()
                 if event.key == 27: # Esc. key
-                    done = True
+                    stopMainLoop()
             if gameState == GAMESTATE.ACTIVE: # All game keyEvents
                 if event.key == 276: # Left arrow
                     gameStateMenu()
@@ -168,8 +178,6 @@ while not done:
         clock.tick(20)
         screen.fill(DARKGRAY)
         fun_patterns.draw()
-        activateUIElement(UI, UIElements["testButton"])
-        activateUIElement(UI, UIElements["Title"])
         player.draw(screen)
 
     # UI layer

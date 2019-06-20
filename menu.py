@@ -3,7 +3,7 @@ from pygame import freetype
 freetype.init()
 
 class Button():
-    def __init__(self, screen, coords: list = [40,40,w-80,h-80], text: str = "click here!", result: str = "print('works')"):
+    def __init__(self, screen, coords: tuple = (40,40,w-80,h-80), text: str = "click here!", result: str = "print('works')"):
         self.screen = screen
         self.coords = coords
         self.text = text
@@ -21,7 +21,7 @@ class Button():
         return self.result
 
 class Text():
-    def __init__(self, screen, coords: list = [40,40,w-80,h-80], text: str = "click here!"):
+    def __init__(self, screen, coords: tuple = (40,40,w-80,h-80), text: str = "click here!"):
         self.screen = screen
         self.coords = coords
         self.text = text

@@ -82,6 +82,7 @@ class bulletSpawner():
 
             elif self.spawningStyle == SPAWNINGSTYLE.EXP:
                 t = self.time/1000
+                c = self.spawnCounter
                 x = eval(self.x)
                 y = eval(self.y)
                 dx = eval(self.dx)
@@ -96,6 +97,7 @@ class bulletSpawner():
 
             elif self.spawningStyle == SPAWNINGSTYLE.POINTEXP:
                 t = self.time / 1000
+                c = self.spawnCounter
                 x, y = eval(self.x), eval(self.y)
                 speed = eval(self.speed)
                 angle = eval(self.angle)

@@ -1,4 +1,4 @@
-import projectile
+import projectile, fun_patterns
 from base import *
 pygame.init()
 
@@ -70,13 +70,13 @@ class Player():
     def sPos(self):
         return (int(self.x),int(self.y))
 
-player = Player(playerSize, [w/2, h/2], WHITE, acceleration, drag, 32)
+player = Player(playerSize, [w/3, h/3], WHITE, acceleration, drag, 64)
 
-spawner_main = projectile.bulletSpawner(screen=screen, spawningDelay=25, minSize=8)
-spawner_main.setSpawningExp(["w*(t-math.floor(t))","h*(t-math.floor(t))"], ["(random.randint(0,1)*2-1)*80","0"])
+# fun_patterns.pattern_dualFan(screen)
+fun_patterns.pattern_quadFan(screen)
+# fun_patterns.pattern_dual_central_spiral(screen)
+# fun_patterns.pattern_enclosing_circle(screen)
 
-spawner_pattern = projectile.bulletSpawner(screen=screen, spawningDelay=50, minSize=8)
-spawner_pattern.setSpawningPointExp(coords=["0", "h/2"], dir=" 0.25 * math.pi * math.sin(math.pi * t)", speed="90")
 while not done:
 
     # Event management
@@ -125,17 +125,14 @@ while not done:
         player.draw(screen)
         player.update((keysDown['d'] - keysDown['a']), (keysDown['s'] - keysDown['w']), dt)
 
-        spawner_main.update(dt, player)
-        spawner_main.draw()
+        fun_patterns.updateDraw(dt, player)
 
-        spawner_pattern.update(dt, player)
-        spawner_pattern.draw()
 
     elif gameState == GAMESTATE.MMENU:
         clock.tick(20)
         screen.fill(DARKGRAY)
-        spawner_main.draw()
-        spawner_pattern.draw()
+        fun_patterns.draw()
+
         player.draw(screen)
 
 

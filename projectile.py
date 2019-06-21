@@ -206,17 +206,17 @@ class Bullet():
         (self.dx, self.dy) = vel
 
     def draw(self, scr):
-        pos = (int(self.x), int(self.y))
-        innerSize = int(self.size-0.5 * self.borderWidth)# prevent the border from exceeding the circle
         # Draw either active projectile, used projectile or yet unactivated projectile
         if self.active and self.time >= self.preTime:
-            self.__drawSelf__(self.color)
+            self.__drawSelf__(scr, self.color)
         elif not self.active and self.time >= self.preTime:
-            self.__drawSelf__(self.fadedColor)
+            self.__drawSelf__(scr, self.fadedColor)
         elif self.time < self.preTime:
-            self.__drawSelf__(WHITE)
+            self.__drawSelf__(scr, WHITE)
 
-    def __drawSelf__(self, color):
+    def __drawSelf__(self, scr, color):
+        pos = (int(self.x), int(self.y))
+        innerSize = int(self.size-0.5 * self.borderWidth)# prevent the border from exceeding the circle
         pygame.draw.circle(scr, color, pos, innerSize, self.borderWidth)
 
     def update(self, dt, player):

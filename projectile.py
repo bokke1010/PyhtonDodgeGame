@@ -70,6 +70,12 @@ class bulletSpawner():
         # Keep in mind that using a bulletexpression (BEXP) means dx and dy are strings instead of numbers
         (self.dx, self.dy) = bulletPattern
 
+    def setSpawningBexpAbs(self, coords: (str,str)):
+        self.spawningStyle = SPAWNINGSTYLE.BEXPABS
+        if self.lifeTime == -1:
+            raise Exception("Expression bullets must have a maximum lifetime")
+        (self.x, self.y) = coords
+
     def draw(self):
         if self.bulletVisible:
             for blt in self.bullets:
@@ -88,6 +94,8 @@ class bulletSpawner():
             else:
                 ballSize = random.randint(self.minSize, self.maxSize)
 
+            bullet = Bullet(color = PINK, size = ballSize, preTime = self.preTime, lifeTime = self.lifeTime, borderWidth = self.bulletBorderWidth)
+
             if self.spawningStyle == SPAWNINGSTYLE.NONE:
                 raise Exception("Spawning style not set")
 
@@ -96,12 +104,14 @@ class bulletSpawner():
                 y = random.randint(self.yMin, self.yMax)
                 dx = randomBetween(self.dxMin, self.dxMax)
                 dy = randomBetween(self.dyMin, self.dyMax)
+                bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
 
             elif self.spawningStyle == SPAWNINGSTYLE.EXP:
                 t = self.time/1000
                 c = self.spawnCounter
                 x, y = eval(self.x), eval(self.y)
                 dx, dy = eval(self.dx), eval(self.dy)
+                bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
 
             elif self.spawningStyle == SPAWNINGSTYLE.POINT:
                 x, y = self.x, self.y
@@ -109,6 +119,7 @@ class bulletSpawner():
                 angle = randomBetween(self.angleMin, self.angleMax)
                 dx = math.cos(angle) * speed
                 dy = math.sin(angle) * speed
+                bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
 
             elif self.spawningStyle == SPAWNINGSTYLE.POINTEXP:
                 t = self.time / 1000
@@ -118,23 +129,21 @@ class bulletSpawner():
                 angle = eval(self.angle)
                 dx = math.cos(angle) * speed
                 dy = math.sin(angle) * speed
+                bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
 
             elif self.spawningStyle == SPAWNINGSTYLE.EXPBEXP:
                 t = self.time / 1000
                 c = self.spawnCounter
                 x, y = eval(self.x), eval(self.y)
                 dx, dy = self.dx, self.dy
+                bullet.setBulletPatternExpRel(pos = (x, y), vel = (dx, dy))
 
+            elif self.spawningStyle == SPAWNINGSTYLE.BEXPABS:
+                t = self.time / 1000
+                c = self.spawnCounter
+                x, y = self.x, self.y
+                bullet.setBulletPatternExpAbs(pos = (x, y), count= self.spawnCounter)
 
-            bullet = Bullet(pos = (x, y), color = PINK, size = ballSize, preTime = self.preTime, lifeTime = self.lifeTime, borderWidth = self.bulletBorderWidth)
-
-            # Set bullet as pattern or line type bullet
-            # I find this piece of code quite clunky. We already have this
-            # same condition just above this no?
-            if self.spawningStyle == SPAWNINGSTYLE.EXPBEXP:
-                bullet.setBulletPatternExpRel(vel = (dx, dy))
-            else:
-                bullet.setBulletPatternLine(vel = (dx, dy))
 
             self.bullets.append(bullet)
             self.spawnCounter += 1
@@ -145,15 +154,15 @@ class bulletSpawner():
             blt.update(dt, player)
 
             # Bullet cleanup (out of bounds & movement check)
-            # No bullet tumors
-            if blt.dx == 0 and blt.dy == 0 and blt.lifeTime == -1:
-                cleanupQue.add(blt)
             # Bullets that exceed their lifetime get cleansed
             if blt.time > blt.lifeTime and blt.lifeTime > 0:
                 cleanupQue.add(blt)
             # Bullets that are guaranteed to never reenter the playfield get
             # deleted
-            if not self.spawningStyle == SPAWNINGSTYLE.EXPBEXP:
+            if blt.movementMode == BULLETPATTERN.LINE:
+                # No bullet tumors
+                if blt.dx == 0 and blt.dy == 0 and blt.lifeTime == -1:
+                    cleanupQue.add(blt)
                 if blt.dx > 0:
                     if blt.x > w:
                         cleanupQue.add(blt)
@@ -175,9 +184,8 @@ class bulletSpawner():
 
 
 class Bullet():
-    def __init__(self, pos: (int, int), color: tuple = PINK, size: int = 12, borderWidth: int = 2, preTime: int = 0, active: bool = True, lifeTime: int = -1):
+    def __init__(self, color: tuple = PINK, size: int = 12, borderWidth: int = 2, preTime: int = 0, active: bool = True, lifeTime: int = -1):
         # Pattern related
-        (self.x, self.y) = pos
         self.size = size
         self.movementMode = BULLETPATTERN.NONE
 
@@ -193,17 +201,20 @@ class Bullet():
         self.preTime = preTime
         self.lifeTime = lifeTime
 
-    def setBulletPatternLine(self, vel: (int, int)):
+    def setBulletPatternLine(self, pos: (int, int), vel: (int, int)):
         self.movementMode = BULLETPATTERN.LINE
+        (self.x, self.y) = pos
         (self.dx, self.dy) = vel
 
-    def setBulletPatternExpRel(self, vel: (str, str)):
+    def setBulletPatternExpRel(self, pos: (int, int), vel: (str, str)):
         self.movementMode = BULLETPATTERN.EXPREL
+        (self.x, self.y) = pos
         (self.dx, self.dy) = vel
 
-    def setBulletPatternExpAbs(self, vel: (str, str)):
+    def setBulletPatternExpAbs(self, pos: (str, str), count: int = 0):
         self.movementMode = BULLETPATTERN.EXPABS
-        (self.dx, self.dy) = vel
+        (self.gx, self.gy) = pos
+        self.count = count
 
     def draw(self, scr):
         # Draw either active projectile, used projectile or yet unactivated projectile
@@ -234,10 +245,10 @@ class Bullet():
             self.y += eval(self.dy) * dt
 
         elif self.movementMode == BULLETPATTERN.EXPABS:
+            c = self.count
             t = self.time
-            x, y = self.x, self.y
-            self.x = eval(self.dx)
-            self.y = eval(self.dy)
+            self.x = eval(self.gx)
+            self.y = eval(self.gy)
 
         # Player collision
         collision = distance((self.x, self.y), player.sPos()) < self.size + player.size

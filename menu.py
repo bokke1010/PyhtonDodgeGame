@@ -13,6 +13,10 @@ class Button():
     def draw(self):
         self.textRenderer.draw()
 
+    def updateText(self, text):
+        self.text = text
+        self.textRenderer.updateText(text)
+
     def getClick(self, pos):
         if self.coords[0] <= pos[0] <= (self.coords[0]+self.coords[2]) and self.coords[1] <= pos[1] <= (self.coords[1] + self.coords[3]):
             return self.onClick()
@@ -20,12 +24,38 @@ class Button():
     def onClick(self):
         return self.result
 
+class sButton():
+    def __init__(self, screen, coords: tuple = (40,40,w-80,h-80), text: str = "click here!", result: str = "print('works')"):
+        self.screen = screen
+        self.coords = coords
+        self.text = text
+        self.result = result
+        self.textRenderer = Text(screen, coords, text)
+
+    def draw(self):
+        self.textRenderer.draw()
+
+    def updateText(self, text):
+        self.text = text
+        self.textRenderer.updateText(text)
+
+    def getClick(self, pos):
+        if self.coords[0] <= pos[0] <= (self.coords[0]+self.coords[2]) and self.coords[1] <= pos[1] <= (self.coords[1] + self.coords[3]):
+            level = (pos[0]-self.coords[0])/self.coords[2]
+            return self.onClick(level)
+
+    def onClick(self, level):
+        return (level, self.result)
+
 class Text():
     def __init__(self, screen, coords: tuple = (40,40,w-80,h-80), text: str = "click here!"):
         self.screen = screen
         self.coords = coords
         self.text = text
         self.font = freetype.Font(None, 20)
+
+    def updateText(self, text):
+        self.text = text
 
     def draw(self, color: tuple = (0  ,0  ,0  )):
         pygame.draw.rect(self.screen, color, self.coords, 2)

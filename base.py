@@ -20,6 +20,7 @@ class SPAWNINGSTYLE(Enum):
     POINT = 3
     POINTEXP = 4
     EXPBEXP = 5 # This also allows the projectiles to evaluate their course
+    BEXPABS = 6 # Projectiles use absolute coordinates
 
 class GAMESTATE(Enum):
     ACTIVE = 0

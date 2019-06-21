@@ -14,7 +14,11 @@ def gameStateActive():
         deactivateUIElement(UI, UIElements["Resume"])
         deactivateUIElement(UI, UIElements["Title"])
         deactivateUIElement(UI, UIElements["Exit"])
-        deactivateUIElement(UI, UIElements["setPat1"])
+        deactivateUIElement(UI, UIElements["spawnGuide"])
+
+        deactivateUIElement(UI, UIElements["setX"])
+        deactivateUIElement(UI, UIElements["setY"])
+        deactivateUIElement(UI, UIElements["spawnIt"])
 
 
 def gameStateMenu():
@@ -24,7 +28,11 @@ def gameStateMenu():
         activateUIElement(UI, UIElements["Resume"])
         activateUIElement(UI, UIElements["Title"])
         activateUIElement(UI, UIElements["Exit"])
-        activateUIElement(UI, UIElements["setPat1"])
+        activateUIElement(UI, UIElements["spawnGuide"])
+
+        activateUIElement(UI, UIElements["setX"])
+        activateUIElement(UI, UIElements["setY"])
+        activateUIElement(UI, UIElements["spawnIt"])
 
 def stopMainLoop():
     global done
@@ -103,14 +111,27 @@ UIElements = {}
 UIElements["Resume"] = menu.Button(screen=screen, coords = (w/10,3*h/10,8*w/10,h/10), text = "resume", result="gameStateActive()")
 UIElements["Exit"] = menu.Button(screen=screen, coords = (w/10,5*h/10,8*w/10,h/10), text = "exit", result="stopMainLoop()")
 UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10), text = "Game Title")
-UIElements["setPat1"] = menu.Button(screen=screen, coords = (w/10,7*h/10,8*w/10,h/10), text = "set pattern None", result="fun_patterns.pattern_dual_spiral(screen, ('8*w/10','2*h/10'))")
+UIElements["spawnGuide"] = menu.Text(screen=screen, coords = (w/10,7*h/10,8*w/10,0.5*h/10), text = "Add patterns")
+
+x = w/2
+def set_x(a):
+    global x
+    x = a
+    UIElements["setX"].updateText(str(x))
+y = h/2
+def set_y(a):
+    global y
+    y = a
+    UIElements["setY"].updateText(str(y))
+
+UIElements["setX"] = menu.sButton(screen=screen, coords = (w/10,7.5*h/10,2*w/10,h/10),
+    text = str(x), result="set_x(w*r)")
+UIElements["setY"] = menu.sButton(screen=screen, coords = (4*w/10,7.5*h/10,2*w/10,h/10),
+    text = str(y), result="set_y(h*r)")
+UIElements["spawnIt"] = menu.Button(screen=screen, coords = (7*w/10,7.5*h/10,2*w/10,h/10),
+    text = "dFans", result="fun_patterns.pattern_star(screen, x, y, 50)")
 UI = []
 
-fun_patterns.pattern_waves_left(screen)
-# fun_patterns.pattern_fast_spin(screen)
-# fun_patterns.pattern_sudden(screen, 0.1)
-# fun_patterns.pattern_dual_central_spiral(screen)
-# fun_patterns.pattern_dodgeball(screen)
 
 
 # Initialization done, loading gameState
@@ -131,6 +152,11 @@ while not done:
                     res = UIElement.getClick(pos)
                     if not res == None:
                         eval(res)
+                if isinstance(UIElement, menu.sButton):
+                    res = UIElement.getClick(pos)
+                    if not res == None:
+                        (r, func) = res
+                        eval(func)
 
         if event.type == pygame.KEYDOWN:
             # Directional keys

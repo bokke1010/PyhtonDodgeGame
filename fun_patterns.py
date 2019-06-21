@@ -19,12 +19,12 @@ def pattern_star(scr, x, y, size):
     spawner["main"].setSpawningPointExp(coords=[str(x), str(y)], dir="random.random()*2*math.pi", speed="100")
     spawners.append(spawner)
 
-def pattern_dualFan(scr):
+def pattern_dualFan(scr, speed: int = 90):
     spawner = {}
     spawner["fan_pattern_1/2"] = projectile.bulletSpawner(screen=scr, spawningDelay=35, minSize=10)
-    spawner["fan_pattern_1/2"].setSpawningPointExp(coords=["0", str(h/2)], dir=" 0.25 * math.pi * (math.sin(math.pi * t)-1)", speed="90")
+    spawner["fan_pattern_1/2"].setSpawningPointExp(coords=["0", str(h/2)], dir=" 0.25 * math.pi * (math.sin(math.pi * t)-1)", speed=str(speed))
     spawner["fan_pattern_2/2"] = projectile.bulletSpawner(screen=scr, spawningDelay=35, minSize=10)
-    spawner["fan_pattern_2/2"].setSpawningPointExp(coords=["w", str(h/2)], dir=" 0.25 * math.pi * (math.sin(math.pi * t)+3)", speed="90")
+    spawner["fan_pattern_2/2"].setSpawningPointExp(coords=["w", str(h/2)], dir=" 0.25 * math.pi * (math.sin(math.pi * t)+3)", speed=str(speed))
     spawners.append(spawner)
 
 
@@ -66,16 +66,22 @@ def pattern_dual_spiral(scr, coords: tuple = ("w/2", "h/2")):
     spawner["central_spiral_2/2"].setSpawningPointExp(coords=coords, dir="t*0.35*math.pi + math.pi", speed="90" )
     spawners.append(spawner)
 
-def pattern_waves_left(scr):
+def pattern_waves(scr, x: int = 0, speed: int = 80):
     spawner = {}
-    spawner["mainWave"] = projectile.bulletSpawner(screen=scr, spawningDelay=80, minSize=8, lifeTime = 20)
-    spawner["mainWave"].setSpawningExpBexp(coords=("0", "h*0.5*(1+math.sin(t*math.pi))"), bulletPattern = ("80","10*(1.7**t)"))
+    spawner["mainWave"] = projectile.bulletSpawner(screen=scr, spawningDelay=80, minSize=8, lifeTime = 8)
+    spawner["mainWave"].setSpawningExpBexp(coords=(str(x), "h*0.5*(1+math.sin(t*math.pi))"), bulletPattern = (str(speed),"10*(1.7**t)"))
     spawners.append(spawner)
 
 def pattern_vertical_wave(scr, vvel = 30):
     spawner = {}
     spawner["mainWave"] = projectile.bulletSpawner(screen=scr, spawningDelay=120, minSize=8, lifeTime = h/vvel)
     spawner["mainWave"].setSpawningExpBexp(coords=("w/2", "0"), bulletPattern = ("400*math.cos(t*math.pi)",str(vvel)))
+    spawners.append(spawner)
+
+def pattern_test_abs(scr, vvel = 30):
+    spawner = {}
+    spawner["mainWave"] = projectile.bulletSpawner(screen=scr, spawningDelay=40, minSize=16, lifeTime = 8*0.8)
+    spawner["mainWave"].setSpawningBexpAbs(coords=("w*0.5*(1+math.cos(c*math.pi*0.01))", "h*0.5*(1+math.sin(c*math.pi*0.01))"), )
     spawners.append(spawner)
 
 def pattern_fast_spin(scr):

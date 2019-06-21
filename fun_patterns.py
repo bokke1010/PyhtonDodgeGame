@@ -29,10 +29,10 @@ def pattern_dualFan(scr):
 
 
 
-def pattern_central_spiral(scr):
+def pattern_spiral(scr, coords: tuple = ("w/2", "h/2")):
     spawner = {}
     spawner["central_spiral"] = projectile.bulletSpawner(screen=scr, spawningDelay=50, minSize=12)
-    spawner["central_spiral"].setSpawningPointExp(coords=[str(w/2),str(h/2)], dir="t*0.5*math.pi", speed="90" )
+    spawner["central_spiral"].setSpawningPointExp(coords=coords, dir="t*0.5*math.pi", speed="90" )
     spawners.append(spawner)
 
 def pattern_dodgeball(scr):
@@ -58,12 +58,12 @@ def pattern_enclosing_circle(scr, speed = 1):
     spawners.append(spawner)
 
 
-def pattern_dual_central_spiral(scr):
+def pattern_dual_spiral(scr, coords: tuple = ("w/2", "h/2")):
     spawner = {}
     spawner["central_spiral_1/2"] = projectile.bulletSpawner(screen=scr, spawningDelay=90, minSize=10)
-    spawner["central_spiral_1/2"].setSpawningPointExp(coords=[str(w/2),str(h/2)], dir="t*0.35*math.pi", speed="90" )
+    spawner["central_spiral_1/2"].setSpawningPointExp(coords=coords, dir="t*0.35*math.pi", speed="90" )
     spawner["central_spiral_2/2"] = projectile.bulletSpawner(screen=scr, spawningDelay=90, minSize=10)
-    spawner["central_spiral_2/2"].setSpawningPointExp(coords=[str(w/2),str(h/2)], dir="t*0.35*math.pi + math.pi", speed="90" )
+    spawner["central_spiral_2/2"].setSpawningPointExp(coords=coords, dir="t*0.35*math.pi + math.pi", speed="90" )
     spawners.append(spawner)
 
 def pattern_fast_spin(scr):

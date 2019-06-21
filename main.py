@@ -41,10 +41,8 @@ keysDown = {"w": False, "a":False, "s":False, "d":False}
 class Player():
     def __init__(self, size, pos, color, acc, drag, lives):
         self.size = size
-        self.x = pos[0]
-        self.y = pos[1]
-        self.dx = 0
-        self.dy = 0
+        (self.x, self.y) = pos
+        self.dx, self.dy = 0, 0
         self.acc = acc
         self.drag = drag
         self.color = color
@@ -94,6 +92,8 @@ class Player():
             stopMainLoop()
     def sPos(self):
         return (int(self.x),int(self.y))
+    def hit(self, damage):
+        self.lives -= damage
 
 player = Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64)
 
@@ -108,12 +108,15 @@ UI = []
 # fun_patterns.pattern_dual_central_spiral(screen)
 # fun_patterns.pattern_dodgeball(screen)
 
-p2 = projectile.bulletSpawner(screen=screen, spawningDelay=1000, minSize=8)
-p2.setSpawningExpBexp(coords=("3", "3"), bulletPattern = ("x","y"))
+p2 = projectile.bulletSpawner(screen=screen, spawningDelay=80, minSize=8, lifeTime = 20)
+p2.setSpawningExpBexp(coords=("0", "h*0.5*(1+math.sin(t*math.pi))"), bulletPattern = ("80","10*(1.7**t)"))
 fun_patterns.add_pattern(p2)
 
-# p1 = projectile.bulletSpawner(screen=screen, spawningDelay=120, minSize=8)
-# p1.setSpawningExpBexp(coords=("w/2", "0"), bulletPattern = ("400*math.cos(t*math.pi)","20"))
+fun_patterns.pattern_dual_spiral(screen, ("8*w/10","2*h/10"))
+
+# __vvel = 30
+# p1 = projectile.bulletSpawner(screen=screen, spawningDelay=120, minSize=8, lifeTime = h/__vvel)
+# p1.setSpawningExpBexp(coords=("w/2", "0"), bulletPattern = ("400*math.cos(t*math.pi)",str(__vvel)))
 # fun_patterns.add_pattern(p1)
 
 # Initialization done, loading gameState
@@ -125,6 +128,7 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             stopMainLoop()
+        # Evaluate menu items
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             for UIElement in UI:
@@ -132,7 +136,9 @@ while not done:
                     res = UIElement.getClick(pos)
                     if not res == None:
                         eval(res)
+
         if event.type == pygame.KEYDOWN:
+            # Directional keys
             if event.unicode == 'w':
                 keysDown['w'] = True
             if event.unicode == 'a':
@@ -141,6 +147,8 @@ while not done:
                 keysDown['s'] = True
             if event.unicode == 'd':
                 keysDown['d'] = True
+
+            # Navigation keys
             if gameState == GAMESTATE.MMENU: # All menu keyEvents
                 if event.key == 275: # Right arrow
                     gameStateActive()
@@ -151,6 +159,8 @@ while not done:
                     gameStateMenu()
                 if event.key == 27: # Esc. key
                     gameStateMenu()
+
+        # KeyUp events for directional keys
         if event.type == pygame.KEYUP:
             if event.key == 119: # W-key (event.unicode doesn't exist for KEYUP)
                 keysDown['w'] = False
@@ -182,6 +192,7 @@ while not done:
     elif gameState == GAMESTATE.MMENU:
         clock.tick(20)
         screen.fill(DARKGRAY)
+
         fun_patterns.draw()
         player.draw(screen)
 

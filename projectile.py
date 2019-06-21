@@ -4,63 +4,56 @@ class bulletSpawner():
     def __init__(self, screen, spawningDelay: int = 90, minSize: int = 16,
                  maxSize: int = 0, preTime: int = 0, lifeTime: int = -1,
                  borderWidth: int = 3, visible: bool = True):
+        self.scr = screen
+        # Spawning timing variables
         self.spawnCounter = 0 # Amount of bullets this spawner has created in its lifetime
         self.delay = spawningDelay # Delay in ms between created bullets
         self.time = 0 # Time since this object is created in seconds
-        self.bullets = [] # locally referencing all bullets
+        # locally referencing all bullets
+        self.bullets = []
+        # Activation times
         self.preTime = preTime #Passing down the bullet fuse
         self.lifeTime = lifeTime
+        # Cosmetic
         self.spawningStyle = SPAWNINGSTYLE.NONE
         self.bulletBorderWidth = borderWidth
         self.bulletVisible = visible
+
         self.minSize = minSize
         if maxSize == 0:
             self.maxSize = self.minSize
         else:
             self.maxSize = maxSize
-        self.scr = screen
 
     def setSpawningBox(self, spawningArea: tuple, spawningVels: tuple ):
         self.spawningStyle = SPAWNINGSTYLE.BOX
         # Defining the spawning area as a box with x1y1 - x2y2
-        self.xMin = spawningArea[0]
-        self.yMin = spawningArea[1]
-        self.xMax = spawningArea[2]
-        self.yMax = spawningArea[3]
+        (self.xMin, self.yMin, self.xMax, self.yMax) = spawningArea
         # Defining the base velocity of projectiles with a minimum and maximumvalue for both x and y
-        self.dxMin = spawningVels[0]
-        self.dyMin = spawningVels[1]
-        self.dxMax = spawningVels[2]
-        self.dyMax = spawningVels[3]
+        (self.dxMin, self.dyMin, self.dxMax, self.dyMax) = spawningVels
 
     def setSpawningExp(self, coords: tuple, spawningVels: tuple ):
         self.spawningStyle = SPAWNINGSTYLE.EXP
         t = 0
-        # Defining the spawning area as a box with x1y1 - x2y2
-        self.x = coords[0]
-        self.y = coords[1]
+        # Defining the spawning area as a point with (x,y)
+        (self.x, self.y) = coords
         # Defining the base velocity of projectiles with a minimum and maximumvalue for both x and y
         # If randomness is wanted in a expression-function, it can be implemented manually
-        self.dx = spawningVels[0]
-        self.dy = spawningVels[1]
+        (self.dx, self.dy) = spawningVels
 
     def setSpawningPoint(self, coords: tuple, dir: tuple, speed: tuple ):
         self.spawningStyle = SPAWNINGSTYLE.POINT
         # Defining the spawning point
-        self.x = coords[0]
-        self.y = coords[1]
+        (self.x, self.y) = coords
         # Getting the allowed angles
-        self.angleMin = dir[0]
-        self.angleMax = dir[1]
+        (self.angleMin, self.angleMax) = dir
         # Defining the base velocity of projectiles with a minimum and maximum
-        self.speedMin = speed[0]
-        self.speedMax = speed[1]
+        (self.speedMin, self.speedMax) = speed
 
     def setSpawningPointExp(self, coords: tuple, dir: str, speed: str ):
         self.spawningStyle = SPAWNINGSTYLE.POINTEXP
         # Defining the spawning point
-        self.x = coords[0]
-        self.y = coords[1]
+        (self.x, self.y) = coords
         # Getting the allowed angle formula
         self.angle = dir
         # Defining the base velocity of the projectile
@@ -70,7 +63,11 @@ class bulletSpawner():
     # and the bullet pattern behave according to a mathematical expression
     def setSpawningExpBexp(self, coords: tuple, bulletPattern: (str, str) = None):
         self.spawningStyle = SPAWNINGSTYLE.EXPBEXP
+        if self.lifeTime == -1:
+            raise Exception("Expression bullets must have a maximum lifetime")
+
         (self.x, self.y) = coords
+        # Keep in mind that using a bulletexpression (BEXP) means dx and dy are strings instead of numbers
         (self.dx, self.dy) = bulletPattern
 
     def draw(self):
@@ -82,8 +79,15 @@ class bulletSpawner():
         self.time += dt*1000 # We get dt in seconds for simulation purposes
         # Bullet creation
         while (self.time - self.spawnCounter * self.delay) >= self.delay:
+
             x, y, dx, dy = 0, 0, 0, 0
-            ballSize = random.randint(self.minSize, self.maxSize)
+            # Determining the ball size
+            ballSize = 0
+            if self.minSize == self.maxSize:
+                ballSize = self.minSize
+            else:
+                ballSize = random.randint(self.minSize, self.maxSize)
+
             if self.spawningStyle == SPAWNINGSTYLE.NONE:
                 raise Exception("Spawning style not set")
 
@@ -96,10 +100,8 @@ class bulletSpawner():
             elif self.spawningStyle == SPAWNINGSTYLE.EXP:
                 t = self.time/1000
                 c = self.spawnCounter
-                x = eval(self.x)
-                y = eval(self.y)
-                dx = eval(self.dx)
-                dy = eval(self.dy)
+                x, y = eval(self.x), eval(self.y)
+                dx, dy = eval(self.dx), eval(self.dy)
 
             elif self.spawningStyle == SPAWNINGSTYLE.POINT:
                 x, y = self.x, self.y
@@ -123,15 +125,18 @@ class bulletSpawner():
                 x, y = eval(self.x), eval(self.y)
                 dx, dy = self.dx, self.dy
 
-            temp = Bullet(pos = (x, y), color = PINK, size = ballSize, preTime = self.preTime, lifeTime = self.lifeTime, borderWidth = self.bulletBorderWidth)
+
+            bullet = Bullet(pos = (x, y), color = PINK, size = ballSize, preTime = self.preTime, lifeTime = self.lifeTime, borderWidth = self.bulletBorderWidth)
 
             # Set bullet as pattern or line type bullet
+            # I find this piece of code quite clunky. We already have this
+            # same condition just above this no?
             if self.spawningStyle == SPAWNINGSTYLE.EXPBEXP:
-                temp.setBulletPatternExpRel(vel = (dx, dy))
+                bullet.setBulletPatternExpRel(vel = (dx, dy))
             else:
-                temp.setBulletPatternLine(vel = (dx, dy))
+                bullet.setBulletPatternLine(vel = (dx, dy))
 
-            self.bullets.append(temp)
+            self.bullets.append(bullet)
             self.spawnCounter += 1
         # Bullet update
         cleanupQue = set()
@@ -140,10 +145,14 @@ class bulletSpawner():
             blt.update(dt, player)
 
             # Bullet cleanup (out of bounds & movement check)
+            # No bullet tumors
             if blt.dx == 0 and blt.dy == 0 and blt.lifeTime == -1:
                 cleanupQue.add(blt)
+            # Bullets that exceed their lifetime get cleansed
             if blt.time > blt.lifeTime and blt.lifeTime > 0:
                 cleanupQue.add(blt)
+            # Bullets that are guaranteed to never reenter the playfield get
+            # deleted
             if not self.spawningStyle == SPAWNINGSTYLE.EXPBEXP:
                 if blt.dx > 0:
                     if blt.x > w:
@@ -157,12 +166,10 @@ class bulletSpawner():
                 elif blt.dy < 0:
                     if blt.y < 0:
                         cleanupQue.add(blt)
-            else:
-                if not 0 <= blt.x <= w:
-                    cleanupQue.add(blt)
-                if not 0 <= blt.y <= h:
-                    cleanupQue.add(blt)
 
+        # Got our list, now we're removing their references to let the garbage
+        # collector do the rest
+        # A better way of doing this might be needed in the future
         for item in cleanupQue:
             self.bullets.remove(item)
 
@@ -170,9 +177,8 @@ class bulletSpawner():
 class Bullet():
     def __init__(self, pos: (int, int), color: tuple = PINK, size: int = 12, borderWidth: int = 2, preTime: int = 0, active: bool = True, lifeTime: int = -1):
         # Pattern related
-        self.x = pos[0]
-        self.y = pos[1]
-        self.size = size # projectile size
+        (self.x, self.y) = pos
+        self.size = size
         self.movementMode = BULLETPATTERN.NONE
 
         # Style related
@@ -204,11 +210,14 @@ class Bullet():
         innerSize = int(self.size-0.5 * self.borderWidth)# prevent the border from exceeding the circle
         # Draw either active projectile, used projectile or yet unactivated projectile
         if self.active and self.time >= self.preTime:
-            pygame.draw.circle(scr, self.color, pos, innerSize, self.borderWidth)
-        elif not self.active:
-            pygame.draw.circle(scr, self.fadedColor, pos, innerSize, self.borderWidth)
-        else:
-            pygame.draw.circle(scr, WHITE, pos, innerSize, self.borderWidth)
+            self.__drawSelf__(self.color)
+        elif not self.active and self.time >= self.preTime:
+            self.__drawSelf__(self.fadedColor)
+        elif self.time < self.preTime:
+            self.__drawSelf__(WHITE)
+
+    def __drawSelf__(self, color):
+        pygame.draw.circle(scr, color, pos, innerSize, self.borderWidth)
 
     def update(self, dt, player):
         # Movement
@@ -234,5 +243,5 @@ class Bullet():
         collision = distance((self.x, self.y), player.sPos()) < self.size + player.size
         active = self.active and self.time >= self.preTime
         if collision and active:
-            player.lives -= 1
+            player.hit(1)
             self.active = False

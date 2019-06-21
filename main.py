@@ -14,6 +14,7 @@ def gameStateActive():
         deactivateUIElement(UI, UIElements["Resume"])
         deactivateUIElement(UI, UIElements["Title"])
         deactivateUIElement(UI, UIElements["Exit"])
+        deactivateUIElement(UI, UIElements["setPat1"])
 
 
 def gameStateMenu():
@@ -23,6 +24,7 @@ def gameStateMenu():
         activateUIElement(UI, UIElements["Resume"])
         activateUIElement(UI, UIElements["Title"])
         activateUIElement(UI, UIElements["Exit"])
+        activateUIElement(UI, UIElements["setPat1"])
 
 def stopMainLoop():
     global done
@@ -101,6 +103,7 @@ UIElements = {}
 UIElements["Resume"] = menu.Button(screen=screen, coords = (w/10,3*h/10,8*w/10,h/10), text = "resume", result="gameStateActive()")
 UIElements["Exit"] = menu.Button(screen=screen, coords = (w/10,5*h/10,8*w/10,h/10), text = "exit", result="stopMainLoop()")
 UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10), text = "Game Title")
+UIElements["setPat1"] = menu.Button(screen=screen, coords = (w/10,7*h/10,8*w/10,h/10), text = "set pattern None", result="fun_patterns.pattern_dual_spiral(screen, ('8*w/10','2*h/10'))")
 UI = []
 
 # fun_patterns.pattern_fast_spin(screen)
@@ -108,11 +111,11 @@ UI = []
 # fun_patterns.pattern_dual_central_spiral(screen)
 # fun_patterns.pattern_dodgeball(screen)
 
-p2 = projectile.bulletSpawner(screen=screen, spawningDelay=80, minSize=8, lifeTime = 20)
-p2.setSpawningExpBexp(coords=("0", "h*0.5*(1+math.sin(t*math.pi))"), bulletPattern = ("80","10*(1.7**t)"))
-fun_patterns.add_pattern(p2)
-
-fun_patterns.pattern_dual_spiral(screen, ("8*w/10","2*h/10"))
+# p2 = projectile.bulletSpawner(screen=screen, spawningDelay=80, minSize=8, lifeTime = 20)
+# p2.setSpawningExpBexp(coords=("0", "h*0.5*(1+math.sin(t*math.pi))"), bulletPattern = ("80","10*(1.7**t)"))
+# fun_patterns.add_pattern(p2)
+#
+# fun_patterns.pattern_dual_spiral(screen, ("8*w/10","2*h/10"))
 
 # __vvel = 30
 # p1 = projectile.bulletSpawner(screen=screen, spawningDelay=120, minSize=8, lifeTime = h/__vvel)
@@ -132,7 +135,8 @@ while not done:
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             for UIElement in UI:
-                if type(UIElement == 'menu.Button'):
+                # print(type(UIElement))
+                if isinstance(UIElement, menu.Button):
                     res = UIElement.getClick(pos)
                     if not res == None:
                         eval(res)

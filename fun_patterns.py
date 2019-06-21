@@ -66,6 +66,18 @@ def pattern_dual_spiral(scr, coords: tuple = ("w/2", "h/2")):
     spawner["central_spiral_2/2"].setSpawningPointExp(coords=coords, dir="t*0.35*math.pi + math.pi", speed="90" )
     spawners.append(spawner)
 
+def pattern_waves_left(scr):
+    spawner = {}
+    spawner["mainWave"] = projectile.bulletSpawner(screen=scr, spawningDelay=80, minSize=8, lifeTime = 20)
+    spawner["mainWave"].setSpawningExpBexp(coords=("0", "h*0.5*(1+math.sin(t*math.pi))"), bulletPattern = ("80","10*(1.7**t)"))
+    spawners.append(spawner)
+
+def pattern_vertical_wave(scr, vvel = 30):
+    spawner = {}
+    spawner["mainWave"] = projectile.bulletSpawner(screen=scr, spawningDelay=120, minSize=8, lifeTime = h/vvel)
+    spawner["mainWave"].setSpawningExpBexp(coords=("w/2", "0"), bulletPattern = ("400*math.cos(t*math.pi)",str(vvel)))
+    spawners.append(spawner)
+
 def pattern_fast_spin(scr):
     pattern_enclosing_circle(scr, speed=1.8)
     pattern_star(scr, w, h, 250)

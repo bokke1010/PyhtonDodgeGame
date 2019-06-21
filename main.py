@@ -106,21 +106,12 @@ UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10),
 UIElements["setPat1"] = menu.Button(screen=screen, coords = (w/10,7*h/10,8*w/10,h/10), text = "set pattern None", result="fun_patterns.pattern_dual_spiral(screen, ('8*w/10','2*h/10'))")
 UI = []
 
+fun_patterns.pattern_waves_left(screen)
 # fun_patterns.pattern_fast_spin(screen)
 # fun_patterns.pattern_sudden(screen, 0.1)
 # fun_patterns.pattern_dual_central_spiral(screen)
 # fun_patterns.pattern_dodgeball(screen)
 
-# p2 = projectile.bulletSpawner(screen=screen, spawningDelay=80, minSize=8, lifeTime = 20)
-# p2.setSpawningExpBexp(coords=("0", "h*0.5*(1+math.sin(t*math.pi))"), bulletPattern = ("80","10*(1.7**t)"))
-# fun_patterns.add_pattern(p2)
-#
-# fun_patterns.pattern_dual_spiral(screen, ("8*w/10","2*h/10"))
-
-# __vvel = 30
-# p1 = projectile.bulletSpawner(screen=screen, spawningDelay=120, minSize=8, lifeTime = h/__vvel)
-# p1.setSpawningExpBexp(coords=("w/2", "0"), bulletPattern = ("400*math.cos(t*math.pi)",str(__vvel)))
-# fun_patterns.add_pattern(p1)
 
 # Initialization done, loading gameState
 gameStateMenu()

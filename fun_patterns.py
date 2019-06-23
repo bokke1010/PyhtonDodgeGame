@@ -94,6 +94,9 @@ def pattern_fast_spin(scr):
 def add_pattern(pattern):
     spawners.append({1:pattern})
 
+def clear():
+    spawners.clear()
+
 def updateDraw(dt, player):
     for spawner in spawners:
         for pat in spawner:

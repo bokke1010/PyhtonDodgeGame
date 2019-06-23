@@ -64,7 +64,8 @@ class Player():
         # pygame.draw.circle(scr, self.color, self.sPos(), self.size)
         dPos = self.sPos()
         healthCS = self.size + 3
-        rect = pygame.Rect(int(dPos[0]-healthCS),int(dPos[1]-healthCS),int(2*healthCS),int(2*healthCS))
+        rect = pygame.Rect(int(dPos[0]-healthCS),int(dPos[1]-healthCS),
+            int(2*healthCS),int(2*healthCS))
         # Health bar
         pygame.draw.arc(scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives)
         # Collision marker
@@ -108,10 +109,14 @@ class Player():
 player = Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64)
 
 UIElements = {}
-UIElements["Resume"] = menu.Button(screen=screen, coords = (w/10,3*h/10,8*w/10,h/10), text = "resume", result="gameStateActive()")
-UIElements["Exit"] = menu.Button(screen=screen, coords = (w/10,5*h/10,8*w/10,h/10), text = "exit", result="stopMainLoop()")
-UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10), text = "Game Title")
-UIElements["spawnGuide"] = menu.Text(screen=screen, coords = (w/10,7*h/10,8*w/10,0.5*h/10), text = "Add patterns")
+UIElements["Resume"] = menu.Button(screen=screen, coords = (w/10,3*h/10,8*w/10,h/10),
+    text = "resume", result="gameStateActive()")
+UIElements["Exit"] = menu.Button(screen=screen, coords = (w/10,5*h/10,8*w/10,h/10),
+    text = "exit", result="stopMainLoop()")
+UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10),
+    text = "Game Title")
+UIElements["spawnGuide"] = menu.Text(screen=screen, coords = (w/10,7*h/10,8*w/10,0.5*h/10),
+    text = "Add patterns")
 
 x = w/2
 def set_x(a):
@@ -132,6 +137,9 @@ UIElements["spawnIt"] = menu.Button(screen=screen, coords = (7*w/10,7.5*h/10,2*w
     text = "dFans", result="fun_patterns.pattern_star(screen, x, y, 50)")
 UI = []
 
+# fun_patterns.pattern_spiral(screen)
+# fun_patterns.pattern_dualFan(screen)
+fun_patterns.pattern_enclosing_circle(screen)
 
 
 # Initialization done, loading gameState

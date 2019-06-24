@@ -2,8 +2,8 @@ from base import *
 
 class bulletSpawner():
     def __init__(self, screen, spawningDelay: int = 90, minSize: int = 16,
-                 maxSize: int = 0, preTime: int = 0, lifeTime: int = -1,
-                 borderWidth: int = 3, visible: bool = True, spawnerLT = -1):
+                 maxSize: int = -1, preTime: int = 0, lifeTime: int = -1,
+                 borderWidth: int = 3, visible: bool = True, spawnerLT: int = -1):
         self.scr = screen
         # Spawning timing variables
         self.spawnCounter = 0 # Amount of bullets this spawner has created in its lifetime
@@ -21,7 +21,7 @@ class bulletSpawner():
         self.spawnerLT = spawnerLT
 
         self.minSize = minSize
-        if maxSize == 0:
+        if maxSize == -1:
             self.maxSize = self.minSize
         else:
             self.maxSize = maxSize

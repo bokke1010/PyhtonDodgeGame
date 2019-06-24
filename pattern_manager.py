@@ -51,13 +51,16 @@ class PatternManager():
     def parseSpawner(self, name, command):
         lt = -1
         slt = -1
+        maxSize = -1
         if "bulletLifeTime" in command:
             lt = command["bulletLifeTime"]
         if "spawnerLifeTime" in command:
             slt = command["spawnerLifeTime"]
+        if "maxSize" in command:
+            maxSize = command["maxSize"]
 
         spawner = projectile.bulletSpawner(screen=self.screen, spawningDelay=command["delay"],
-        minSize=command["minSize"], lifeTime = lt, spawnerLT = slt)
+        minSize=command["minSize"], maxSize=command["maxSize"] lifeTime = lt, spawnerLT = slt)
 
         if command["type"] == "pointExp":
             spawner.setSpawningPointExp(coords=(command["sX"], command["sY"]), dir = command["bDir"], speed = command["speed"])

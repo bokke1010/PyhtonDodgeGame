@@ -2,7 +2,7 @@ from base import *
 
 class bulletSpawner():
     def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = -1,
-                 borderWidth: int = 3, visible: bool = True, spawnerLT: int = -1):
+                 visible: bool = True, spawnerLT: int = -1, spawning: bool = True):
         self.scr = screen
         # Spawning timing variables
         self.spawnCounter = 0 # Amount of bullets this spawner has created in its lifetime
@@ -13,13 +13,14 @@ class bulletSpawner():
         # Activation times
         self.preTime = preTime #Passing down the bullet fuse
         self.lifeTime = lifeTime
-        self.spawning = True
+        self.spawning = spawning
         self.delete = False
         # Cosmetic
         self.spawningStyle = SPAWNINGSTYLE.NONE
         self.bulletVisible = visible
 
-
+    def addBullet(self, bullet):
+        self.bullets.append(bullet)
 
     def setSpawningBox(self, spawningArea: (int, int), spawningVels: (int, int), size: (int, int), borderWidth: int ):
         self.spawningStyle = SPAWNINGSTYLE.BOX

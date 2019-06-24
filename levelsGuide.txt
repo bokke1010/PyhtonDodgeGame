@@ -9,15 +9,29 @@ spawner:
   in JSON so far:
   - "pointExp": Use expressions for the x,y of the spawner; direction and speed of the bullet at creation
   - "expBexp": Use expressions for the x,y of the spawner; dx, dy of the bullet each frame
+  - "bExpAbs": Use expressions for the x,y of the bullet each frame
   "delay": specifies the delay in ms between bullet spawns (can be as low as you want, no frame limit)
-  "minSize": Minimum size of the bullet - if no maxSize is specified this is the size
-  "maxSize": Maximum size of the bullet - not required
-  "sX": spawner x coordinate (required by certain spawning types, all spawning types implemented so far require this)
+  "size": size of the bullet
+  "minSize": Minimum size of the bullet - not yet implemented into json, will be for a randomizer
+  "maxSize": see "minSize"
+  "sX": spawner x coordinate (required by most spawner types, so far only bExpAbs does not need this)
   "sY": see "sX"
   "bDir": bullet direction in radians, required by only pointExp so far
   "speed": speed of the bullet in points per second, required by only pointExp so far
-  "bX": bullet delta-X formula, executed each frame, required by only expBexp so far
+  "bX": bullet delta-X formula, executed each frame, required by expBexp so far
+        When used in bExpAbs, it is instead the absolute x coordinate
   "bY": see "bX"
+bullet:
+  Using the bullet event, one can add seperate buttons without needing a spawner
+  NOTE: remember that using this means the pattern manager will bind the bullets
+        to it's own integrated spawner, meaning c won't be predictable
+  "type": the type of the bullet. supports "line", "expRel" and "expAbs"
+  "x" and "y": the starting x and y value for line and expRel bullets
+  "x" and "y": the formulas for x and y in expAbs bullets
+  "dx" and "dy": the dx and dy values/formulas in line and expRel bullets respecively
+  "size": the size of the bullet. a int for line bullets, a str for expression bullets
+  "borderWidth": see "size", but this instead affects the border width (optional)
+  "preTime" and "lifeTime": time before bullet activation and bullet lifetime (optional)
 wait:
   using the wait event, you delay all events after it by the specified amount of milliseconds
 del:

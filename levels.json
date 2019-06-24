@@ -66,6 +66,17 @@
       }
     },
     {
+      "bullet":[
+        {
+          "type":"expAbs",
+          "x":"t*h/5",
+          "y":"h*0.5*(1-math.cos(t*math.pi/2.5))",
+          "size":"20",
+          "lifeTime":5
+        }
+      ]
+    },
+    {
       "wait":20000
     },
     {

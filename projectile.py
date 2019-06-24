@@ -3,7 +3,7 @@ from base import *
 class bulletSpawner():
     def __init__(self, screen, spawningDelay: int = 90, minSize: int = 16,
                  maxSize: int = 0, preTime: int = 0, lifeTime: int = -1,
-                 borderWidth: int = 3, visible: bool = True):
+                 borderWidth: int = 3, visible: bool = True, spawnerLT = -1):
         self.scr = screen
         # Spawning timing variables
         self.spawnCounter = 0 # Amount of bullets this spawner has created in its lifetime
@@ -18,6 +18,7 @@ class bulletSpawner():
         self.spawningStyle = SPAWNINGSTYLE.NONE
         self.bulletBorderWidth = borderWidth
         self.bulletVisible = visible
+        self.spawnerLT = spawnerLT
 
         self.minSize = minSize
         if maxSize == 0:
@@ -83,70 +84,74 @@ class bulletSpawner():
 
     def update(self, dt, player):
         self.time += dt*1000 # We get dt in seconds for simulation purposes
-        # Bullet creation
-        while (self.time - self.spawnCounter * self.delay) >= self.delay:
+        self.spawning = True
+        if (not self.spawnerLT == -1) and self.time > self.spawnerLT:
+            self.spawning = False
+        if self.spawning:
+            # Bullet creation
+            while (self.time - self.spawnCounter * self.delay) >= self.delay:
 
-            x, y, dx, dy = 0, 0, 0, 0
-            # Determining the ball size
-            ballSize = 0
-            if self.minSize == self.maxSize:
-                ballSize = self.minSize
-            else:
-                ballSize = random.randint(self.minSize, self.maxSize)
+                x, y, dx, dy = 0, 0, 0, 0
+                # Determining the ball size
+                ballSize = 0
+                if self.minSize == self.maxSize:
+                    ballSize = self.minSize
+                else:
+                    ballSize = random.randint(self.minSize, self.maxSize)
 
-            bullet = Bullet(color = PINK, size = ballSize, preTime = self.preTime, lifeTime = self.lifeTime, borderWidth = self.bulletBorderWidth)
+                bullet = Bullet(color = PINK, size = ballSize, preTime = self.preTime, lifeTime = self.lifeTime, borderWidth = self.bulletBorderWidth)
 
-            if self.spawningStyle == SPAWNINGSTYLE.NONE:
-                raise Exception("Spawning style not set")
+                if self.spawningStyle == SPAWNINGSTYLE.NONE:
+                    raise Exception("Spawning style not set")
 
-            elif self.spawningStyle == SPAWNINGSTYLE.BOX:
-                x = random.randint(self.xMin, self.xMax)
-                y = random.randint(self.yMin, self.yMax)
-                dx = randomBetween(self.dxMin, self.dxMax)
-                dy = randomBetween(self.dyMin, self.dyMax)
-                bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
+                elif self.spawningStyle == SPAWNINGSTYLE.BOX:
+                    x = random.randint(self.xMin, self.xMax)
+                    y = random.randint(self.yMin, self.yMax)
+                    dx = randomBetween(self.dxMin, self.dxMax)
+                    dy = randomBetween(self.dyMin, self.dyMax)
+                    bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
 
-            elif self.spawningStyle == SPAWNINGSTYLE.EXP:
-                t = self.time/1000
-                c = self.spawnCounter
-                x, y = eval(self.x), eval(self.y)
-                dx, dy = eval(self.dx), eval(self.dy)
-                bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
+                elif self.spawningStyle == SPAWNINGSTYLE.EXP:
+                    t = self.time/1000
+                    c = self.spawnCounter
+                    x, y = eval(self.x), eval(self.y)
+                    dx, dy = eval(self.dx), eval(self.dy)
+                    bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
 
-            elif self.spawningStyle == SPAWNINGSTYLE.POINT:
-                x, y = self.x, self.y
-                speed = randomBetween(self.speedMin, self.speedMax)
-                angle = randomBetween(self.angleMin, self.angleMax)
-                dx = math.cos(angle) * speed
-                dy = math.sin(angle) * speed
-                bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
+                elif self.spawningStyle == SPAWNINGSTYLE.POINT:
+                    x, y = self.x, self.y
+                    speed = randomBetween(self.speedMin, self.speedMax)
+                    angle = randomBetween(self.angleMin, self.angleMax)
+                    dx = math.cos(angle) * speed
+                    dy = math.sin(angle) * speed
+                    bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
 
-            elif self.spawningStyle == SPAWNINGSTYLE.POINTEXP:
-                t = self.time / 1000
-                c = self.spawnCounter
-                x, y = eval(self.x), eval(self.y)
-                speed = eval(self.speed)
-                angle = eval(self.angle)
-                dx = math.cos(angle) * speed
-                dy = math.sin(angle) * speed
-                bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
+                elif self.spawningStyle == SPAWNINGSTYLE.POINTEXP:
+                    t = self.time / 1000
+                    c = self.spawnCounter
+                    x, y = eval(self.x), eval(self.y)
+                    speed = eval(self.speed)
+                    angle = eval(self.angle)
+                    dx = math.cos(angle) * speed
+                    dy = math.sin(angle) * speed
+                    bullet.setBulletPatternLine(pos= (x,y), vel = (dx,dy))
 
-            elif self.spawningStyle == SPAWNINGSTYLE.EXPBEXP:
-                t = self.time / 1000
-                c = self.spawnCounter
-                x, y = eval(self.x), eval(self.y)
-                dx, dy = self.dx, self.dy
-                bullet.setBulletPatternExpRel(pos = (x, y), vel = (dx, dy))
+                elif self.spawningStyle == SPAWNINGSTYLE.EXPBEXP:
+                    t = self.time / 1000
+                    c = self.spawnCounter
+                    x, y = eval(self.x), eval(self.y)
+                    dx, dy = self.dx, self.dy
+                    bullet.setBulletPatternExpRel(pos = (x, y), vel = (dx, dy))
 
-            elif self.spawningStyle == SPAWNINGSTYLE.BEXPABS:
-                t = self.time / 1000
-                c = self.spawnCounter
-                x, y = self.x, self.y
-                bullet.setBulletPatternExpAbs(pos = (x, y), count= self.spawnCounter)
+                elif self.spawningStyle == SPAWNINGSTYLE.BEXPABS:
+                    t = self.time / 1000
+                    c = self.spawnCounter
+                    x, y = self.x, self.y
+                    bullet.setBulletPatternExpAbs(pos = (x, y), count= self.spawnCounter)
 
 
-            self.bullets.append(bullet)
-            self.spawnCounter += 1
+                self.bullets.append(bullet)
+                self.spawnCounter += 1
         # Bullet update
         cleanupQue = set()
         for blt in self.bullets:

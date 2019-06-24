@@ -68,5 +68,28 @@
     {
       "del":["encCircle-0"]
     }
+  ],
+  "level-3":[
+    {
+      "spawner":{
+        "vWave":{
+          "type":"expBexp",
+          "delay":120,
+          "minSize":8,
+          "bulletLifeTime":16.67,
+          "sX":"w*0.5",
+          "sY":"0",
+          "bX":"400*math.cos(t*math.pi)",
+          "bY":"30",
+          "spawnerLifeTime":16667
+        }
+      }
+    },
+    {
+      "wait":33334
+    },
+    {
+      "del":["vWave"]
+    }
   ]
 }

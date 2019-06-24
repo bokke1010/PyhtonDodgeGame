@@ -1,4 +1,4 @@
-import projectile, fun_patterns, menu
+import projectile, pattern_manager, menu
 from base import *
 
 # All initialization
@@ -16,9 +16,9 @@ def gameStateActive():
         deactivateUIElement(UI, UIElements["Exit"])
         deactivateUIElement(UI, UIElements["spawnGuide"])
 
-        deactivateUIElement(UI, UIElements["setX"])
-        deactivateUIElement(UI, UIElements["setY"])
-        deactivateUIElement(UI, UIElements["spawnIt"])
+        deactivateUIElement(UI, UIElements["b1"])
+        deactivateUIElement(UI, UIElements["b2"])
+        deactivateUIElement(UI, UIElements["b3"])
 
 
 def gameStateMenu():
@@ -30,9 +30,9 @@ def gameStateMenu():
         activateUIElement(UI, UIElements["Exit"])
         activateUIElement(UI, UIElements["spawnGuide"])
 
-        activateUIElement(UI, UIElements["setX"])
-        activateUIElement(UI, UIElements["setY"])
-        activateUIElement(UI, UIElements["spawnIt"])
+        activateUIElement(UI, UIElements["b1"])
+        activateUIElement(UI, UIElements["b2"])
+        activateUIElement(UI, UIElements["b3"])
 
 def stopMainLoop():
     global done
@@ -49,7 +49,7 @@ keysDown = {"w": False, "a":False, "s":False, "d":False}
 
 
 class Player():
-    def __init__(self, size, pos, color, acc, drag, lives):
+    def __init__(self, size, pos, color, acc, drag, lives, scr):
         self.size = size
         (self.x, self.y) = pos
         self.dx, self.dy = 0, 0
@@ -59,17 +59,19 @@ class Player():
         self.lives = lives
         self.mLives = lives
         self.secCol = DARKGREEN
+        self.scr =  scr
 
-    def draw(self, scr):
+    def draw(self):
         # pygame.draw.circle(scr, self.color, self.sPos(), self.size)
         dPos = self.sPos()
         healthCS = self.size + 3
         rect = pygame.Rect(int(dPos[0]-healthCS),int(dPos[1]-healthCS),
             int(2*healthCS),int(2*healthCS))
         # Health bar
-        pygame.draw.arc(scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives)
+        pygame.draw.arc(self.scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives)
         # Collision marker
-        pygame.draw.circle(scr, self.secCol, dPos, self.size)
+        pygame.draw.circle(self.scr, self.secCol, dPos, self.size)
+
     def update(self, xInp, yInp, dt):
         # air resistance as expected, not what I use
         self.dx += self.acc * xInp * dt
@@ -101,12 +103,16 @@ class Player():
         # End game when dead
         if self.lives <= 0:
             stopMainLoop()
+
     def sPos(self):
         return (int(self.x),int(self.y))
+
     def hit(self, damage):
         self.lives -= damage
 
-player = Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64)
+player = Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64, screen)
+patternManager = pattern_manager.PatternManager(screen)
+patternManager.loadJson("levels.json")
 
 UIElements = {}
 UIElements["Resume"] = menu.Button(screen=screen, coords = (w/10,3*h/10,8*w/10,h/10),
@@ -118,28 +124,13 @@ UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10),
 UIElements["spawnGuide"] = menu.Text(screen=screen, coords = (w/10,7*h/10,8*w/10,0.5*h/10),
     text = "Add patterns")
 
-x = w/2
-def set_x(a):
-    global x
-    x = a
-    UIElements["setX"].updateText(str(x))
-y = h/2
-def set_y(a):
-    global y
-    y = a
-    UIElements["setY"].updateText(str(y))
-
-UIElements["setX"] = menu.sButton(screen=screen, coords = (w/10,7.5*h/10,2*w/10,h/10),
-    text = str(x), result="set_x(w*r)")
-UIElements["setY"] = menu.sButton(screen=screen, coords = (4*w/10,7.5*h/10,2*w/10,h/10),
-    text = str(y), result="set_y(h*r)")
-UIElements["spawnIt"] = menu.Button(screen=screen, coords = (7*w/10,7.5*h/10,2*w/10,h/10),
-    text = "dFans", result="fun_patterns.pattern_star(screen, x, y, 50)")
+UIElements["b1"] = menu.sButton(screen=screen, coords = (w/10,7.5*h/10,2*w/10,h/10),
+    text = "Level 1", result="patternManager.startLevel('level-1')")
+UIElements["b2"] = menu.sButton(screen=screen, coords = (4*w/10,7.5*h/10,2*w/10,h/10),
+    text = "Level 2", result="patternManager.startLevel('level-2')")
+UIElements["b3"] = menu.Button(screen=screen, coords = (7*w/10,7.5*h/10,2*w/10,h/10),
+    text = "Level 3", result="")
 UI = []
-
-# fun_patterns.pattern_spiral(screen)
-# fun_patterns.pattern_dualFan(screen)
-fun_patterns.pattern_enclosing_circle(screen)
 
 
 # Initialization done, loading gameState
@@ -212,18 +203,19 @@ while not done:
         screen.fill(BLACK)
 
         # Player code
-        player.draw(screen)
         player.update((keysDown['d'] - keysDown['a']), (keysDown['s'] - keysDown['w']), dt)
+        player.draw()
 
-        fun_patterns.updateDraw(dt, player)
+        patternManager.update(dt, player)
+        patternManager.draw()
 
 
     elif gameState == GAMESTATE.MMENU:
         clock.tick(20)
         screen.fill(DARKGRAY)
 
-        fun_patterns.draw()
-        player.draw(screen)
+        player.draw()
+        patternManager.draw()
 
     # UI layer
     # UI uses a seperate system from object drawing.

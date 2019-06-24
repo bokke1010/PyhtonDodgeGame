@@ -1,6 +1,3 @@
-spawners = []
-import projectile
-from base import *
 def pattern_quadFan(scr):
     spawner = {}
     spawner["fan_pattern_1/4"] = projectile.bulletSpawner(screen=scr, spawningDelay=30, minSize=8)
@@ -90,19 +87,3 @@ def pattern_fast_spin(scr):
     pattern_star(scr, 0, h, 250)
     pattern_star(scr, w, 0, 250)
     pattern_star(scr, 0, 0, 250)
-
-def add_pattern(pattern):
-    spawners.append({1:pattern})
-
-def clear():
-    spawners.clear()
-
-def updateDraw(dt, player):
-    for spawner in spawners:
-        for pat in spawner:
-            spawner[pat].draw()
-            spawner[pat].update(dt, player)
-def draw():
-    for spawner in spawners:
-        for pat in spawner:
-            spawner[pat].draw()

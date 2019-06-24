@@ -41,14 +41,20 @@ class PatternManager():
         # command [3] is arg2 (optional)
         # etc.
         if command[1] == "add":
-            self.parseSpawner(command[2], command[3])
+            self.spawners[command[2]] = self.parseSpawner(command[3])
+            return True
         elif command[1] == "del":
-            self.spawners.pop(command[2], True)
+            if self.spawners[command[2]].deleteSpawner():
+                self.spawners.pop(command[2], True)
+                return True
+            else:
+                return False
         elif command[1] == "end":
             self.spawners = {}
+            return True
 
 
-    def parseSpawner(self, name, command):
+    def parseSpawner(self, command):
         lt = -1
         slt = -1
         bdw = 3
@@ -63,10 +69,11 @@ class PatternManager():
 
         if command["type"] == "pointExp":
             spawner.setSpawningPointExp(coords=(command["sX"], command["sY"]), dir = command["bDir"], speed = command["speed"], size=command["size"], borderWidth=str(bdw))
-        if command["type"] == "expBexp":
+        if command["type"] == "expBExp":
             spawner.setSpawningExpBexp(coords=(command["sX"], command["sY"]), bulletPattern = (command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw))
-        self.spawners[name] = (spawner)
-        # return spawner
+        if command["type"] == "bExpAbs":
+            spawner.setSpawningBexpAbs(coords=(command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw))
+        return spawner
 
     def add_pattern(self, pattern, name):
         spawners[name] = pattern
@@ -81,8 +88,14 @@ class PatternManager():
                 # Stop checking the que if it is empty now
                 if len(self.que) == 0:
                     break
-        for spawner in self.spawners:
-            self.spawners[spawner].update(dt, player)
+        # Since we decided to only remove spawners once they have no more bullets left, we have to check for that
+        deleteQue = set()
+        for key, spawner in self.spawners.items():
+            spawner.update(dt, player)
+            if spawner.delete and len(spawner.bullets) == 0:
+                deleteQue.add(key)
+        for key in deleteQue:
+            self.spawners.pop(key, True)
 
     def draw(self):
         for spawner in self.spawners:

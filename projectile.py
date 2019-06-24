@@ -13,10 +13,12 @@ class bulletSpawner():
         # Activation times
         self.preTime = preTime #Passing down the bullet fuse
         self.lifeTime = lifeTime
+        self.spawning = True
+        self.delete = False
         # Cosmetic
         self.spawningStyle = SPAWNINGSTYLE.NONE
         self.bulletVisible = visible
-        self.spawnerLT = spawnerLT
+
 
 
     def setSpawningBox(self, spawningArea: (int, int), spawningVels: (int, int), size: (int, int), borderWidth: int ):
@@ -59,6 +61,7 @@ class bulletSpawner():
         self.angle = dir
         # Defining the base velocity of the projectile
         self.speed = speed
+        self.size = size
         self.bulletBorderWidth = borderWidth
 
     # A spawning style with Bexp in the name means that the bullet itself also evaluates expressions
@@ -89,9 +92,6 @@ class bulletSpawner():
 
     def update(self, dt, player):
         self.time += dt*1000 # We get dt in seconds for simulation purposes
-        self.spawning = True
-        if (not self.spawnerLT == -1) and self.time > self.spawnerLT:
-            self.spawning = False
         if self.spawning:
             # Bullet creation
             while (self.time - self.spawnCounter * self.delay) >= self.delay:
@@ -162,6 +162,7 @@ class bulletSpawner():
 
                 self.bullets.append(bullet)
                 self.spawnCounter += 1
+
         # Bullet update
         cleanupQue = set()
         for blt in self.bullets:
@@ -196,6 +197,11 @@ class bulletSpawner():
         # A better way of doing this might be needed in the future
         for item in cleanupQue:
             self.bullets.remove(item)
+
+    def deleteSpawner(self):
+        self.spawning = False
+        self.delete = True
+        return len(self.bullets) == 0
 
 
 class Bullet():

@@ -38,8 +38,8 @@ DARKGREEN = (31 ,127,31 )
 
 # Player properties
 playerSize = 8
-acceleration = 4000
-drag = 0.6
+acceleration = 320
+drag = 0.5
 
 # Universal functions
 def distance(p1, p2):

@@ -73,13 +73,23 @@ class Player():
         pygame.draw.circle(self.scr, self.secCol, dPos, self.size)
 
     def update(self, xInp, yInp, dt):
-        # air resistance as expected, not what I use
-        self.dx += self.acc * xInp * dt
-        self.dx -= self.drag * abs(self.dx)**1.5 * ((self.dx > 0) - (self.dx < 0)) * dt
+        # air resistance as expected
+        # self.dx += self.acc * xInp * dt
+        # self.dx -= self.drag * abs(self.dx)**2 * ((self.dx > 0) - (self.dx < 0)) * dt
+        # self.x += self.dx * dt
+        #
+        # self.dy += self.acc * yInp * dt
+        # self.dy -= self.drag * abs(self.dy)**2 * ((self.dy > 0) - (self.dy < 0)) * dt
+        # self.y += self.dy * dt
+
+        # Game implementation
+        # Maximum speed is 320px in each direction, so sqrt(320^2+320^2) = 453 total
+        self.dx = self.acc * xInp
+        # self.dx -= self.drag * abs(self.dx)**2 * ((self.dx > 0) - (self.dx < 0)) * dt
         self.x += self.dx * dt
 
-        self.dy += self.acc * yInp * dt
-        self.dy -= self.drag * abs(self.dy)**1.5 * ((self.dy > 0) - (self.dy < 0)) * dt
+        self.dy = self.acc * yInp
+        # self.dy -= self.drag * abs(self.dy)**2 * ((self.dy > 0) - (self.dy < 0)) * dt
         self.y += self.dy * dt
 
         # Prevent out-of-bounds character

@@ -38,7 +38,7 @@ DARKGREEN = (31 ,127,31 )
 
 # Player properties
 playerSize = 8
-acceleration = 320
+acceleration = 160
 drag = 0.5
 
 # Universal functions

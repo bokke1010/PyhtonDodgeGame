@@ -45,7 +45,7 @@ done = False
 
 deltaTime = 0
 time = 0
-keysDown = {"w": False, "a":False, "s":False, "d":False}
+keysDown = {"w": False, "a":False, "s":False, "d":False, "shift":False}
 
 
 class Player():
@@ -83,14 +83,14 @@ class Player():
         # self.y += self.dy * dt
 
         # Game implementation
-        # Maximum speed is 320px in each direction, so sqrt(320^2+320^2) = 453 total
+        # Maximum speed is 320px in each direction (160*2), so sqrt(320^2+320^2) = 453 total
         self.dx = self.acc * xInp
         # self.dx -= self.drag * abs(self.dx)**2 * ((self.dx > 0) - (self.dx < 0)) * dt
-        self.x += self.dx * dt
+        self.x += self.dx * (2-keysDown['shift']) * dt
 
         self.dy = self.acc * yInp
         # self.dy -= self.drag * abs(self.dy)**2 * ((self.dy > 0) - (self.dy < 0)) * dt
-        self.y += self.dy * dt
+        self.y += self.dy * (2-keysDown['shift']) * dt
 
         # Prevent out-of-bounds character
         while self.x > w:
@@ -134,9 +134,9 @@ UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10),
 UIElements["spawnGuide"] = menu.Text(screen=screen, coords = (w/10,7*h/10,8*w/10,0.5*h/10),
     text = "Add patterns")
 
-UIElements["b1"] = menu.sButton(screen=screen, coords = (w/10,7.5*h/10,2*w/10,h/10),
+UIElements["b1"] = menu.Button(screen=screen, coords = (w/10,7.5*h/10,2*w/10,h/10),
     text = "Level 1", result="patternManager.startLevel('level-1')")
-UIElements["b2"] = menu.sButton(screen=screen, coords = (4*w/10,7.5*h/10,2*w/10,h/10),
+UIElements["b2"] = menu.Button(screen=screen, coords = (4*w/10,7.5*h/10,2*w/10,h/10),
     text = "Level 2", result="patternManager.startLevel('level-2')")
 UIElements["b3"] = menu.Button(screen=screen, coords = (7*w/10,7.5*h/10,2*w/10,h/10),
     text = "Level 3", result="patternManager.startLevel('level-3')")
@@ -169,14 +169,17 @@ while not done:
 
         if event.type == pygame.KEYDOWN:
             # Directional keys
-            if event.unicode == 'w':
+            if event.key == 119:
                 keysDown['w'] = True
-            if event.unicode == 'a':
+            if event.key == 97:
                 keysDown['a'] = True
-            if event.unicode == 's':
+            if event.key == 115:
                 keysDown['s'] = True
-            if event.unicode == 'd':
+            if event.key == 100:
                 keysDown['d'] = True
+
+            if event.key == 304:
+                keysDown['shift'] = True
 
             # Navigation keys
             if gameState == GAMESTATE.MMENU: # All menu keyEvents
@@ -200,6 +203,9 @@ while not done:
                 keysDown['s'] = False
             if event.key == 100: # D-key
                 keysDown['d'] = False
+
+            if event.key == 304: # Shift-key
+                keysDown['shift'] = False
 
     # Game active loop
     if gameState == GAMESTATE.ACTIVE:

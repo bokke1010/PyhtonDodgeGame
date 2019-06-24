@@ -5,7 +5,7 @@
         "opening-0":{
           "type":"pointExp",
           "delay":35,
-          "minSize":10,
+          "size":"10",
           "sX":"0",
           "sY":"h/2",
           "bDir":"0.25 * math.pi * (math.sin(math.pi * t)-1)",
@@ -14,7 +14,7 @@
         "opening-1":{
           "type":"pointExp",
           "delay":50,
-          "minSize":12,
+          "size":"12",
           "sX":"w/2",
           "sY":"h/2",
           "bDir":"t*0.5*math.pi",
@@ -33,7 +33,7 @@
         "closing-0":{
           "type":"pointExp",
           "delay":35,
-          "minSize":10,
+          "size":"10",
           "sX":"0",
           "sY":"h/2",
           "bDir":"0.25 * math.pi * (math.sin(math.pi * t)-1)",
@@ -54,7 +54,7 @@
         "encCircle-0":{
           "type":"pointExp",
           "delay":35,
-          "minSize":10,
+          "size":"10",
           "sX":"w*0.5*(1+math.cos(t*math.pi))",
           "sY":"h*0.5*(1+math.sin(t*math.pi))",
           "bDir":"t*math.pi+math.pi",
@@ -75,13 +75,14 @@
         "vWave":{
           "type":"expBexp",
           "delay":120,
-          "minSize":8,
+          "size":"math.sqrt(c + 4)",
           "bulletLifeTime":16.67,
           "sX":"w*0.5",
           "sY":"0",
           "bX":"400*math.cos(t*math.pi)",
           "bY":"30",
-          "spawnerLifeTime":16667
+          "spawnerLifeTime":16667,
+          "borderWidth":"1"
         }
       }
     },

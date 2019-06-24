@@ -51,21 +51,20 @@ class PatternManager():
     def parseSpawner(self, name, command):
         lt = -1
         slt = -1
-        maxSize = -1
+        bdw = 3
         if "bulletLifeTime" in command:
             lt = command["bulletLifeTime"]
         if "spawnerLifeTime" in command:
             slt = command["spawnerLifeTime"]
-        if "maxSize" in command:
-            maxSize = command["maxSize"]
+        if "borderWidth" in command:
+            bdw = command["borderWidth"] # Borderwidth can be both a str as an int, so we assure the correct type is passed on later
 
-        spawner = projectile.bulletSpawner(screen=self.screen, spawningDelay=command["delay"],
-        minSize=command["minSize"], maxSize=command["maxSize"] lifeTime = lt, spawnerLT = slt)
+        spawner = projectile.bulletSpawner(screen=self.screen, spawningDelay=command["delay"], lifeTime = lt, spawnerLT = slt)
 
         if command["type"] == "pointExp":
-            spawner.setSpawningPointExp(coords=(command["sX"], command["sY"]), dir = command["bDir"], speed = command["speed"])
+            spawner.setSpawningPointExp(coords=(command["sX"], command["sY"]), dir = command["bDir"], speed = command["speed"], size=command["size"], borderWidth=str(bdw))
         if command["type"] == "expBexp":
-            spawner.setSpawningExpBexp(coords=(command["sX"], command["sY"]), bulletPattern = (command["bX"], command["bY"]))
+            spawner.setSpawningExpBexp(coords=(command["sX"], command["sY"]), bulletPattern = (command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw))
         self.spawners[name] = (spawner)
         # return spawner
 

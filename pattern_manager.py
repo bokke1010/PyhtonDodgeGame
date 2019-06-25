@@ -34,7 +34,7 @@ class PatternManager():
                     for name, command in value.items():
                         self._queAppend((scheduledTime, "pat", name + ":" + str(self.lc), command))
                 if key == "trigger":
-                    for command in value:
+                    for name in value:
                         self._queAppend((scheduledTime, "trg", name + ":" + str(self.lc)))
                 if key == "wait":
                     scheduledTime += value

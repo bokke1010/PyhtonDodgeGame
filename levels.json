@@ -111,11 +111,40 @@
           "type":"bExpAbs",
           "count":8,
           "size":"10",
-          "bX":"(w*0.5)+(w*0.25*math.cos(0.25*math.pi*c))+(w*0.25*math.cos(t*math.pi+c*0.25*math.pi+math.pi))",
-          "bY":"(h*0.5)+(h*0.25*math.sin(0.25*math.pi*c))+(h*0.25*math.sin(t*math.pi+c*0.25*math.pi+math.pi))",
-          "bulletLifeTime":2
+          "bX":"(w*0.5)+(w*0.25*math.cos(0.25*math.pi*c))+(w*0.25*math.cos(t*0.5*math.pi+c*0.25*math.pi+math.pi))",
+          "bY":"(h*0.5)+(h*0.25*math.sin(0.25*math.pi*c))+(h*0.25*math.sin(t*0.5*math.pi+c*0.25*math.pi+math.pi))",
+          "bulletLifeTime":4
+        },
+        "leftWave":{
+          "type":"bExpAbs",
+          "count":50,
+          "size":"10",
+          "bX":"(w/8)*((1+math.sin(0.5*math.pi*t)) + (1+math.sin((c+5*t)*math.pi*0.08)))",
+          "bY":"(c+0.5) * h/50",
+          "bulletLifeTime":20
+        },
+        "rightWave":{
+            "type":"bExpAbs",
+            "count":50,
+            "size":"10",
+            "bX":"w-(w/8)*((1-math.sin(0.5*math.pi*t)) + 2 - (1+math.sin((c+5*t)*math.pi*0.08)))",
+            "bY":"(c+0.5) * h/50",
+            "bulletLifeTime":20
         }
       }
+
+    },
+    {
+      "trigger":["microspiral", "leftWave", "rightWave"]
+    },
+    {
+      "wait":100
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":500
     },
     {
       "trigger":["microspiral"]
@@ -127,7 +156,7 @@
       "trigger":["microspiral"]
     },
     {
-      "wait":200
+      "wait":500
     },
     {
       "trigger":["microspiral"]
@@ -139,7 +168,55 @@
       "trigger":["microspiral"]
     },
     {
-      "wait":200
+      "wait":500
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":100
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":500
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":100
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":500
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":100
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":500
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":100
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":500
     },
     {
       "trigger":["microspiral"]

@@ -16,9 +16,9 @@ def gameStateActive():
         deactivateUIElement(UI, UIElements["Exit"])
         deactivateUIElement(UI, UIElements["spawnGuide"])
 
-        deactivateUIElement(UI, UIElements["b1"])
-        deactivateUIElement(UI, UIElements["b2"])
-        deactivateUIElement(UI, UIElements["b3"])
+        deactivateUIElement(UI, UIElements["prev"])
+        deactivateUIElement(UI, UIElements["startLevel"])
+        deactivateUIElement(UI, UIElements["next"])
 
 
 def gameStateMenu():
@@ -30,23 +30,13 @@ def gameStateMenu():
         activateUIElement(UI, UIElements["Exit"])
         activateUIElement(UI, UIElements["spawnGuide"])
 
-        activateUIElement(UI, UIElements["b1"])
-        activateUIElement(UI, UIElements["b2"])
-        activateUIElement(UI, UIElements["b3"])
+        activateUIElement(UI, UIElements["prev"])
+        activateUIElement(UI, UIElements["startLevel"])
+        activateUIElement(UI, UIElements["next"])
 
 def stopMainLoop():
     global done
     done = True
-
-screen = pygame.display.set_mode((w, h))
-clock = pygame.time.Clock()
-
-done = False
-
-deltaTime = 0
-time = 0
-keysDown = {"w": False, "a":False, "s":False, "d":False, "shift":False}
-
 
 class Player():
     def __init__(self, size, pos, color, acc, drag, lives, scr):
@@ -120,9 +110,38 @@ class Player():
     def hit(self, damage):
         self.lives -= damage
 
+screen = pygame.display.set_mode((w, h))
+clock = pygame.time.Clock()
+
+done = False
+
+deltaTime = 0
+time = 0
+
+keysDown = {"w": False, "a":False, "s":False, "d":False, "shift":False}
+
 player = Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64, screen)
 patternManager = pattern_manager.PatternManager(screen)
-patternManager.loadJson("levels.json")
+levels = patternManager.loadJson("levels.json")
+levelCount = len(levels)
+levelIndex = 0
+
+def nextLevel():
+    global levelIndex, levelCount
+    levelIndex += 1
+    if levelIndex > levelCount-1:
+        levelIndex = 0
+    UIElements["startLevel"].updateText(levels[levelIndex])
+
+
+def prevLevel():
+    global levelIndex, levelCount
+    levelIndex -= 1
+    if levelIndex < 0:
+        levelIndex = levelCount-1
+    UIElements["startLevel"].updateText(levels[levelIndex])
+
+
 
 UIElements = {}
 UIElements["Resume"] = menu.Button(screen=screen, coords = (w/10,3*h/10,8*w/10,h/10),
@@ -134,12 +153,12 @@ UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10),
 UIElements["spawnGuide"] = menu.Text(screen=screen, coords = (w/10,7*h/10,8*w/10,0.5*h/10),
     text = "Add patterns")
 
-UIElements["b1"] = menu.Button(screen=screen, coords = (w/10,7.5*h/10,2*w/10,h/10),
-    text = "Level 1", result="patternManager.startLevel('level-1')")
-UIElements["b2"] = menu.Button(screen=screen, coords = (4*w/10,7.5*h/10,2*w/10,h/10),
-    text = "Level 2", result="patternManager.startLevel('level-2')")
-UIElements["b3"] = menu.Button(screen=screen, coords = (7*w/10,7.5*h/10,2*w/10,h/10),
-    text = "test", result="patternManager.startLevel('testing')")
+UIElements["prev"] = menu.Button(screen=screen, coords = (w/10,7.5*h/10,2*w/10,h/10),
+    text = "<--", result="prevLevel()")
+UIElements["startLevel"] = menu.Button(screen=screen, coords = (4*w/10,7.5*h/10,2*w/10,h/10),
+    text = levels[levelIndex], result="patternManager.startLevel(levels[levelIndex])")
+UIElements["next"] = menu.Button(screen=screen, coords = (7*w/10,7.5*h/10,2*w/10,h/10),
+    text = "-->", result="nextLevel()")
 UI = []
 
 

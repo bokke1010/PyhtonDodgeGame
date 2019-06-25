@@ -17,6 +17,7 @@ class PatternManager():
     def loadJson(self, fileName):
         with open(fileName) as json_file:
             self.data = json.load(json_file)
+        return list(iter(self.data))
 
     def startLevel(self, level):
         data = self.data[level]

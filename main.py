@@ -139,7 +139,7 @@ UIElements["b1"] = menu.Button(screen=screen, coords = (w/10,7.5*h/10,2*w/10,h/1
 UIElements["b2"] = menu.Button(screen=screen, coords = (4*w/10,7.5*h/10,2*w/10,h/10),
     text = "Level 2", result="patternManager.startLevel('level-2')")
 UIElements["b3"] = menu.Button(screen=screen, coords = (7*w/10,7.5*h/10,2*w/10,h/10),
-    text = "Level 3", result="patternManager.startLevel('level-3')")
+    text = "test", result="patternManager.startLevel('testing')")
 UI = []
 
 

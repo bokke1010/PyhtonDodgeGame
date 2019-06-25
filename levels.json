@@ -103,5 +103,38 @@
     {
       "del":["vWave"]
     }
+  ],
+  "testing":[
+    {
+      "pattern":{
+        "microspiral":{
+          "type":"pointExp",
+          "count":10,
+          "size":"10",
+          "sX":"w*0.5",
+          "sY":"h*0.5",
+          "bDir":"c * math.pi * 0.2",
+          "speed":"90"
+        }
+      }
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":100
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":100
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "del":["microspiral"]
+    }
   ]
 }

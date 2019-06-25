@@ -32,6 +32,10 @@ bullet:
   "size": the size of the bullet. a int for line bullets, a str for expression bullets
   "borderWidth": see "size", but this instead affects the border width (optional)
   "preTime" and "lifeTime": time before bullet activation and bullet lifetime (optional)
+pattern:
+  coming soon hopefully, mostly follows spawner guidelines, but with count instead of delay
+trigger:
+  trigger a pattern
 wait:
   using the wait event, you delay all events after it by the specified amount of milliseconds
 del:

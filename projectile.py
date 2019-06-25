@@ -1,12 +1,14 @@
 from base import *
 
 class BulletManager():
-    def __init__(self, screen, visible: bool = True):
+    def __init__(self, screen, visible: bool = True, preTime: int = 0, lifeTime: int = -1,):
         self.scr = screen
         self.visible = visible
         self.delete = False
         self.spawnCounter = 0 # Amount of bullets this spawner has created in its lifetime
         self.time = 0 # Time since this object is created in seconds
+        self.preTime = preTime #Passing down the bullet fuse
+        self.lifeTime = lifeTime
         # locally referencing all bullets
         self.bullets = []
 
@@ -77,24 +79,27 @@ class BulletManager():
         self.size = size
         self.bulletBorderWidth = borderWidth
 
-    def _createBullet(self):
+    def _createBullet(self, time: int = -1, lateFraction: int = 0):
         """Internal function that uses internal variables to create a bullet (NOT FOR EXTERNAL USE)"""
+
+        if time == -1:
+            time = self.time
         bullet = Bullet(screen = self.scr, color = PINK, preTime = self.preTime, lifeTime = self.lifeTime)
 
         if self.spawningStyle == SPAWNINGSTYLE.NONE:
             raise Exception("Spawning style not set")
 
         elif self.spawningStyle == SPAWNINGSTYLE.BOX:
-            x = random.randint(self.xMin, self.xMax)
-            y = random.randint(self.yMin, self.yMax)
             dx = randomBetween(self.dxMin, self.dxMax)
             dy = randomBetween(self.dyMin, self.dyMax)
+            x = random.randint(self.xMin, self.xMax) + lateFraction * dx
+            y = random.randint(self.yMin, self.yMax) + lateFraction * dx
             size = randomBetween(self.minSize, self.maxSize)
             borderWidth = self.bulletBorderWidth
             bullet.setBulletPathLine(pos= (x,y), vel = (dx,dy), size = size, borderWidth = borderWidth)
 
         elif self.spawningStyle == SPAWNINGSTYLE.EXP:
-            t = self.time/1000
+            t = time/1000
             c = self.spawnCounter
             x, y = eval(self.x), eval(self.y)
             dx, dy = eval(self.dx), eval(self.dy)
@@ -103,43 +108,41 @@ class BulletManager():
             bullet.setBulletPathLine(pos= (x,y), vel = (dx,dy), size = size, borderWidth = borderWidth)
 
         elif self.spawningStyle == SPAWNINGSTYLE.POINT:
-            x, y = self.x, self.y
             speed = randomBetween(self.speedMin, self.speedMax)
             angle = randomBetween(self.angleMin, self.angleMax)
             dx = math.cos(angle) * speed
             dy = math.sin(angle) * speed
+            x, y = self.x + dx*lateFraction, self.y + dy*lateFraction
             size = randomBetween(self.minSize, self.maxSize)
             borderWidth = self.bulletBorderWidth
             bullet.setBulletPathLine(pos= (x,y), vel = (dx,dy), size = size, borderWidth = borderWidth)
 
         elif self.spawningStyle == SPAWNINGSTYLE.POINTEXP:
-            t = self.time / 1000
+            t = time / 1000
             c = self.spawnCounter
-            x, y = eval(self.x), eval(self.y)
             speed = eval(self.speed)
             angle = eval(self.angle)
             dx = math.cos(angle) * speed
             dy = math.sin(angle) * speed
+            x, y = eval(self.x) + dx * lateFraction, eval(self.y) + dy * lateFraction
             size = eval(self.size)
             borderWidth = eval(self.bulletBorderWidth)
             bullet.setBulletPathLine(pos= (x,y), vel = (dx,dy), size = size, borderWidth = borderWidth)
 
         elif self.spawningStyle == SPAWNINGSTYLE.EXPBEXP:
-            t = self.time / 1000
+            t = time / 1000
             c = self.spawnCounter
             x, y = eval(self.x), eval(self.y)
             dx, dy = self.dx, self.dy
             size = self.size
             borderWidth = self.bulletBorderWidth
-            bullet.setBulletPathExpRel(pos = (x, y), vel = (dx, dy), count= self.spawnCounter, size = size, borderWidth = borderWidth)
+            bullet.setBulletPathExpRel(pos = (x, y), vel = (dx, dy), count= self.spawnCounter, size = size, borderWidth = borderWidth, timeStart = lateFraction)
 
         elif self.spawningStyle == SPAWNINGSTYLE.BEXPABS:
-            t = self.time / 1000
-            c = self.spawnCounter
             x, y = self.x, self.y
             size = self.size
             borderWidth = self.bulletBorderWidth
-            bullet.setBulletPathExpAbs(pos = (x, y), count= self.spawnCounter, size = size, borderWidth = borderWidth)
+            bullet.setBulletPathExpAbs(pos = (x, y), count= self.spawnCounter, size = size, borderWidth = borderWidth, timeStart = lateFraction)
 
         return bullet
 
@@ -191,13 +194,12 @@ class BulletManager():
 
 class BulletSpawner(BulletManager):
     def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = -1,
-                 visible: bool = True, spawnerLT: int = -1, spawning: bool = True):
-        super().__init__(screen=screen, visible = visible)
+                 visible: bool = True, spawning: bool = True):
+        super().__init__(screen=screen, visible = visible, preTime = preTime, lifeTime = lifeTime)
         # Spawning timing variables
         self.delay = spawningDelay # Delay in ms between created bullets
         # Activation times
-        self.preTime = preTime #Passing down the bullet fuse
-        self.lifeTime = lifeTime
+
         self.spawning = spawning
         # Cosmetic
         self.spawningStyle = SPAWNINGSTYLE.NONE
@@ -207,13 +209,16 @@ class BulletSpawner(BulletManager):
         if self.spawning:
             # Bullet creation
             while (self.time - self.spawnCounter * self.delay) >= self.delay:
+                time = (self.spawnCounter + 1) * self.delay
+                # whatever reason I have for keeping time in milliseconds, it just doesn't work for lateFraction
+                lateFraction = (self.time - time)/1000
                 # Using a internal helper to create the bullet
                 # This function is defined in bulletManager, and uses internal variables
-                # That is the reason we don't pass arguments
-                bullet = self._createBullet()
+                # That is the reason we don't pass many arguments
+                bullet = self._createBullet(time, lateFraction)
+                self.spawnCounter += 1
 
                 self.bullets.append(bullet)
-                self.spawnCounter += 1
         super().update(dt, player)
 
     def deleteManager(self):
@@ -264,20 +269,22 @@ class Bullet():
         self.size = size
         self.borderWidth = borderWidth
 
-    def setBulletPathExpRel(self, pos: (int, int), vel: (str, str), count: int = 0, size: str = "12", borderWidth: str = "3"):
+    def setBulletPathExpRel(self, pos: (int, int), vel: (str, str), count: int = 0, size: str = "12", borderWidth: str = "3", timeStart: int = 0):
         self.movementMode = BULLETPATH.EXPREL
         (self.x, self.y) = pos
         (self.dx, self.dy) = vel
         self.count = count
         self.sizeExp = size
         self.borderWidthExp = borderWidth
+        self.time = timeStart
 
-    def setBulletPathExpAbs(self, pos: (str, str), count: int = 0, size: str = "12", borderWidth: str = "3"):
+    def setBulletPathExpAbs(self, pos: (str, str), count: int = 0, size: str = "12", borderWidth: str = "3", timeStart: int = 0):
         self.movementMode = BULLETPATH.EXPABS
         (self.gx, self.gy) = pos
         self.count = count
         self.sizeExp = size
         self.borderWidthExp = borderWidth
+        self.time = timeStart
 
     def draw(self):
         # Draw either active projectile, used projectile or yet unactivated projectile

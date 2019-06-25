@@ -85,19 +85,16 @@ class PatternManager():
 
     def parseSpawner(self, command):
         lt = -1
-        slt = -1
         pt = 0
         bdw = 3
         if "bulletLifeTime" in command:
             lt = command["bulletLifeTime"]
         if "preTime" in command:
             pt = command["preTime"]
-        if "spawnerLifeTime" in command:
-            slt = command["spawnerLifeTime"]
         if "borderWidth" in command:
             bdw = command["borderWidth"] # Borderwidth can be both a str as an int, so we assure the correct type is passed on later
 
-        spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"], lifeTime = lt, spawnerLT = slt)
+        spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"], lifeTime = lt)
 
         if command["type"] == "pointExp":
             spawner.setSpawningPointExp(coords=(command["sX"], command["sY"]), dir = command["bDir"], speed = command["speed"], size=command["size"], borderWidth=str(bdw))
@@ -139,7 +136,7 @@ class PatternManager():
         if "spawnerLifeTime" in command:
             slt = command["spawnerLifeTime"]
 
-        pattern = projectile.BulletPattern(screen = self.screen, patternSize = command["count"])
+        pattern = projectile.BulletPattern(screen = self.screen, patternSize = command["count"], lifeTime = lt)
 
         if command["type"] == "pointExp":
             pattern.setSpawningPointExp(coords=(command["sX"], command["sY"]), dir = command["bDir"], speed = command["speed"], size=command["size"], borderWidth=str(bdw))

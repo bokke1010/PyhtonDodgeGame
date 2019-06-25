@@ -108,13 +108,12 @@
     {
       "pattern":{
         "microspiral":{
-          "type":"pointExp",
-          "count":10,
+          "type":"bExpAbs",
+          "count":8,
           "size":"10",
-          "sX":"w*0.5",
-          "sY":"h*0.5",
-          "bDir":"c * math.pi * 0.2",
-          "speed":"90"
+          "bX":"(w*0.5)+(w*0.25*math.cos(0.25*math.pi*c))+(w*0.25*math.cos(t*math.pi+c*0.25*math.pi+math.pi))",
+          "bY":"(h*0.5)+(h*0.25*math.sin(0.25*math.pi*c))+(h*0.25*math.sin(t*math.pi+c*0.25*math.pi+math.pi))",
+          "bulletLifeTime":2
         }
       }
     },
@@ -123,6 +122,24 @@
     },
     {
       "wait":100
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":200
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":100
+    },
+    {
+      "trigger":["microspiral"]
+    },
+    {
+      "wait":200
     },
     {
       "trigger":["microspiral"]

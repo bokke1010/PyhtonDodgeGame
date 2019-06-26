@@ -3,6 +3,10 @@ import projectile
 from base import *
 from collections import deque
 
+#TODO: So I really need to implement a area/formula bullet time to prevent
+#      needing to close in borders with 100s of expAbs bullets (which all require
+#      their position to be recalculated each frame)
+
 class PatternManager():
 
     def __init__(self, screen):
@@ -17,7 +21,9 @@ class PatternManager():
     def loadJson(self, fileName):
         with open(fileName) as json_file:
             self.data = json.load(json_file)
-        return list(iter(self.data))
+        self.levelNames = list(self.data)
+        self.levelCount = len(self.data)
+        return self.levelNames
 
     def startLevel(self, level):
         data = self.data[level]
@@ -73,7 +79,7 @@ class PatternManager():
         elif command[1] == "trg":
             self.bulletManagers[command[2]].trigger()
         elif command[1] == "del":
-            if self.bulletManagers[command[2]].deleteManager():
+            if self.bulletManagers[command[2]].setDelete():
                 self.bulletManagers.pop(command[2], True)
                 return True
             else:
@@ -84,36 +90,27 @@ class PatternManager():
 
 
     def parseSpawner(self, command):
-        lt = -1
-        pt = 0
-        bdw = 3
-        if "bulletLifeTime" in command:
-            lt = command["bulletLifeTime"]
-        if "preTime" in command:
-            pt = command["preTime"]
-        if "borderWidth" in command:
-            bdw = command["borderWidth"] # Borderwidth can be both a str as an int, so we assure the correct type is passed on later
+        lt = command["bulletLifeTime"] if "bulletLifeTime" in command else -1
+        pt = command["preTime"] if "preTime" in command else 0
+        bdw = command["borderWidth"] if "borderWidth" in command else 3  # Borderwidth can be both a str as an int, so we assure the correct type is passed on later
+        a = command["a"] if "a" in command else "0"
+        b = command["b"] if "b" in command else "0"
 
         spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"], lifeTime = lt)
 
+        # Lots of redundant code here
         if command["type"] == "pointExp":
             spawner.setSpawningPointExp(coords=(command["sX"], command["sY"]), dir = command["bDir"], speed = command["speed"], size=command["size"], borderWidth=str(bdw))
         if command["type"] == "expBExp":
-            spawner.setSpawningExpBexp(coords=(command["sX"], command["sY"]), bulletPath = (command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw))
+            spawner.setSpawningExpBexp(coords=(command["sX"], command["sY"]), bulletPath = (command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw), a = a, b = b)
         if command["type"] == "bExpAbs":
-            spawner.setSpawningBexpAbs(coords=(command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw))
+            spawner.setSpawningBexpAbs(coords=(command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw), a = a, b = b)
         return spawner
 
     def parseBullet(self, command):
-        lt = -1
-        pt = 0
-        bdw = 3
-        if "bulletLifeTime" in command:
-            lt = command["bulletLifeTime"]
-        if "preTime" in command:
-            pt = command["preTime"]
-        if "borderWidth" in command:
-            bdw = command["borderWidth"]
+        lt = command["bulletLifeTime"] if "bulletLifeTime" in command else -1
+        pt = command["preTime"] if "preTime" in command else 0
+        bdw = command["borderWidth"] if "borderWidth" in command else 3  # Borderwidth can be both a str as an int, so we assure the correct type is passed on later
 
         bullet = projectile.Bullet(screen=self.screen, preTime = pt, lifeTime = lt)
         if command["type"] == "line":
@@ -126,24 +123,20 @@ class PatternManager():
         return bullet
 
     def parsePattern(self, command):
-        lt = -1
-        pt = 0
-        bdw = 3
-        if "bulletLifeTime" in command:
-            lt = command["bulletLifeTime"]
-        if "preTime" in command:
-            pt = command["preTime"]
-        if "spawnerLifeTime" in command:
-            slt = command["spawnerLifeTime"]
+        lt = command["bulletLifeTime"] if "bulletLifeTime" in command else -1
+        pt = command["preTime"] if "preTime" in command else 0
+        bdw = command["borderWidth"] if "borderWidth" in command else 3  # Borderwidth can be both a str as an int, so we assure the correct type is passed on later
+        a = command["a"] if "a" in command else "0"
+        b = command["b"] if "b" in command else "0"
 
         pattern = projectile.BulletPattern(screen = self.screen, patternSize = command["count"], lifeTime = lt)
 
         if command["type"] == "pointExp":
             pattern.setSpawningPointExp(coords=(command["sX"], command["sY"]), dir = command["bDir"], speed = command["speed"], size=command["size"], borderWidth=str(bdw))
         elif command["type"] == "expBExp":
-            pattern.setSpawningExpBexp(coords=(command["sX"], command["sY"]), bulletPath = (command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw))
+            pattern.setSpawningExpBexp(coords=(command["sX"], command["sY"]), bulletPath = (command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw), a = a, b = b)
         elif command["type"] == "bExpAbs":
-            pattern.setSpawningBexpAbs(coords=(command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw))
+            pattern.setSpawningBexpAbs(coords=(command["bX"], command["bY"]), size=command["size"], borderWidth=str(bdw), a = a, b = b)
 
         return pattern
 
@@ -151,7 +144,7 @@ class PatternManager():
         bulletManagers[name] = pattern
 
     def update(self, dt, player):
-        self.time += dt*1000
+        self.time += dt
         if len(self.que) > 0:
             while self.que[0][0] <= self.time:
                 print(self.que[0])
@@ -167,7 +160,7 @@ class PatternManager():
         deleteQue = set()
         for key, manager in self.bulletManagers.items():
             manager.update(dt, player)
-            if manager.delete and len(manager.bullets) == 0:
+            if manager.getDelete():
                 deleteQue.add(key)
         for item in deleteQue:
             self.bulletManagers.pop(item, True)

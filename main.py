@@ -76,11 +76,11 @@ class Player():
         # Maximum speed is 320px in each direction (160*2), so sqrt(320^2+320^2) = 453 total
         self.dx = self.acc * xInp
         # self.dx -= self.drag * abs(self.dx)**2 * ((self.dx > 0) - (self.dx < 0)) * dt
-        self.x += self.dx * (2-keysDown['shift']) * dt
+        self.x += self.dx * (2-keysDown['shift']) * dt * 0.001
 
         self.dy = self.acc * yInp
         # self.dy -= self.drag * abs(self.dy)**2 * ((self.dy > 0) - (self.dy < 0)) * dt
-        self.y += self.dy * (2-keysDown['shift']) * dt
+        self.y += self.dy * (2-keysDown['shift']) * dt * 0.001
 
         # Prevent out-of-bounds character
         while self.x > w:
@@ -123,13 +123,14 @@ keysDown = {"w": False, "a":False, "s":False, "d":False, "shift":False}
 player = Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64, screen)
 patternManager = pattern_manager.PatternManager(screen)
 levels = patternManager.loadJson("levels.json")
-levelCount = len(levels)
 levelIndex = 0
+
+# UI will eventually get a seperate system like the level system
 
 def nextLevel():
     global levelIndex, levelCount
     levelIndex += 1
-    if levelIndex > levelCount-1:
+    if levelIndex > patternManager.levelCount-1:
         levelIndex = 0
     UIElements["startLevel"].updateText(levels[levelIndex])
 
@@ -138,7 +139,7 @@ def prevLevel():
     global levelIndex, levelCount
     levelIndex -= 1
     if levelIndex < 0:
-        levelIndex = levelCount-1
+        levelIndex = patternManager.levelCount-1
     UIElements["startLevel"].updateText(levels[levelIndex])
 
 
@@ -232,16 +233,15 @@ while not done:
         # Time and game clock management
         deltaTime = clock.tick(60)
         time += deltaTime # time and deltatime in milliseconds
-        dt = deltaTime/1000 # deltatime in seconds
 
         # Reset screen to start drawing frame
         screen.fill(BLACK)
 
         # Player code
-        player.update((keysDown['d'] - keysDown['a']), (keysDown['s'] - keysDown['w']), dt)
+        player.update((keysDown['d'] - keysDown['a']), (keysDown['s'] - keysDown['w']), deltaTime)
         player.draw()
 
-        patternManager.update(dt, player)
+        patternManager.update(deltaTime, player)
         patternManager.draw()
 
 

@@ -55,6 +55,8 @@ class PatternManager():
         if len(self.que) > 0 and self.que[-1][0] > command[0]:
             i = len(self.que) - 1
             while (self.que[i][0] > command[0]):
+                if i == 0:
+                    break
                 i -= 1
             self.que.insert(i+1, command)
         else:
@@ -129,7 +131,7 @@ class PatternManager():
         a = command["a"] if "a" in command else "0"
         b = command["b"] if "b" in command else "0"
 
-        pattern = projectile.BulletPattern(screen = self.screen, patternSize = command["count"], lifeTime = lt)
+        pattern = projectile.BulletPattern(screen = self.screen, patternSize = command["count"], preTime = pt, lifeTime = lt)
 
         if command["type"] == "pointExp":
             pattern.setSpawningPointExp(coords=(command["sX"], command["sY"]), dir = command["bDir"], speed = command["speed"], size=command["size"], borderWidth=str(bdw))

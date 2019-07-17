@@ -28,7 +28,6 @@ class BulletManager():
 
     def setSpawningExp(self, coords: (str, str), spawningVels: (str, str), size: str, borderWidth: str ):
         self.spawningStyle = SPAWNINGSTYLE.EXP
-        t = 0
         # Defining the spawning area as a point with (x,y)
         (self.x, self.y) = coords
         # Defining the base velocity of projectiles with a minimum and maximumvalue for both x and y

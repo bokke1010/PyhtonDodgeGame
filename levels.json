@@ -109,150 +109,91 @@
       "spawner":{
         "revolvingCircle":{
           "type":"bExpAbs",
-          "delay":4,
+          "delay":20,
           "size":"5",
           "bulletBorderWidth":"1",
-          "bX":"(w*0.5)+(w*0.25*cos(0.15*pi*c))+(w*0.25*cos(t*0.5*pi+c*0.15*pi+pi))",
-          "bY":"(h*0.5)+(h*0.25*sin(0.15*pi*c))+(h*0.25*sin(t*0.5*pi+c*0.15*pi+pi))",
-          "bulletLifeTime":4000
+          "bX":"(w*0.5)+(w*0.32*cos((1/4)*pi*c))+(w*0.32*cos(t*1*pi+c*(1/4)*pi+pi))",
+          "bY":"(h*0.5)+(h*0.32*sin((1/4)*pi*c))+(h*0.32*sin(t*1*pi+c*(1/4)*pi+pi))",
+          "bulletLifeTime":2000
         }
       }
     },
     {
-      "wait":2000
+      "wait":8000
     },
     {
       "del":["revolvingCircle"]
     }
   ],
-  "level-5":[
+  "inb":[
     {
       "pattern":{
-        "microspiral":{
+        "weirdGrid":{
           "type":"bExpAbs",
-          "count":8,
-          "size":"10",
-          "a":"w*0.25",
-          "b":"h*0.25",
-          "bX":"2*a+(a*cos(0.25*pi*c))-(a*cos(t*0.5*pi+c*0.25*pi))",
-          "bY":"2*b+(b*sin(0.25*pi*c))-(b*sin(t*0.5*pi+c*0.25*pi))",
-          "bulletLifeTime":4000
-        },
-        "leftWave":{
-          "type":"bExpAbs",
-          "count":50,
-          "size":"10",
-          "a":"w/8",
-          "b":"h/50",
-          "bX":"a*(2 + sin(0.5*pi*t) + sin((c+5*t)*pi*0.08))",
-          "bY":"(c+0.5) * b",
-          "bulletLifeTime":20000
-        },
-        "rightWave":{
-            "type":"bExpAbs",
-            "count":50,
-            "size":"10",
-            "a":"w/8",
-            "b":"h/50",
-            "bX":"w-a*(2-sin(0.5*pi*t)- sin((c+5*t)*pi*0.08))",
-            "bY":"(c+0.5) * b",
-            "bulletLifeTime":20000
+          "count":100,
+          "size":"8*t+6",
+          "bulletBorderWidth":"1",
+          "preTime":500,
+          "bX":"(((c+t)%100)%10+0.5) * w * 0.1",
+          "bY":"(floor(((c+t)%100)/10)+0.5) * h * 0.1 + 20*cos((c+t)*0.2*pi)",
+          "bulletLifeTime":5000
         }
       }
-
     },
     {
-      "trigger":["microspiral", "leftWave", "rightWave"]
+      "trigger":["weirdGrid"]
     },
     {
-      "wait":100
+      "wait":250
     },
     {
-      "trigger":["microspiral"]
+      "trigger":["weirdGrid"]
     },
     {
-      "wait":500
+      "wait":250
     },
     {
-      "trigger":["microspiral"]
+      "trigger":["weirdGrid"]
     },
     {
-      "wait":100
+      "del":["weirdGrid"]
+    }
+  ],
+  "level-5":[
+    {
+      "spawner":{
+        "microspiral":{
+          "type":"bExpAbs",
+          "delay":50,
+          "size":"6",
+          "bX":"w/2+w*0.5*sin(t*pi)",
+          "bY":"50*t+80*sin(t*2*pi)",
+          "bulletLifeTime":20000
+        }
+      }
     },
     {
-      "trigger":["microspiral"]
+      "wait":10000
     },
     {
-      "wait":500
+      "del":["microspiral"]
+    }
+  ],
+  "level-s":[
+    {
+      "spawner":{
+        "microspiral":{
+          "type":"bExpAbs",
+          "delay":10,
+          "size":"12",
+          "bX":"w/2 + t*(w/6)*cos(c*0.25*pi)",
+          "bY":"h/2 + t*(h/6)*sin(c*0.25*pi)",
+          "bulletLifeTime":3000
+        }
+      }
     },
     {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":100
-    },
-    {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":500
-    },
-    {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":100
-    },
-    {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":500
-    },
-    {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":100
-    },
-    {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":500
-    },
-    {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":100
-    },
-    {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":500
-    },
-    {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":100
-    },
-    {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":500
-    },
-    {
-      "trigger":["microspiral"]
-    },
-    {
-      "wait":100
-    },
-    {
-      "trigger":["microspiral"]
+      "wait":10000
     },
     {
       "del":["microspiral"]

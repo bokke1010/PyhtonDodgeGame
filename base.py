@@ -31,6 +31,8 @@ class GAMESTATE(Enum):
     ACTIVE = 0
     MMENU = 1
 
+keyCodes = {"119":"w", "97":"a", "115":"s", "100":"d", "304":"shift"}
+
 # Some default colors:
 BLACK     = (0  ,0  ,0  )
 DARKGRAY  = (63 ,63 ,63 )
@@ -40,6 +42,7 @@ WHITE     = (255,255,255)
 PINK      = (153,9  ,153)
 CYAN      = (0  ,192,192)
 DARKGREEN = (31 ,127,31 )
+
 
 # Player properties
 playerSize = 8
@@ -66,3 +69,9 @@ def activateUIElement(UI, UIElement):
 
 def sgn(a):
     return (a > 0) - (a < 0)
+
+# Universal data type
+class Data():
+    def __init__(self, type, **data):
+        self.type = type
+        self.__dict__.update(data)

@@ -53,7 +53,10 @@ patternManager = pattern_manager.PatternManager(screen)
 levelIndex = 0
 levels = patternManager.loadJson("levels.json")
 
-keyDownFlags = {"w": False, "a":False, "s":False, "d":False, "shift":False}
+keyDownFlags = {}
+for key in keyCodes.values():
+    keyDownFlags[key] = False
+print(keyDownFlags)
 
 # UI needs it's own file/import, preferably another JSON file like the level system
 
@@ -103,6 +106,7 @@ while not done:
     # Event management
     actions = eventManager.mainLoopEvent(gameState)
 
+    # Handling the que from the eventManager
     for action in actions:
         if action.type == "stop":
             stopMainLoop()

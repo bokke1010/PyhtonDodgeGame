@@ -76,8 +76,14 @@ class Data():
         self.type = type
         self.__dict__.update(data)
 
-    def __str__(self):
+    def __repr__(self):
         x = "D"
         for key, item in self.__dict__.items():
             x += ", " + str(key) + ": " + str(item)
         return x
+
+    def __len__(self):
+        return len(self.__dict__)
+
+    def __dir__(self):
+        return list(self.__dict__)

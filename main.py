@@ -47,7 +47,7 @@ done = False
 deltaTime = 0
 time = 0
 
-playerCharacter = player.Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 64, screen)
+playerCharacter = player.Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 6, screen)
 patternManager = pattern_manager.PatternManager(screen)
 
 levelIndex = 0
@@ -132,9 +132,15 @@ while not done:
         screen.fill(BLACK)
 
         # Player code
-        playerCharacter.update((keyDownFlags['d'] - keyDownFlags['a']),
+        pd = playerCharacter.update((keyDownFlags['d'] - keyDownFlags['a']),
             (keyDownFlags['s'] - keyDownFlags['w']), keyDownFlags["shift"], deltaTime)
         playerCharacter.draw()
+
+        # The player can now also return data from it's update function which needs to be handled
+        while len(pd) > 0:
+            item = pd.pop()
+            if item.type == "stop":
+                stopMainLoop()
 
         patternManager.update(deltaTime, playerCharacter)
         patternManager.draw()

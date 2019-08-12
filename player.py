@@ -27,6 +27,7 @@ class Player():
         pygame.draw.circle(self.scr, self.secCol, dPos, self.size)
 
     def update(self, xInp, yInp, sneak, dt):
+        rtd = []
         # air resistance as expected
         # self.dx += self.acc * xInp * dt
         # self.dx -= self.drag * abs(self.dx)**2 * ((self.dx > 0) - (self.dx < 0)) * dt
@@ -66,7 +67,8 @@ class Player():
 
         # End game when dead
         if self.lives <= 0:
-            stopMainLoop()
+            rtd.append(Data("stop"))
+        return rtd
 
     def sPos(self):
         return (int(self.x),int(self.y))

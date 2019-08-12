@@ -32,7 +32,7 @@ class PatternManager():
             for key, value in item.items():
                 if key == "spawner":
                     for name, command in value.items():
-                        self.que.append(Data("spw", time = scheduledTime, name = self._formatName(name), command = command))
+                        self._queAppend(Data("spw", time = scheduledTime, name = self._formatName(name), command = command))
                 if key == "bullet":
                     for command in value:
                         self._queAppend(Data("bul", time = scheduledTime, command = command))
@@ -57,7 +57,7 @@ class PatternManager():
 
     def _queAppend(self, command: Data):
         """Internal function to append items to the que"""
-        if len(self.que) > 1 and command.time < self.que[-1].time:
+        if (len(self.que) > 1) and (command.time < self.que[-1].time):
             # Add a item inside the que by looping back through the que
             # We want to work with index, so we take lenght - 1
             # since the if statement already checks for the last item, we subtract 1 more
@@ -157,14 +157,13 @@ class PatternManager():
 
     def update(self, dt, player):
         self.time += dt
-        if len(self.que) > 0:
-            while self.que[0].time <= self.time:
+        while len(self.que) > 0:
+            if self.que[0].time <= self.time:
                 print(self.que[0])
                 self.process(self.que[0])
                 self.que.popleft()
-                # Stop checking the que if it is empty now
-                if len(self.que) == 0:
-                    break
+            else:
+                break
 
         # Update the integrated bulletManager used as parent for bullets created by a bullet command
         self.bulletManager.update(dt, player)

@@ -72,6 +72,12 @@ def sgn(a):
 
 # Universal data type
 class Data():
-    def __init__(self, type, **data):
+    def __init__(self, type: str, **data):
         self.type = type
         self.__dict__.update(data)
+
+    def __str__(self):
+        x = "D"
+        for key, item in self.__dict__.items():
+            x += ", " + str(key) + ": " + str(item)
+        return x

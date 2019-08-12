@@ -32,33 +32,43 @@ class PatternManager():
             for key, value in item.items():
                 if key == "spawner":
                     for name, command in value.items():
-                        self.que.append((scheduledTime, "spw", name + ":" + str(self.lc), command))
+                        self.que.append(Data("spw", time = scheduledTime, name = self._formatName(name), command = command))
                 if key == "bullet":
                     for command in value:
-                        self._queAppend((scheduledTime, "bul", command))
+                        self._queAppend(Data("bul", time = scheduledTime, command = command))
                 if key == "pattern":
                     for name, command in value.items():
-                        self._queAppend((scheduledTime, "pat", name + ":" + str(self.lc), command))
+                        self._queAppend(Data("pat", time = scheduledTime, name = self._formatName(name), command = command))
                 if key == "trigger":
                     for name in value:
-                        self._queAppend((scheduledTime, "trg", name + ":" + str(self.lc)))
+                        self._queAppend(Data("trg", time = scheduledTime, name = self._formatName(name)))
                 if key == "wait":
                     scheduledTime += value
                 if key == "del":
-                    for delItem in value:
-                        self._queAppend((scheduledTime, "del", delItem + ":" + str(self.lc)))
+                    for name in value:
+                        self._queAppend(Data("del", time = scheduledTime, name = self._formatName(name)))
 
         # Unique identifier to prevent levels overwriting each other
         self.lc += 1
 
-    def _queAppend(self, command):
-        if len(self.que) > 0 and self.que[-1][0] > command[0]:
-            i = len(self.que) - 1
-            while (self.que[i][0] > command[0]):
-                if i == 0:
-                    break
+    def _formatName(self, name: str):
+        # lc is a attribute, and should still be the correct value when this is called
+        return name + ":" + str(self.lc)
+
+    def _queAppend(self, command: Data):
+        """Internal function to append items to the que"""
+        if len(self.que) > 1 and command.time < self.que[-1].time:
+            # Add a item inside the que by looping back through the que
+            # We want to work with index, so we take lenght - 1
+            # since the if statement already checks for the last item, we subtract 1 more
+            i = len(self.que) - 2
+
+            # If the trigger timestamp of our item is lower than the current que
+            # item, we decrease the que index
+            while (command.time < self.que[i].time):
                 i -= 1
-            self.que.insert(i+1, command)
+                if i == 0: break
+            self.que.insert(i, command)
         else:
             self.que.append(command)
 
@@ -68,25 +78,25 @@ class PatternManager():
         # command [2] is arg1 (optional, often name)
         # command [3] is arg2 (optional)
         # etc.
-        if command[1] == "spw":
-            spawner = self.parseSpawner(command[3])
-            self.bulletManagers[command[2]] = spawner
-        elif command[1] == "bul":
+        if command.type == "spw":
+            spawner = self.parseSpawner(command.command)
+            self.bulletManagers[command.name] = spawner
+        elif command.type == "bul":
             # Bullets do not have a name, so command[2] contains their parameters
-            bullet = self.parseBullet(command[2])
+            bullet = self.parseBullet(command.command)
             self.bulletManager.addBullet(bullet)
-        elif command[1] == "pat":
-            pattern = self.parsePattern(command[3])
-            self.bulletManagers[command[2]] = pattern
-        elif command[1] == "trg":
-            self.bulletManagers[command[2]].trigger()
-        elif command[1] == "del":
-            if self.bulletManagers[command[2]].setDelete():
-                self.bulletManagers.pop(command[2], True)
+        elif command.type == "pat":
+            pattern = self.parsePattern(command.command)
+            self.bulletManagers[command.name] = pattern
+        elif command.type == "trg":
+            self.bulletManagers[command.name].trigger()
+        elif command.type == "del":
+            if self.bulletManagers[command.name].setDelete():
+                self.bulletManagers.pop(command.name, True)
                 return True
             else:
                 return False
-        elif command[1] == "end":
+        elif command.type == "end":
             self.bulletManagers = {}
             return True
 
@@ -148,7 +158,7 @@ class PatternManager():
     def update(self, dt, player):
         self.time += dt
         if len(self.que) > 0:
-            while self.que[0][0] <= self.time:
+            while self.que[0].time <= self.time:
                 print(self.que[0])
                 self.process(self.que[0])
                 self.que.popleft()

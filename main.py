@@ -1,4 +1,4 @@
-import projectile, pattern_manager, menu, events, player
+import projectile, pattern_manager, menu, keyEvents, player
 from base import *
 
 # All initialization
@@ -94,7 +94,7 @@ UIElements["next"] = menu.Button(screen=screen, coords = (7*w/10,7.5*h/10,2*w/10
     text = "-->", result="nextLevel()")
 UI = []
 
-eventManager = events.EventManager(UI)
+eventManager = keyEvents.EventManager(UI)
 # UI will eventually get a seperate system
 
 

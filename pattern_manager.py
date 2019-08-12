@@ -57,26 +57,24 @@ class PatternManager():
 
     def _queAppend(self, command: Data):
         """Internal function to append items to the que"""
-        if (len(self.que) > 1) and (command.time < self.que[-1].time):
+        if len(self.que) > 0:
             # Add a item inside the que by looping back through the que
             # We want to work with index, so we take lenght - 1
             # since the if statement already checks for the last item, we subtract 1 more
-            i = len(self.que) - 2
+            i = len(self.que)
 
-            # If the trigger timestamp of our item is lower than the current que
-            # item, we decrease the que index
-            while (command.time < self.que[i].time):
+            # If the trigger timestamp of our item is lower than the earlier que
+            # item, we decrease the index to match that item
+            while (i > 0 and command.time < self.que[i-1].time):
                 i -= 1
-                if i == 0: break
             self.que.insert(i, command)
         else:
             self.que.append(command)
 
     def process(self, command):
-        # command[0] is timing, often not required
-        # command[1] is instruction
-        # command [2] is arg1 (optional, often name)
-        # command [3] is arg2 (optional)
+        # command.time is timing, often not required
+        # command.type is instruction
+        # command.name, command.command etc. provide extra information
         # etc.
         if command.type == "spw":
             spawner = self.parseSpawner(command.command)

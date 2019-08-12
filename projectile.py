@@ -170,20 +170,16 @@ class BulletManager():
             # Bullets that are guaranteed to never reenter the playfield get
             # deleted
             if blt.movementMode == BULLETPATH.LINE:
-                # No bullet tumors
+                # No bullet tumors (bullets that never leave the screen and live forever)
                 if blt.dx == 0 and blt.dy == 0 and blt.lifeTime == -1:
                     cleanupQue.add(blt)
-                if blt.dx > 0:
-                    if blt.x > w:
+                if blt.dx > 0 and blt.x > w:
                         cleanupQue.add(blt)
-                elif blt.dx < 0:
-                    if blt.x < 0:
+                elif blt.dx < 0 and blt.x < 0:
                         cleanupQue.add(blt)
-                if blt.dy > 0:
-                    if blt.y > h:
+                if blt.dy > 0 and blt.y > h:
                         cleanupQue.add(blt)
-                elif blt.dy < 0:
-                    if blt.y < 0:
+                elif blt.dy < 0 and blt.y < 0:
                         cleanupQue.add(blt)
 
         # Got our list, now we're removing their references to let the garbage
@@ -194,7 +190,9 @@ class BulletManager():
 
     def setDelete(self):
         self.endOfLife = True
-        return len(self.bullets) == 0
+        # While the endOfLife check in getdelete is obsolete, this way of checking
+        # is easier to understand and change
+        return self.getDelete()
 
     def getDelete(self):
         return self.endOfLife and len(self.bullets) == 0

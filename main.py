@@ -47,7 +47,7 @@ done = False
 deltaTime = 0
 time = 0
 
-playerCharacter = player.Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 6, screen)
+playerCharacter = player.Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 600, screen)
 patternManager = pattern_manager.PatternManager(screen)
 
 levelIndex = 0
@@ -57,6 +57,21 @@ keyDownFlags = {}
 for key in keyCodes.values():
     keyDownFlags[key] = False
 print(keyDownFlags)
+
+def handleReturnData(data):
+    for action in data:
+        if action.type == "stop":
+            stopMainLoop()
+        elif action.type == "exec":
+            r = action.variable
+            eval(action.data)
+        elif action.type == "gameState":
+            if action.state == GAMESTATE.ACTIVE:
+                gameStateActive()
+            if action.state == GAMESTATE.MMENU:
+                gameStateMenu()
+        elif action.type == "keySet":
+            keyDownFlags[action.key] = action.value
 
 # UI needs it's own file/import, preferably another JSON file like the level system
 
@@ -107,19 +122,7 @@ while not done:
     actions = eventManager.mainLoopEvent(gameState)
 
     # Handling the que from the eventManager
-    for action in actions:
-        if action.type == "stop":
-            stopMainLoop()
-        elif action.type == "exec":
-            r = action.variable
-            eval(action.data)
-        elif action.type == "gameState":
-            if action.state == GAMESTATE.ACTIVE:
-                gameStateActive()
-            if action.state == GAMESTATE.MMENU:
-                gameStateMenu()
-        elif action.type == "keySet":
-            keyDownFlags[action.key] = action.value
+    handleReturnData(actions)
 
     # Game active loop
     if gameState == GAMESTATE.ACTIVE:
@@ -137,10 +140,7 @@ while not done:
         playerCharacter.draw()
 
         # The player can now also return data from it's update function which needs to be handled
-        while len(pd) > 0:
-            item = pd.pop()
-            if item.type == "stop":
-                stopMainLoop()
+        handleReturnData(pd)
 
         patternManager.update(deltaTime, playerCharacter)
         patternManager.draw()

@@ -1,30 +1,40 @@
 from base import *
+import menu
 
 class Player():
     """This class defines a player character, using general parameters and player input
     to function"""
+
     def __init__(self, size, pos, color, acc, drag, lives, scr):
         self.size = size
         (self.x, self.y) = pos
         self.dx, self.dy = 0, 0
         self.acc = acc
         self.drag = drag
-        self.color = color
+        self.color = color # Health bar color
         self.lives = lives
         self.mLives = lives
-        self.secCol = DARKGREEN
+        self.secCol = DARKGREEN # Object's color
         self.scr =  scr
+        self.healthMeter = menu.Text(screen = self.scr, coords = (0.02*w, 0.02*w, 0.12*w, 0.12*h), text = self._healthStr(), border = False, textSize = 18, color=self.color)
+
+    def _healthStr(self):
+        return str(round(100*self.lives/self.mLives))
 
     def draw(self):
         # pygame.draw.circle(scr, self.color, self.sPos(), self.size)
         dPos = self.sPos()
-        healthCS = self.size + 3
-        rect = pygame.Rect(int(dPos[0]-healthCS),int(dPos[1]-healthCS),
-            int(2*healthCS),int(2*healthCS))
-        # Health bar
-        pygame.draw.arc(self.scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives)
-        # Collision marker
+        healthBarRad = self.size + 6
+        # rect = pygame.Rect(int(dPos[0]-healthBarRad),int(dPos[1]-healthBarRad),
+        #     int(2*healthBarRad),int(2*healthBarRad))
+        # This command uses topLeft and width/height, that's why we enter .1 instead of .12
+        rect = pygame.Rect(0.02*w, 0.02*w, 0.1*w, 0.1*h)
+        # Health bar and text
+        pygame.draw.arc(self.scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives, 2)
+        self.healthMeter.draw()
+        # Player draw/collision marker
         pygame.draw.circle(self.scr, self.secCol, dPos, self.size)
+
 
     def update(self, xInp, yInp, sneak, dt):
         rtd = []
@@ -66,6 +76,7 @@ class Player():
                 self.dy = 0
 
         # End game when dead
+        self.healthMeter.updateText(self._healthStr())
         if self.lives <= 0:
             rtd.append(Data("stop"))
         return rtd

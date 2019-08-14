@@ -1,6 +1,13 @@
 import projectile, pattern_manager, menu, keyEvents, player
 from base import *
 
+# This file acts as a hub for all other files (except base.py, that one only
+# contains some lightweight universal constants and functions).
+#
+# These files can send data back using lists with Data() objects, which are
+# dicts in a wrapper that ensures they must have a 'type' key (with value)
+# These are rarely longer than 4 key/data pairs
+
 # All initialization
 
 pygame.init()
@@ -47,7 +54,7 @@ done = False
 deltaTime = 0
 time = 0
 
-playerCharacter = player.Player(playerSize, [w/2, h-playerSize], WHITE, acceleration, drag, 600, screen)
+playerCharacter = player.Player(playerSize, [w/2, h-playerSize], RED, acceleration, drag, 600, screen)
 patternManager = pattern_manager.PatternManager(screen)
 
 levelIndex = 0
@@ -59,54 +66,53 @@ for key in keyCodes.values():
 print(keyDownFlags)
 
 def handleReturnData(data):
+    """Handle returned [Data()] objects with commands/information"""
     for action in data:
         if action.type == "stop":
             stopMainLoop()
-        elif action.type == "exec":
-            r = action.variable
-            eval(action.data)
         elif action.type == "gameState":
             if action.state == GAMESTATE.ACTIVE:
                 gameStateActive()
             if action.state == GAMESTATE.MMENU:
                 gameStateMenu()
+        elif action.type == "level":
+            if action.hasattr("deltaLevel"):
+                levelRelative(action.deltaLevel)
+            else:
+                patternManager.startLevel(levels[levelIndex])
+                gameStateActive()
         elif action.type == "keySet":
             keyDownFlags[action.key] = action.value
 
 # UI needs it's own file/import, preferably another JSON file like the level system
 
-def nextLevel():
+def levelRelative(relative):
+    """Moves the level index according to the given value"""
     global levelIndex, levelCount
-    levelIndex += 1
-    if levelIndex > patternManager.levelCount-1:
-        levelIndex = 0
-    UIElements["startLevel"].updateText(levels[levelIndex])
-
-
-def prevLevel():
-    global levelIndex, levelCount
-    levelIndex -= 1
-    if levelIndex < 0:
-        levelIndex = patternManager.levelCount-1
+    levelIndex += relative
+    while levelIndex > patternManager.levelCount-1:
+        levelIndex -= patternManager.levelCount
+    while levelIndex < 0:
+        levelIndex += patternManager.levelCount
     UIElements["startLevel"].updateText(levels[levelIndex])
 
 
 UIElements = {}
-UIElements["Resume"] = menu.Button(screen=screen, coords = (w/10,3*h/10,8*w/10,h/10),
-    text = "resume", result="gameStateActive()")
-UIElements["Exit"] = menu.Button(screen=screen, coords = (w/10,5*h/10,8*w/10,h/10),
-    text = "exit", result="stopMainLoop()")
-UIElements["Title"] = menu.Text(screen=screen, coords = (w/10,h/10,8*w/10,h/10),
+UIElements["Resume"] = menu.Button(screen=screen, coords = (0.1*w,0.3*h,0.9*w,0.4*h),
+    text = "resume", result=Data("gameState", state = GAMESTATE.ACTIVE))
+UIElements["Exit"] = menu.Button(screen=screen, coords = (0.1*w,0.5*h,0.9*w,0.6*h),
+    text = "exit", result=Data("stop"))
+UIElements["Title"] = menu.Text(screen=screen, coords = (0.1*w,0.1*h,0.9*w,0.2*h),
     text = "Game Title")
-UIElements["spawnGuide"] = menu.Text(screen=screen, coords = (w/10,7*h/10,8*w/10,0.5*h/10),
+UIElements["spawnGuide"] = menu.Text(screen=screen, coords = (0.1*w,0.7*h,0.9*w,0.75*h),
     text = "Add patterns")
 
-UIElements["prev"] = menu.Button(screen=screen, coords = (w/10,7.5*h/10,2*w/10,h/10),
-    text = "<--", result="prevLevel()")
-UIElements["startLevel"] = menu.Button(screen=screen, coords = (4*w/10,7.5*h/10,2*w/10,h/10),
-    text = levels[levelIndex], result="patternManager.startLevel(levels[levelIndex])")
-UIElements["next"] = menu.Button(screen=screen, coords = (7*w/10,7.5*h/10,2*w/10,h/10),
-    text = "-->", result="nextLevel()")
+UIElements["prev"] = menu.Button(screen=screen, coords = (0.1*w,0.75*h,0.3*w,0.85*h),
+    text = "<--", result=Data("level", deltaLevel = -1))
+UIElements["startLevel"] = menu.Button(screen=screen, coords = (0.4*w,0.75*h,0.6*w,0.85*h),
+    text = levels[levelIndex], result=Data("level"))
+UIElements["next"] = menu.Button(screen=screen, coords = (0.7*w,0.75*h,0.9*w,0.85*h),
+    text = "-->", result=Data("level", deltaLevel = 1))
 UI = []
 
 eventManager = keyEvents.EventManager(UI)

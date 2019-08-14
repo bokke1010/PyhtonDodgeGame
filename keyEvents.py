@@ -14,7 +14,9 @@ class EventManager():
         que = []
         def ret(x: Data):
             """Appends a data object to the return value"""
-            que.append(x)
+            # Too lazy to do this inline
+            if not x == None:
+                que.append(x)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -26,14 +28,9 @@ class EventManager():
                 for UIElement in self.UI:
                     # print(type(UIElement))
                     if isinstance(UIElement, menu.Button):
-                        res = UIElement.getClick(pos)
-                        if not res == None:
-                            ret(Data("exec", data=res, variable = 0))
+                        ret(UIElement.getClick(pos))
                     elif isinstance(UIElement, menu.sButton):
-                        res = UIElement.getClick(pos)
-                        if not res == None:
-                            (r, func) = res
-                            ret(Data("exec", data=func, variable=r))
+                        ret(UIElement.getClick(pos))
 
             if event.type == pygame.KEYDOWN:
                 # Navigation keys

@@ -16,7 +16,7 @@ class Player():
         self.mLives = lives
         self.secCol = DARKGREEN # Object's color
         self.scr =  scr
-        self.healthMeter = menu.Text(screen = self.scr, coords = (0.02*w, 0.02*w, 0.12*w, 0.12*h), text = self._healthStr(), border = False, textSize = 18, color=self.color)
+        self.healthMeter = menu.Text(screen = self.scr, coords = (0.02*h, 0.02*h, 0.12*h, 0.12*h), text = self._healthStr(), border = False, textSize = 18, color=self.color)
 
     def _healthStr(self):
         return str(round(100*self.lives/self.mLives))
@@ -28,7 +28,7 @@ class Player():
         # rect = pygame.Rect(int(dPos[0]-healthBarRad),int(dPos[1]-healthBarRad),
         #     int(2*healthBarRad),int(2*healthBarRad))
         # This command uses topLeft and width/height, that's why we enter .1 instead of .12
-        rect = pygame.Rect(0.02*w, 0.02*w, 0.1*w, 0.1*h)
+        rect = pygame.Rect(0.02*h, 0.02*h, 0.1*h, 0.1*h)
         # Health bar and text
         pygame.draw.arc(self.scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives, 2)
         self.healthMeter.draw()

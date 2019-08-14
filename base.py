@@ -90,7 +90,7 @@ class Data():
     def __dir__(self):
         return list(self.__dict__)
 
-    def set(key, value):
+    def set(self, key, value):
         self.__dict__[key] = value
         return self
 

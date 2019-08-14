@@ -1,0 +1,52 @@
+{
+  "Resume":{
+    "text":"resume",
+    "object":"Button",
+    "coordinates":[0.1, 0.3, 0.9, 0.4],
+    "result":"gameState:0",
+    "visibles":["MMENU"],
+    "color":"DARKGREEN"
+  },
+  "Exit":{
+    "text":"exit",
+    "object":"Button",
+    "coordinates":[0.1, 0.5, 0.9, 0.6],
+    "result":"stop",
+    "visibles":["MMENU"],
+    "color":"RED"
+  },
+  "Title":{
+    "text":"Dodge something?",
+    "object": "Text",
+    "coordinates":[0.1, 0.1, 0.9, 0.2],
+    "visibles":["MMENU"],
+    "color":"WHITE"
+  },
+  "spawnGuide":{
+    "text":"Add patterns",
+    "object": "Text",
+    "coordinates":[0.1, 0.7, 0.9, 0.75],
+    "visibles":["MMENU"]
+  },
+  "prev":{
+    "text":"<--",
+    "object":"Button",
+    "coordinates":[0.1, 0.75, 0.3, 0.85],
+    "result":"level:-1",
+    "visibles":["MMENU"]
+  },
+  "startLevel":{
+    "text":"%levels[levelIndex]",
+    "object":"Button",
+    "coordinates":[0.4, 0.75, 0.6, 0.85],
+    "result":"level",
+    "visibles":["MMENU"]
+  },
+  "next":{
+    "text":"-->",
+    "object":"Button",
+    "coordinates":[0.7, 0.75, 0.9, 0.85],
+    "result":"level:1",
+    "visibles":["MMENU"]
+  }
+}

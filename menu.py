@@ -1,6 +1,42 @@
 from base import *
 from pygame import freetype
+import json
 freetype.init()
+
+def loadJson(fileName:str) -> dict:
+    """Way to simple json load function, why is this even here?"""
+    with open(fileName) as json_file:
+        return json.load(json_file)
+
+
+def parseJson(jsonIn: dict) -> dict:
+    """Parses JSON from a file to dicts readable by parseMenuList() (see main.py)"""
+    def formatData(value: dict) -> dict:
+        textValue = value["text"]
+        menuType = globals()[value["object"]]
+
+        # TODO: make up my mind on a common standard to add data this way
+        resultOut = None
+        if "result" in value:
+            resultIn = value["result"].split(":")
+            if resultIn[0] == "stop":
+                resultOut = Data("stop")
+            elif resultIn[0] == "level":
+                resultOut = Data("level")
+                if len(resultIn) == 2:
+                    resultOut.set("deltaLevel", int(resultIn[1]))
+            elif resultIn[0] == "gameState": # gameState:1
+                resultOut = Data("gameState", state = int(resultIn[1]))
+
+
+        color = globals()[value["color"]] if "color" in value else BLACK
+        visibles = [getattr(GAMESTATE, x) for x in value["visibles"]]
+
+        return {"text":textValue, "object":menuType, "coordinates":tuple(value["coordinates"]), "result":resultOut, "visibles":visibles, "color":color}
+    rv = {}
+    for key, value in jsonIn.items():
+        rv[key] = formatData(value)
+    return rv
 
 class Text():
     def __init__(self, screen, coords: tuple = (40,40,w-80,h-80), text: str = "click here!", border = True, textSize = 20, color: tuple = (0  ,0  ,0  ), visibles:list = [], **kwargs):

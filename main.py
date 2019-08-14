@@ -63,9 +63,9 @@ def handleReturnData(data):
         if action.type == "stop":
             stopMainLoop()
         elif action.type == "gameState":
-            if action.state == GAMESTATE.ACTIVE:
+            if action.state == GAMESTATE.ACTIVE or action.state == GAMESTATE.ACTIVE.value:
                 gameStateActive()
-            if action.state == GAMESTATE.MMENU:
+            if action.state == GAMESTATE.MMENU or action.state == GAMESTATE.MMENU.value:
                 gameStateMenu()
         elif action.type == "level":
             if action.hasattr("deltaLevel"):
@@ -86,37 +86,32 @@ def levelRelative(relative):
         levelIndex -= patternManager.levelCount
     while levelIndex < 0:
         levelIndex += patternManager.levelCount
+
+    # Trying to remove all button-specific code eventually
     UIElements["startLevel"].updateText(levels[levelIndex])
 
+
+# TODO: find some way to move this to menu.py (something like copy-paste might work)
 def parseMenuList(items:dict, UIElements:dict, screen:pygame.display):
     for key, item in items.items():
         coords = (item["coordinates"][0]*w, item["coordinates"][1]*h, item["coordinates"][2]*w, item["coordinates"][3]*h)
         item["result"] = None if not "result" in item else item["result"]
         item["color"] = GRAY if not "color" in item else item["color"]
-        UIElements[key] = item["object"](screen = screen, coords = coords, text = item["text"], result = item["result"], visibles = item["visibles"], color=item["color"])
 
-# I considered using Data() for this, but dicts are probably better suited
-# The only downside is that keys are strings instead of arguments, making it slightly more chaotic
-# The key here is also the key in UIElements, this step is required to simplify
-# and eventually externalize UI
-MenuButtons = {
-    "Resume":{"text":"resume", "object":menu.Button, "coordinates":(0.1, 0.3, 0.9, 0.4), "result":Data("gameState", state=GAMESTATE.ACTIVE), "visibles":[GAMESTATE.MMENU], "color":DARKGREEN},
-    "Exit":{"text":"exit", "object":menu.Button, "coordinates":(0.1, 0.5, 0.9, 0.6), "result":Data("stop"), "visibles":[GAMESTATE.MMENU], "color":RED},
-    "Title":{"text":"Dodge something?", "object": menu.Text, "coordinates":(0.1, 0.1, 0.9, 0.2), "visibles":[GAMESTATE.MMENU], "color":WHITE},
-    "spawnGuide":{"text":"Add patterns", "object": menu.Text, "coordinates":(0.1, 0.7, 0.9, 0.75), "visibles":[GAMESTATE.MMENU]},
-    "prev":{"text":"<--", "object":menu.Button, "coordinates":(0.1, 0.75, 0.3, 0.85), "result":Data("level", deltaLevel = -1), "visibles":[GAMESTATE.MMENU]},
-    "startLevel":{"text":levels[levelIndex], "object":menu.Button, "coordinates":(0.4, 0.75, 0.6, 0.85), "result":Data("level"), "visibles":[GAMESTATE.MMENU]},
-    "next":{"text":"-->", "object":menu.Button, "coordinates":(0.7, 0.75, 0.9, 0.85), "result":Data("level", deltaLevel = 1), "visibles":[GAMESTATE.MMENU]},
+        # Possible malicious code injection using buttonText
+        try:
+            textValue = item["text"] if not "%" == item["text"][0] else str(globals()[item["text"][1:]])
+        except KeyError:
+            textValue = "Failed to read global"
+        UIElements[key] = item["object"](screen = screen, coords = coords, text = textValue, result = item["result"], visibles = item["visibles"], color=item["color"])
 
-}
 
 UIElements = {}
-
 UI = []
 
 # I would consider giving ui import dicts like MenuButtons a unique ID, but I can't imagine
 # a scenario where multiple copies of the same UI would need to exist right now...
-parseMenuList(MenuButtons, UIElements, screen)
+parseMenuList(menu.parseJson(menu.loadJson("menuItems.json")), UIElements, screen)
 
 eventManager = keyEvents.EventManager(UI)
 # UI will eventually get a seperate system

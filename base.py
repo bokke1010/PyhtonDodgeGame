@@ -36,8 +36,8 @@ keyCodes = {"119":"w", "97":"a", "115":"s", "100":"d", "304":"shift"}
 # Some default colors:
 BLACK     = (0  ,0  ,0  )
 DARKGRAY  = (63 ,63 ,63 )
-GRAY      = (63 ,63 ,63 )
-LIGHTGRAY = (63 ,63 ,63 )
+GRAY      = (127,127,127)
+LIGHTGRAY = (191,191,191)
 WHITE     = (255,255,255)
 PINK      = (153,9  ,153)
 CYAN      = (0  ,192,192)

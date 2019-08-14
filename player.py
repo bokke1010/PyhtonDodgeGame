@@ -29,8 +29,12 @@ class Player():
         #     int(2*healthBarRad),int(2*healthBarRad))
         # This command uses topLeft and width/height, that's why we enter .1 instead of .12
         rect = pygame.Rect(0.02*h, 0.02*h, 0.1*h, 0.1*h)
-        # Health bar and text
+
+        # Health bar
         pygame.draw.arc(self.scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives, 2)
+        # Drawing text and small background circle for contrast
+        # TODO: Integrate contrast circle into menu.Text()
+        pygame.draw.circle(self.scr, BLACK, (int(0.07*h), int(0.07*h)), int(0.04*h))
         self.healthMeter.draw()
         # Player draw/collision marker
         pygame.draw.circle(self.scr, self.secCol, dPos, self.size)

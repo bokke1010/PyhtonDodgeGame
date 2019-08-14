@@ -3,13 +3,15 @@ from pygame import freetype
 freetype.init()
 
 class Text():
-    def __init__(self, screen, coords: tuple = (40,40,w-80,h-80), text: str = "click here!", border = True, textSize = 20, color: tuple = (0  ,0  ,0  )):
+    def __init__(self, screen, coords: tuple = (40,40,w-80,h-80), text: str = "click here!", border = True, textSize = 20, color: tuple = (0  ,0  ,0  ), visibles:list = [], **kwargs):
+        # We accept more kwargs to allow overflowing when using this interchangably with more complex UIElement that inherits Text
         self.screen = screen
         self.coords = coords
         self.text = text
         self.color = color
         self.font = freetype.Font(None, textSize)
         self.border = border
+        self.visibles = visibles
 
     def updateText(self, text):
         self.text = text
@@ -35,8 +37,8 @@ class Text():
         self.font.render_to(self.screen, textPos, self.text, fgcolor=self.color)
 
 class Button(Text):
-    def __init__(self, screen, coords: tuple = (40,40,w-80,h-80), text: str = "click here!", result: Data = Data("pass")):
-        super().__init__(screen = screen, coords = coords, text = text)
+    def __init__(self, result: Data = Data("pass"), **kw):
+        super().__init__(**kw)
         self.result = result
 
     def getClick(self, pos):

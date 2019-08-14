@@ -42,10 +42,11 @@ WHITE     = (255,255,255)
 PINK      = (153,9  ,153)
 CYAN      = (0  ,192,192)
 DARKGREEN = (31 ,127,31 )
+RED       = (255,0  ,0  )
 
 
 # Player properties
-playerSize = 8
+playerSize = 5
 acceleration = 160
 drag = 0.5
 
@@ -87,3 +88,10 @@ class Data():
 
     def __dir__(self):
         return list(self.__dict__)
+
+    def set(key, value):
+        self.__dict__[key] = value
+        return self
+
+    def hasattr(self, value):
+        return value in self.__dict__

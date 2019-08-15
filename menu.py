@@ -39,7 +39,7 @@ def parseJson(jsonIn: dict) -> dict:
     return rv
 
 class Text():
-    def __init__(self, screen, coords: tuple = (40,40,w-80,h-80), text: str = "click here!", border = True, textSize = 20, color: tuple = (0  ,0  ,0  ), visibles:list = [], **kwargs):
+    def __init__(self, screen, coords: tuple = (40,40,w-40,h-40), text: str = "click here!", border = True, textSize = 20, color: tuple = (0  ,0  ,0  ), visibles:list = [], **kwargs):
         # We accept more kwargs to allow overflowing when using this interchangably with more complex UIElement that inherits Text
         self.screen = screen
         self.coords = coords

@@ -42,45 +42,24 @@ class Player():
 
     def update(self, xInp, yInp, sneak, dt):
         rtd = []
-        # air resistance as expected
-        # self.dx += self.acc * xInp * dt
-        # self.dx -= self.drag * abs(self.dx)**2 * ((self.dx > 0) - (self.dx < 0)) * dt
-        # self.x += self.dx * dt
-        #
-        # self.dy += self.acc * yInp * dt
-        # self.dy -= self.drag * abs(self.dy)**2 * ((self.dy > 0) - (self.dy < 0)) * dt
-        # self.y += self.dy * dt
 
         # Game implementation
-        # Maximum speed is 320px in each direction (160*2), so sqrt(320^2+320^2) = 453 total
-        self.dx = self.acc * xInp
-        # self.dx -= self.drag * abs(self.dx)**2 * ((self.dx > 0) - (self.dx < 0)) * dt
-        self.x += self.dx * (2-sneak) * dt * 0.001
-
-        self.dy = self.acc * yInp
-        # self.dy -= self.drag * abs(self.dy)**2 * ((self.dy > 0) - (self.dy < 0)) * dt
-        self.y += self.dy * (2-sneak) * dt * 0.001
+        # The second part prevents diagonal input from being faster than horizontal
+        # input
+        diagMod = 0.70710678118 if xInp != 0 and yInp != 0 else 1
+        self.x += (self.acc * xInp * (2-sneak) * dt * 0.001) * diagMod
+        self.y += (self.acc * yInp * (2-sneak) * dt * 0.001) * diagMod
 
         # Prevent out-of-bounds character
-        while self.x > w:
-            self.x = w
-            if self.dx > 0:
-                self.dx = 0
-        while self.x < 0:
-            self.x = 0
-            if self.dx < 0:
-                self.dx = 0
-        while self.y > h:
-            self.y = h
-            if self.dy > 0:
-                self.dy = 0
-        while self.y < 0:
-            self.y = 0
-            if self.dy < 0:
-                self.dy = 0
+        self.x = clamp(self.x, 0, w)
+        self.y = clamp(self.y, 0, h)
+
+        # Keep the UI updated
+        # This part of the UI is integrated into the player instead of the
+        # main UI storage, and doesn't get updated by the general UI loop as a result
+        self.healthMeter.updateText(self._healthStr())
 
         # End game when dead
-        self.healthMeter.updateText(self._healthStr())
         if self.lives <= 0:
             print("Player lives reached zero, stopping program.")
             rtd.append(Data("stop"))

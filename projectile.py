@@ -1,6 +1,9 @@
 from base import *
 import numexpr as ne
 
+# TODO: Mayor cleanup and refactor
+# use numexpr high efficientcy array-operations for large performance improvements
+
 class BulletManager():
     def __init__(self, screen, visible: bool = True, preTime: int = 0, lifeTime: int = -1,):
         self.scr = screen
@@ -308,9 +311,9 @@ class Bullet():
             self._drawSelf(WHITE)
 
     def _drawSelf(self, color):
-        if not (hasattr(self, 'size') or hasattr(self, 'x')):
-            raise Exception("""This projectile has a expression which hasn't been calculated yet,
-            make sure it's update function was called.""")
+        # if not (hasattr(self, 'size') or hasattr(self, 'x')):
+        #     raise Exception("""This projectile has a expression which hasn't been calculated yet,
+        #     make sure it's update function was called.""")
         pos = (int(self.x), int(self.y))
         innerSize = int(self.size-0.5 * self.borderWidth)# prevent the border from exceeding the circle
         pygame.draw.circle(self.scr, color, pos, innerSize, self.borderWidth)

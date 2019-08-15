@@ -54,8 +54,9 @@ acceleration = 160
 drag = 0.5
 
 # Universal functions
-def distance(p1, p2):
-    return ( ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) )**0.5
+distance = lambda p1, p2: ( ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) )**0.5
+
+clamp = lambda x, l, u: max(l, min(u, x))
 
 def distanceLess(p1, p2, distance, inclusiveEqual: bool = False):
     if inclusiveEqual:

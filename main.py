@@ -21,22 +21,22 @@ def setGamestateUI(UIElements, gameState, UI):
         else:
             deactivateUIElement(UI, item)
 
-def gameStateActive():
-    global gameState, UIELements, UI
-    if not gameState == GAMESTATE.ACTIVE:
-        gameState = GAMESTATE.ACTIVE
+def setGameState(state = GAMESTATE.MMENU):
+    global gameState, UIElements, UI
+    if not gameState == state:
+        gameState = state
         setGamestateUI(UIElements, gameState, UI)
 
-def gameStateMenu():
-    global gameState
-    if not gameState == GAMESTATE.MMENU:
-        gameState = GAMESTATE.MMENU
-        setGamestateUI(UIElements, gameState, UI)
+def isState(a,b):
+    if not type(a) == int:
+        a = a.value
+    if not type(b) == int:
+        b = b.value
+    return a == b
 
 def stopMainLoop():
     global done
     done = True
-
 
 screen = pygame.display.set_mode((w, h))
 clock = pygame.time.Clock()
@@ -63,16 +63,18 @@ def handleReturnData(data):
         if action.type == "stop":
             stopMainLoop()
         elif action.type == "gameState":
-            if action.state == GAMESTATE.ACTIVE or action.state == GAMESTATE.ACTIVE.value:
-                gameStateActive()
-            if action.state == GAMESTATE.MMENU or action.state == GAMESTATE.MMENU.value:
-                gameStateMenu()
+            if isState(action.state, GAMESTATE.ACTIVE):
+                setGameState(GAMESTATE.ACTIVE)
+            elif isState(action.state, GAMESTATE.MMENU):
+                setGameState(GAMESTATE.MMENU)
+            elif isState(action.state, GAMESTATE.HELP):
+                setGameState(GAMESTATE.HELP)
         elif action.type == "level":
             if action.hasattr("deltaLevel"):
                 levelRelative(action.deltaLevel)
             else:
                 patternManager.startLevel(levels[levelIndex])
-                gameStateActive()
+                setGameState(GAMESTATE.ACTIVE)
         elif action.type == "keySet":
             keyDownFlags[action.key] = action.value
 
@@ -100,7 +102,8 @@ def parseMenuList(items:dict, UIElements:dict, screen:pygame.display):
 
         # Possible malicious code injection using buttonText
         try:
-            textValue = item["text"] if not "%" == item["text"][0] else str(globals()[item["text"][1:]])
+            text = item["text"]
+            textValue = text if not "%" == text[0] else str(globals()[text[1:]])
         except KeyError:
             textValue = "Failed to read global"
         UIElements[key] = item["object"](screen = screen, coords = coords, text = textValue, result = item["result"], visibles = item["visibles"], color=item["color"])
@@ -118,7 +121,7 @@ eventManager = keyEvents.EventManager(UI)
 
 
 # Initialization done, loading gameState
-gameStateMenu()
+setGameState(GAMESTATE.MMENU)
 
 # Starting game loop
 while not done:
@@ -157,6 +160,10 @@ while not done:
 
         patternManager.draw()
         playerCharacter.draw()
+
+    elif gameState == GAMESTATE.HELP:
+        clock.tick(20)
+        screen.fill(BLACK)
 
     # UI layer
     # UI uses a seperate system from object drawing.

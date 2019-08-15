@@ -82,6 +82,7 @@ class Player():
         # End game when dead
         self.healthMeter.updateText(self._healthStr())
         if self.lives <= 0:
+            print("Player lives reached zero, stopping program.")
             rtd.append(Data("stop"))
         return rtd
 

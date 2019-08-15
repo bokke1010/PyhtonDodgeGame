@@ -42,6 +42,9 @@ class EventManager():
                 if gameState == GAMESTATE.ACTIVE: # All game keyEvents
                     if event.key in [276, 27]: # Left arrow or Esc
                         ret(Data("gameState", state=GAMESTATE.MMENU))
+                if gameState == GAMESTATE.HELP:
+                    if event.key in [276, 27]:
+                        ret(Data("gameState", state=GAMESTATE.MMENU))
 
                 # Directional keys
                 # TODO: These should not be handled on a per_case basis

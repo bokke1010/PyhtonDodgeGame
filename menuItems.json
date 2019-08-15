@@ -28,6 +28,21 @@
     "coordinates":[0.1, 0.7, 0.9, 0.75],
     "visibles":["MMENU"]
   },
+  "help":{
+    "text":"How to play",
+    "object":"Button",
+    "coordinates":[0.9,0,1,0.1],
+    "result":"gameState:2",
+    "visibles":["MMENU"],
+    "color":"BLUE"
+  },
+  "howToPlay":{
+    "text":"this is a testing page",
+    "object": "Text",
+    "coordinates":[0.1, 0.7, 0.9, 0.75],
+    "visibles":["HELP"],
+    "color":"WHITE"
+  },
   "prev":{
     "text":"<--",
     "object":"Button",

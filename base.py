@@ -30,6 +30,7 @@ class PATTERNSTYLE(Enum):
 class GAMESTATE(Enum):
     ACTIVE = 0
     MMENU = 1
+    HELP = 2
 
 keyCodes = {"119":"w", "97":"a", "115":"s", "100":"d", "304":"shift"}
 
@@ -44,6 +45,7 @@ CYAN      = (0  ,192,192)
 DARKGREEN = (31 ,127,31 )
 GREEN     = (63 ,255,63 )
 RED       = (255,0  ,0  )
+BLUE      = (0  ,0  ,255)
 
 
 # Player properties
@@ -54,6 +56,12 @@ drag = 0.5
 # Universal functions
 def distance(p1, p2):
     return ( ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) )**0.5
+
+def distanceLess(p1, p2, distance, inclusiveEqual: bool = False):
+    if inclusiveEqual:
+        return ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) <= distance**2
+    else:
+        return ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) < distance**2
 
 def randomColor():
     return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))

@@ -344,7 +344,7 @@ class Bullet():
             self.borderWidth = ne.evaluate(self.borderWidthExp)
 
         # Player collision
-        collision = distance((self.x, self.y), player.sPos()) < self.size + player.size
+        collision = distanceLess((self.x, self.y), player.sPos(), self.size + player.size)
         active = self.active and self.time >= self.preTime
         if collision and active:
             player.hit(1)

@@ -1,5 +1,5 @@
 # These functions do not work anymore, too many parameters etc. have changed
-# Most of the things in here should be possible to recreate using JSON currently implemented
+# It is possible to reimplement these patterns in JSON if you feel the need to do so
 def pattern_quadFan(scr):
     spawner = {}
     spawner["fan_pattern_1/4"] = projectile.bulletSpawner(screen=scr, spawningDelay=30, minSize=8)

@@ -75,8 +75,7 @@ class BulletManager():
 
     def _drawBullet(self, coords, size, borderWidth, color):
         pos = [int(n) for n in coords]
-        innerSize = int(size - borderWidth / 2)# prevent the border from exceeding the circle
-        pygame.draw.circle(self.scr, color, pos, innerSize, borderWidth)
+        pygame.draw.circle(self.scr, color, pos, int(size), borderWidth)
 
 
     def update(self, dt, player):

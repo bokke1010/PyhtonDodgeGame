@@ -19,7 +19,7 @@ class Player():
         self.healthMeter = menu.Text(screen = self.scr, coords = (0.02*h, 0.02*h, 0.12*h, 0.12*h), text = self._healthStr(), border = False, textSize = 18, color=self.color)
 
     def _healthStr(self):
-        return str(round(100*self.lives/self.mLives))
+        return str(self.lives)
 
     def draw(self):
         # pygame.draw.circle(scr, self.color, self.sPos(), self.size)

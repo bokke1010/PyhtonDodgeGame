@@ -46,21 +46,21 @@
   "prev":{
     "text":"<--",
     "object":"Button",
-    "coordinates":[0.1, 0.75, 0.3, 0.85],
+    "coordinates":[0.1, 0.75, 0.2, 0.85],
     "result":"level:-1",
     "visibles":["MMENU"]
   },
   "startLevel":{
     "text":"%levelIndexName",
     "object":"Button",
-    "coordinates":[0.4, 0.75, 0.6, 0.85],
+    "coordinates":[0.25, 0.75, 0.75, 0.85],
     "result":"level",
     "visibles":["MMENU"]
   },
   "next":{
     "text":"-->",
     "object":"Button",
-    "coordinates":[0.7, 0.75, 0.9, 0.85],
+    "coordinates":[0.8, 0.75, 0.9, 0.85],
     "result":"level:1",
     "visibles":["MMENU"]
   }

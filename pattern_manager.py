@@ -98,7 +98,10 @@ class PatternManager():
         pt = command["preTime"] if "preTime" in command else 0
         bdw = command["borderWidth"] if "borderWidth" in command else "3"  # Borderwidth can be both a str as an int, so we assure the correct type is passed on later
 
-        spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"], lifeTime = lt, x = command["bX"], y = command["bY"], borderWidth = bdw, size = command["size"])
+        x = "w*({})".format(command["bX"])
+        y = "h*({})".format(command["bY"])
+
+        spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"], lifeTime = lt, x = x, y = y, borderWidth = bdw, size = command["size"])
 
         return spawner
 
@@ -107,7 +110,10 @@ class PatternManager():
         pt = command["preTime"] if "preTime" in command else 0
         bdw = command["borderWidth"] if "borderWidth" in command else "3" # Borderwidth can be both a str as an int, so we assure the correct type is passed on later
 
-        pattern = projectile.BulletPattern(screen = self.screen, patternSize = command["count"], preTime = pt, lifeTime = lt, x = command["bX"], y = command["bY"], borderWidth = bdw, size = command["size"])
+        x = "w*({})".format(command["bX"])
+        y = "h*({})".format(command["bY"])
+
+        pattern = projectile.BulletPattern(screen = self.screen, patternSize = command["count"], preTime = pt, lifeTime = lt, x = x, y = y, borderWidth = bdw, size = command["size"])
 
         return pattern
 

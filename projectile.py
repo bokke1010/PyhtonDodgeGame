@@ -74,8 +74,8 @@ class BulletManager():
                 self._drawBullet(item, self.bulletSize[i], borderWidth[i], color)
 
     def _drawBullet(self, coords, size, borderWidth, color):
-        pos = (int(coords[0]), int(coords[1]))
-        innerSize = int(size-0.5 * borderWidth)# prevent the border from exceeding the circle
+        pos = [int(n) for n in coords]
+        innerSize = int(size - borderWidth / 2)# prevent the border from exceeding the circle
         pygame.draw.circle(self.scr, color, pos, innerSize, borderWidth)
 
 
@@ -88,6 +88,7 @@ class BulletManager():
         tt = dt
         tb = list(ne.evaluate("tt+tb"))
         t = list(ne.evaluate("0.001*tb"))
+        self.bulletTime = tb
         c = self.bulletIndex
         # ALL BULLET CALCULATIONS HERE
 
@@ -154,7 +155,6 @@ class BulletPattern(BulletManager):
     def __init__(self, screen, visible: bool = True, patternSize: int = 10, preTime: int = 0, lifeTime: int = -1,  color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", borderWidth: str = "1", x:str = "c", y:str = "t"):
 
         super().__init__(screen = screen, visible = visible, color = color, size = size, borderWidth = borderWidth, x = x, y = y)
-        self.spawningPattern = PATTERNSTYLE.NONE
         self.patternSize = patternSize
         self.preTime = preTime
         self.lifeTime = lifeTime
@@ -166,103 +166,3 @@ class BulletPattern(BulletManager):
                 self._createBullet()
         else:
             raise Warning("This pattern is waiting for removal, will not spawn bullets")
-
-
-#
-#
-# class Bullet():
-#     def __init__(self, screen, color: tuple = PINK, preTime: int = 0, active: bool = True, lifeTime: int = -1, timeStart: int = 0):
-#         # Pattern related
-#         self.movementMode = BULLETPATH.NONE
-#         self.scr = screen
-#         # Style related
-#         self.color = color
-#         self.style = PROJECTILETYPE.BALL
-#         self.fadedColor = (self.color[0] * 0.5, self.color[1] * 0.5, self.color[2] * 0.5)
-#
-#         # Activity related
-#         self.active = active
-#         self.time = timeStart # Time since creation
-#         self.preTime = preTime
-#         self.lifeTime = lifeTime
-#
-#     def setBulletPathLine(self, pos: (int, int), vel: (int, int), size: int = 12, borderWidth: int = 3):
-#         self.movementMode = BULLETPATH.LINE
-#         (self.bx, self.by) = pos
-#         self.x, self.y = self.bx, self.by
-#         (self.dx, self.dy) = vel
-#         self.size = size
-#         self.borderWidth = borderWidth
-#
-#     def setBulletPathExpRel(self, pos: (int, int), vel: (str, str), count: int = 0, size: str = "12", borderWidth: str = "3", a: int = 0, b:int = 0):
-#         self.movementMode = BULLETPATH.EXPREL
-#         (self.x, self.y) = pos
-#         (self.dx, self.dy) = vel
-#         self.count = count
-#         self.sizeExp = size
-#         self.borderWidthExp = borderWidth
-#         self.a, self.b = a, b
-#         if self.lifeTime == -1:
-#             raise Exception("This expression bullet has no set lifetime")
-#
-#     def setBulletPathExpAbs(self, pos: (str, str), count: int = 0, size: str = "12", borderWidth: str = "3", a: int = 1, b:int = 1):
-#         self.movementMode = BULLETPATH.EXPABS
-#         (self.gx, self.gy) = pos
-#         self.count = count
-#         self.sizeExp = size
-#         self.borderWidthExp = borderWidth
-#         self.a, self.b = a, b
-#         if self.lifeTime == -1:
-#             raise Exception("This expression bullet has no set lifetime")
-#
-#     def draw(self):
-#         # Draw either active projectile, used projectile or yet unactivated projectile
-#         if self.active and self.time >= self.preTime:
-#             self._drawSelf(self.color)
-#         elif not self.active and self.time >= self.preTime:
-#             self._drawSelf(self.fadedColor)
-#         elif self.time < self.preTime:
-#             self._drawSelf(WHITE)
-#
-#     def _drawSelf(self, color):
-#         # if not (hasattr(self, 'size') or hasattr(self, 'x')):
-#         #     raise Exception("""This projectile has a expression which hasn't been calculated yet,
-#         #     make sure it's update function was called.""")
-#         pos = (int(self.x), int(self.y))
-#         innerSize = int(self.size-0.5 * self.borderWidth)# prevent the border from exceeding the circle
-#         pygame.draw.circle(self.scr, color, pos, innerSize, self.borderWidth)
-#
-#     def update(self, dt, player):
-#         # Movement
-#         self.time += dt
-#         if self.movementMode == BULLETPATH.LINE:
-#             self.x = self.bx + self.dx * self.time * 0.001
-#             self.y = self.by + self.dy * self.time * 0.001
-#
-#         elif self.movementMode == BULLETPATH.EXPREL:
-#             c = self.count
-#             t = self.time * 0.001 # Expression clock in seconds
-#             a, b = self.a, self.b
-#             x, y = self.x, self.y
-#             px, py = player.x, player.y
-#             self.x += ne.evaluate(self.dx) * dt * 0.001
-#             self.y += ne.evaluate(self.dy) * dt * 0.001
-#             self.size = ne.evaluate(self.sizeExp)
-#             self.borderWidth = ne.evaluate(self.borderWidthExp)
-#
-#         elif self.movementMode == BULLETPATH.EXPABS:
-#             c = self.count
-#             t = self.time * 0.001 # Expression clock in seconds
-#             a, b = self.a, self.b
-#             px, py = player.x, player.y
-#             self.x = ne.evaluate(self.gx)
-#             self.y = ne.evaluate(self.gy)
-#             self.size = ne.evaluate(self.sizeExp)
-#             self.borderWidth = ne.evaluate(self.borderWidthExp)
-#
-#         # Player collision
-#         collision = distanceLess((self.x, self.y), player.sPos(), self.size + player.size)
-#         active = self.active and self.time >= self.preTime
-#         if collision and active:
-#             player.hit(1)
-#             self.active = False

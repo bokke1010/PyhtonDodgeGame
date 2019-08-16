@@ -51,7 +51,7 @@
     "visibles":["MMENU"]
   },
   "startLevel":{
-    "text":"%levels[levelIndex]",
+    "text":"%levelIndexName",
     "object":"Button",
     "coordinates":[0.4, 0.75, 0.6, 0.85],
     "result":"level",

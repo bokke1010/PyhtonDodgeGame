@@ -51,6 +51,7 @@ patternManager = pattern_manager.PatternManager(screen)
 
 levelIndex = 0
 levels = patternManager.loadJson("levels.json")
+levelIndexName = levels[levelIndex]
 
 keyDownFlags = {}
 for key in keyCodes.values():
@@ -90,7 +91,8 @@ def levelRelative(relative):
         levelIndex += patternManager.levelCount
 
     # Trying to remove all button-specific code eventually
-    UIElements["startLevel"].updateText(levels[levelIndex])
+    levelIndexName = levels[levelIndex]
+    UIElements["startLevel"].updateText(levelIndexName)
 
 
 # TODO: find some way to move this to menu.py (something like copy-paste might work)

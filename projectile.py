@@ -115,8 +115,13 @@ class BulletManager():
 
         # Got our list, now we just need to remove the bullets
         # TODO: remove the bullets
-        for index in cleanupQue:
-            print("Bullet at index " + str(index) + " must be removed")
+        for index in sorted(list(cleanupQue), reverse=True):
+            self.bulletIndex.pop(index)
+            self.bulletX.pop(index)
+            self.bulletY.pop(index)
+            self.bulletSize.pop(index)
+            self.bulletTime.pop(index)
+            self.bulletActive.pop(index)
 
 
     def setDelete(self):
@@ -132,19 +137,21 @@ class BulletSpawner(BulletManager):
     def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = -1, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", borderWidth: str = "1", x:str = "c", y:str = "t"):
         super().__init__(screen=screen, visible = visible, preTime = preTime, lifeTime = lifeTime, color = color, size = size, borderWidth = borderWidth, x = x, y = y)
         # Spawning timing variables
+        self.spawning = True
         self.delay = spawningDelay # Delay in ms between created bullets
 
     def update(self, dt, player):
         # Bullet creation
-        while (self.time - self.spawnCounter * self.delay) >= self.delay:
-            time = (self.spawnCounter + 1) * self.delay
-            # Using fraction in the name specifies that this variable is a
-            # part (of a second), and as such measured in seconds
-            lateFraction = (self.time - time)/1000
-            # Using a internal helper to create the bullet
-            # This function is defined in bulletManager, and uses internal variables
-            # That is the reason we don't pass many arguments
-            self._createBullet(time, lateFraction)
+        if self.spawning:
+            while (self.time - self.spawnCounter * self.delay) >= self.delay:
+                time = (self.spawnCounter + 1) * self.delay
+                # Using fraction in the name specifies that this variable is a
+                # part (of a second), and as such measured in seconds
+                lateFraction = (self.time - time)/1000
+                # Using a internal helper to create the bullet
+                # This function is defined in bulletManager, and uses internal variables
+                # That is the reason we don't pass many arguments
+                self._createBullet(time, lateFraction)
         super().update(dt, player)
 
     def setDelete(self):

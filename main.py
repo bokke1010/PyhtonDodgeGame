@@ -95,29 +95,14 @@ def levelRelative(relative):
     UIElements["startLevel"].updateText(levelIndexName)
 
 
-# TODO: find some way to move this to menu.py (something like copy-paste might work)
-def parseMenuList(items:dict, UIElements:dict, screen:pygame.display):
-    for key, item in items.items():
-        coords = (item["coordinates"][0]*w, item["coordinates"][1]*h, item["coordinates"][2]*w, item["coordinates"][3]*h)
-        item["result"] = None if not "result" in item else item["result"]
-        item["color"] = GRAY if not "color" in item else item["color"]
-
-        # Possible malicious code injection using buttonText
-        try:
-            text = item["text"]
-            textValue = text if not "%" == text[0] else str(globals()[text[1:]])
-        except KeyError:
-            textValue = "Failed to read global"
-        UIElements[key] = item["object"](screen = screen, coords = coords, text = textValue, result = item["result"], visibles = item["visibles"], color=item["color"])
-
-
-UIElements = {}
+UIElements = menu.parseMenuList(menu.parseJson(menu.loadJson("menuItems.json")), screen)
 UI = []
+# Calling a empty levelRelative to initiate the level select button text
+# This is obviously kind of clunky, but that whole button is kind of a hack
+levelRelative(0)
 
 # I would consider giving ui import dicts like MenuButtons a unique ID, but I can't imagine
 # a scenario where multiple copies of the same UI would need to exist right now...
-parseMenuList(menu.parseJson(menu.loadJson("menuItems.json")), UIElements, screen)
-
 eventManager = keyEvents.EventManager(UI)
 # UI will eventually get a seperate system
 
@@ -134,7 +119,7 @@ while not done:
     handleReturnData(actions)
 
     # Game active loop
-    if gameState == GAMESTATE.ACTIVE:
+    if isState(gameState, GAMESTATE.ACTIVE):
 
         # Time and game clock management
         deltaTime = clock.tick(60)
@@ -147,8 +132,11 @@ while not done:
         patternManager.draw()
 
         # Player code
-        pd = playerCharacter.update((keyDownFlags['d'] - keyDownFlags['a']),
-            (keyDownFlags['s'] - keyDownFlags['w']), keyDownFlags["shift"], deltaTime)
+        # Using ê as a temporary variable since it pretty much can't conflict
+        # with anything else
+        kdf = keyDownFlags
+        pd = playerCharacter.update((kdf['d'] - kdf['a']),
+            (kdf['s'] - kdf['w']), kdf["shift"], deltaTime)
         playerCharacter.draw()
 
         # The player can now also return data from it's update function which needs to be handled
@@ -156,14 +144,14 @@ while not done:
 
 
 
-    elif gameState == GAMESTATE.MMENU:
+    elif isState(gameState, GAMESTATE.MMENU):
         clock.tick(20)
         screen.fill(DARKGRAY)
 
         patternManager.draw()
         playerCharacter.draw()
 
-    elif gameState == GAMESTATE.HELP:
+    elif isState(gameState, GAMESTATE.HELP):
         clock.tick(20)
         screen.fill(BLACK)
 

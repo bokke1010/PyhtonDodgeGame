@@ -31,12 +31,25 @@ def parseJson(jsonIn: dict) -> dict:
 
         color = globals()[value["color"]] if "color" in value else BLACK
         visibles = [getattr(GAMESTATE, x) for x in value["visibles"]]
+        border = value["border"] if "border" in value else True
 
-        return {"text":textValue, "object":menuType, "coordinates":tuple(value["coordinates"]), "result":resultOut, "visibles":visibles, "color":color}
+        return {"text":textValue, "object":menuType, "coordinates":tuple(value["coordinates"]), "result":resultOut, "visibles":visibles, "color":color, "border":border}
     rv = {}
     for key, value in jsonIn.items():
         rv[key] = formatData(value)
     return rv
+
+def parseMenuList(items:dict, screen:pygame.display) -> dict:
+    UIElements = {}
+    for key, item in items.items():
+        coords = (item["coordinates"][0]*w, item["coordinates"][1]*h, item["coordinates"][2]*w, item["coordinates"][3]*h)
+        item["result"] = None if not "result" in item else item["result"]
+        item["color"] = GRAY if not "color" in item else item["color"]
+
+        text = item["text"]
+
+        UIElements[key] = item["object"](screen = screen, coords = coords, text = text, result = item["result"], visibles = item["visibles"], color=item["color"], border = item["border"])
+    return UIElements
 
 class Text():
     def __init__(self, screen, coords: tuple = (40,40,w-40,h-40), text: str = "click here!", border = True, textSize = 20, color: tuple = (0  ,0  ,0  ), visibles:list = [], **kwargs):

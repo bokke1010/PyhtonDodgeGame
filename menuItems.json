@@ -18,9 +18,10 @@
   "Title":{
     "text":"Dodge something?",
     "object": "Text",
-    "coordinates":[0.1, 0.1, 0.9, 0.2],
+    "coordinates":[0.1, 0.15, 0.9, 0.25],
     "visibles":["MMENU"],
-    "color":"WHITE"
+    "color":"WHITE",
+    "border":false
   },
   "spawnGuide":{
     "text":"Add patterns",

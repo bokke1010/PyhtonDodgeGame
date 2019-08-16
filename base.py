@@ -8,25 +8,6 @@ class PROJECTILETYPE(Enum):
     BALL = 0
     BOX = 1
 
-class BULLETPATH(Enum):
-    NONE = 0
-    LINE = 1
-    EXPREL = 2
-    EXPABS = 3
-
-class SPAWNINGSTYLE(Enum):
-    NONE = 0
-    BOX = 1
-    EXP = 2
-    POINT = 3
-    POINTEXP = 4
-    EXPBEXP = 5 # This also allows the projectiles to evaluate their course
-    BEXPABS = 6 # Projectiles use absolute coordinates
-
-class PATTERNSTYLE(Enum):
-    NONE = 0
-    POINT = 1
-
 class GAMESTATE(Enum):
     ACTIVE = 0
     MMENU = 1
@@ -63,12 +44,6 @@ def distanceLess(p1, p2, distance, inclusiveEqual: bool = False):
         return ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) <= distance**2
     else:
         return ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) < distance**2
-
-def randomColor():
-    return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-
-def randomBetween(a, b):
-    return a + (random.random() * (b-a))
 
 def deactivateUIElement(UI, UIElement):
     if UIElement in UI:

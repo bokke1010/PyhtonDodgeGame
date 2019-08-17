@@ -45,45 +45,67 @@ def parseMenuList(items:dict, screen:pygame.display) -> dict:
         coords = (item["coordinates"][0]*w, item["coordinates"][1]*h, item["coordinates"][2]*w, item["coordinates"][3]*h)
         item["result"] = None if not "result" in item else item["result"]
         item["color"] = GRAY if not "color" in item else item["color"]
-
         text = item["text"]
 
         UIElements[key] = item["object"](screen = screen, coords = coords, text = text, result = item["result"], visibles = item["visibles"], color=item["color"], border = item["border"])
+    print(UIElements)
     return UIElements
 
-class Text():
-    def __init__(self, screen, coords: tuple = (40,40,w-40,h-40), text: str = "click here!", border = True, textSize = 20, color: tuple = (0  ,0  ,0  ), visibles:list = [], **kwargs):
-        # We accept more kwargs to allow overflowing when using this interchangably with more complex UIElement that inherits Text
+class MenuItem():
+    def __init__(self, screen, coords: tuple = (40,40,w-40,h-40), visibles:list = [], **kw):
         self.screen = screen
         self.coords = coords
+        self.visibles = visibles
+
+    def draw(self):
+        pass
+
+    def __repr__(self):
+        return "MenuItem parent class, visibles: " + str(self.visibles)
+
+
+class Text(MenuItem):
+    def __init__(self, text: str = "text box", border = True, textSize = 20, color: tuple = (0  ,0  ,0  ), backGround:bool = False, **kw):
+        super().__init__(**kw)
+        # We accept more kwargs to allow overflowing when using this interchangably with more complex UIElements
+
         self.text = text
         self.color = color
         self.font = freetype.Font(None, textSize)
         self.border = border
-        self.visibles = visibles
+        self.backGround = backGround
 
     def updateText(self, text):
         self.text = text
 
     def draw(self):
+        super().draw()
         # absolute coords of the textbox corners, and the textbox width and height
         x1, y1 = self.coords[0], self.coords[1]
         x2, y2 = self.coords[2], self.coords[3]
         dx, dy = x2 - x1       , y2 - y1
 
-        # Draw the text border
-        if self.border:
-            pygame.draw.rect(self.screen, self.color, (x1,y1,dx,dy), 2)
-
         # First we calculate the central position of the Button
         # Then we get the size of the text we're rendering
         # Using these values, we calculate the top-left corner for that text to be centered
-        # Then we render it
         buttonCenter = (0.5*(x1+x2), 0.5*(y1+y2))
         textRect = self.font.get_rect(self.text, size=self.font.size)
-
         textPos = (int(buttonCenter[0]-0.5*textRect.width), int(buttonCenter[1]-0.5*textRect.height))
+
+        # Draw the text border
+        if self.border:
+            pygame.draw.rect(self.screen, self.color, (x1,y1,dx,dy), 2)
+        if self.backGround:
+            bgColor = BLACK if sum([channel/3 for channel in self.color]) > 63 else WHITE
+            bgB = 4 # background border width
+            backgroundRect = (textPos[0]-bgB, textPos[1]-bgB, textRect.width+2*bgB, textRect.height+2*bgB)
+            pygame.draw.rect(self.screen, bgColor, backgroundRect)
+
         self.font.render_to(self.screen, textPos, self.text, fgcolor=self.color)
+
+    def __repr__(self):
+        return "MenuItem Text class: " + str(self.visibles)
+
 
 class Button(Text):
     def __init__(self, result: Data = Data("pass"), **kw):
@@ -98,12 +120,16 @@ class Button(Text):
         print("Button clicked once, returning: " + str(self.result))
         return self.result
 
-class sButton(Button):
-
-    def getClick(self, pos):
-        if self.coords[0] <= pos[0] <= self.coords[2] and self.coords[1] <= pos[1] <= self.coords[3]:
-            level = (pos[0]-self.coords[0])/self.coords[2]
-            return self.onClick(level)
-
-    def onClick(self, level):
-        return self.result.set("level", level)
+    def __repr__(self):
+        return "MenuItem Button class: " + str(self.visibles)
+# This needs to be reimplemented as a proper silder later
+#
+# class sButton(Button):
+#
+#     def getClick(self, pos):
+#         if self.coords[0] <= pos[0] <= self.coords[2] and self.coords[1] <= pos[1] <= self.coords[3]:
+#             level = (pos[0]-self.coords[0])/self.coords[2]
+#             return self.onClick(level)
+#
+#     def onClick(self, level):
+#         return self.result.set("level", level)

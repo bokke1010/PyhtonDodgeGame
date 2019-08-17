@@ -16,7 +16,7 @@ class Player():
         self.mLives = lives
         self.secCol = DARKGREEN # Object's color
         self.scr =  scr
-        self.healthMeter = menu.Text(screen = self.scr, coords = (0.02*h, 0.02*h, 0.12*h, 0.12*h), text = self._healthStr(), border = False, textSize = 18, color=self.color)
+        self.healthMeter = menu.Text(screen = self.scr, coords = (0.02*h, 0.02*h, 0.12*h, 0.12*h), text = self._healthStr(), border = False, textSize = 18, color=self.color, backGround = True)
 
     def _healthStr(self):
         return str(self.lives)
@@ -34,7 +34,7 @@ class Player():
         pygame.draw.arc(self.scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives, 2)
         # Drawing text and small background circle for contrast
         # TODO: Integrate contrast circle into menu.Text()
-        pygame.draw.circle(self.scr, BLACK, (int(0.07*h), int(0.07*h)), int(0.04*h))
+        # pygame.draw.circle(self.scr, BLACK, (int(0.07*h), int(0.07*h)), int(0.04*h))
         self.healthMeter.draw()
         # Player draw/collision marker
         pygame.draw.circle(self.scr, self.secCol, dPos, self.size)

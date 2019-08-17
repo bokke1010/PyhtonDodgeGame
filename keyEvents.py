@@ -29,8 +29,8 @@ class EventManager():
                     # print(type(UIElement))
                     if isinstance(UIElement, menu.Button):
                         ret(UIElement.getClick(pos))
-                    elif isinstance(UIElement, menu.sButton):
-                        ret(UIElement.getClick(pos))
+                    # elif isinstance(UIElement, menu.sButton):
+                    #     ret(UIElement.getClick(pos))
 
             if event.type == pygame.KEYDOWN:
                 # Navigation keys

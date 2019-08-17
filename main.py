@@ -132,8 +132,6 @@ while not done:
         patternManager.draw()
 
         # Player code
-        # Using ê as a temporary variable since it pretty much can't conflict
-        # with anything else
         kdf = keyDownFlags
         pd = playerCharacter.update((kdf['d'] - kdf['a']),
             (kdf['s'] - kdf['w']), kdf["shift"], deltaTime)

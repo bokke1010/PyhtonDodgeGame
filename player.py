@@ -33,8 +33,6 @@ class Player():
         # Health bar
         pygame.draw.arc(self.scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives, 2)
         # Drawing text and small background circle for contrast
-        # TODO: Integrate contrast circle into menu.Text()
-        # pygame.draw.circle(self.scr, BLACK, (int(0.07*h), int(0.07*h)), int(0.04*h))
         self.healthMeter.draw()
         # Player draw/collision marker
         pygame.draw.circle(self.scr, self.secCol, dPos, self.size)

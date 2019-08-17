@@ -2,9 +2,6 @@ from base import *
 import numexpr as ne
 import numpy
 
-# TODO: Mayor cleanup and refactor
-# use numexpr high efficientcy array-operations for large performance improvements
-
 class BulletManager():
     def __init__(self, screen: pygame.display, visible: bool = True, preTime: int = 0, lifeTime: int = 1, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", borderWidth: str = "1", x:str = "c", y:str = "t"):
         self.scr = screen
@@ -113,7 +110,6 @@ class BulletManager():
                 cleanupQue.add(i)
 
         # Got our list, now we just need to remove the bullets
-        # TODO: remove the bullets
         for index in sorted(list(cleanupQue), reverse=True):
             self.bulletIndex.pop(index)
             self.bulletX.pop(index)

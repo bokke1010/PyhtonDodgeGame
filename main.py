@@ -1,4 +1,4 @@
-import projectile, pattern_manager, menu, keyEvents, player
+import projectile, pattern_manager, menu, keyEvents, player, gamestates
 from base import *
 
 # This file acts as a hub for all other files (except base.py, that one only
@@ -12,19 +12,28 @@ from base import *
 
 pygame.init()
 
+screen = pygame.display.set_mode((w, h))
+clock = pygame.time.Clock()
+
 gameState = None
+loadedStates = {}
+#TODO: This is where you can add custom gamestates (before the state loading)
+
+for key, state in gamestates.gameStates.items():
+    loadedStates[key] = state() # Can also use state.value, but we've already got the keys
 
 def setGamestateUI(UIElements, gameState, UI):
     for key, item in UIElements.items():
-        if gameState in item.visibles:
+        if gameState.value in item.visibles:
             activateUIElement(UI, item)
         else:
             deactivateUIElement(UI, item)
 
 def setGameState(state = GAMESTATE.MMENU):
     global gameState, UIElements, UI
-    if not gameState == state:
-        gameState = state
+    if (gameState == None) or (not gameState.value == state):
+        print(gamestates.gameStates)
+        gameState = loadedStates[state]
         setGamestateUI(UIElements, gameState, UI)
 
 def isState(a,b):
@@ -38,9 +47,7 @@ def stopMainLoop():
     global done
     done = True
 
-screen = pygame.display.set_mode((w, h))
-clock = pygame.time.Clock()
-
+# Defining in-game variables
 done = False
 
 deltaTime = 0
@@ -57,6 +64,10 @@ keyDownFlags = {}
 for key in keyCodes.values():
     keyDownFlags[key] = False
 print(keyDownFlags)
+
+# Passing around the required variables to our gamestate controller
+gamestates.passClass(screen = screen, clock = clock, patternManager = patternManager, playerCharacter = playerCharacter)
+
 
 def handleReturnData(data):
     """Handle returned [Data()] objects with commands/information"""
@@ -104,7 +115,6 @@ levelRelative(0)
 # I would consider giving ui import dicts like MenuButtons a unique ID, but I can't imagine
 # a scenario where multiple copies of the same UI would need to exist right now...
 eventManager = keyEvents.EventManager(UI)
-# UI will eventually get a seperate system
 
 
 # Initialization done, loading gameState
@@ -119,45 +129,17 @@ while not done:
     handleReturnData(actions)
 
     # Game active loop
-    if isState(gameState, GAMESTATE.ACTIVE):
+    # We already passed most required objects earlier (why there not here or the other way around?)
+    # So we only need to pass kdf
+    returnData = gameState.update(keyDownFlags = keyDownFlags)
+    if not returnData == None:
+        handleReturnData(returnData)
 
-        # Time and game clock management
-        deltaTime = clock.tick(60)
-        time += deltaTime # time and deltatime in milliseconds
-
-        # Reset screen to start drawing frame
-        screen.fill(BLACK)
-
-        patternManager.update(deltaTime, playerCharacter)
-        patternManager.draw()
-
-        # Player code
-        kdf = keyDownFlags
-        pd = playerCharacter.update((kdf['d'] - kdf['a']),
-            (kdf['s'] - kdf['w']), kdf["shift"], deltaTime)
-        playerCharacter.draw()
-
-        # The player can now also return data from it's update function which needs to be handled
-        handleReturnData(pd)
-
-
-
-    elif isState(gameState, GAMESTATE.MMENU):
-        clock.tick(20)
-        screen.fill(DARKGRAY)
-
-        patternManager.draw()
-        playerCharacter.draw()
-
-    elif isState(gameState, GAMESTATE.HELP):
-        clock.tick(20)
-        screen.fill(BLACK)
 
     # UI layer
     # UI uses a seperate system from object drawing.
     # it is created and rendered last and not affected by gamestate
     for UIElement in UI:
         UIElement.draw()
-
     pygame.display.flip()
 pygame.quit()

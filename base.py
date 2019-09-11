@@ -31,6 +31,7 @@ BLUE      = (0  ,0  ,255)
 
 # Player properties
 playerSize = 5
+playerLives = 24
 acceleration = 160
 drag = 0.5
 

@@ -46,7 +46,7 @@ done = False
 deltaTime = 0
 time = 0
 
-playerCharacter = player.Player(playerSize, [w/2, h-playerSize], RED, acceleration, drag, 10, screen)
+playerCharacter = player.Player(playerSize, [w/2, h-playerSize], RED, acceleration, drag, playerLives, screen)
 patternManager = pattern_manager.PatternManager(screen)
 
 levelIndex = 0
@@ -78,8 +78,6 @@ def handleReturnData(data):
                 setGameState(GAMESTATE.ACTIVE)
         elif action.type == "keySet":
             keyDownFlags[action.key] = action.value
-
-# UI needs it's own file/import, preferably another JSON file like the level system
 
 def levelRelative(relative):
     """Moves the level index according to the given value"""

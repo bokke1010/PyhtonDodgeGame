@@ -110,6 +110,7 @@ class BulletManager():
                 cleanupQue.add(i)
 
         # Got our list, now we just need to remove the bullets
+        # TODO: clean up redundancy
         for index in sorted(list(cleanupQue), reverse=True):
             self.bulletIndex.pop(index)
             self.bulletX.pop(index)

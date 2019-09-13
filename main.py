@@ -17,7 +17,8 @@ clock = pygame.time.Clock()
 
 gameState = None
 loadedStates = {}
-#TODO: This is where you can add custom gamestates (before the state loading)
+
+# NOTE: This is where you can add custom gamestates (before the state loading)
 
 for key, state in gamestates.gameStates.items():
     loadedStates[key] = state() # Can also use state.value, but we've already got the keys
@@ -32,7 +33,6 @@ def setGamestateUI(UIElements, gameState, UI):
 def setGameState(state = GAMESTATE.MMENU):
     global gameState, UIElements, UI
     if (gameState == None) or (not gameState.value == state):
-        print(gamestates.gameStates)
         gameState = loadedStates[state]
         setGamestateUI(UIElements, gameState, UI)
 

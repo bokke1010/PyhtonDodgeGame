@@ -80,6 +80,3 @@ gameStates[GamestateActive.value] = GamestateActive
 
 def addState(state):
     gameStates[state.value] = state
-
-
-print(gameStates)

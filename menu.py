@@ -9,11 +9,11 @@ def loadJson(fileName:str) -> dict:
         return json.load(json_file)
 
 
-def parseJson(jsonIn: dict) -> dict:
+def parseJson(jsonIn: dict, screen) -> dict:
     """Parses JSON from a file to dicts readable by parseMenuList() (see main.py)"""
-    def formatData(value: dict) -> dict:
-        textValue = value["text"]
-        menuType = globals()[value["object"]]
+    UIElements = {}
+
+    for key, value in jsonIn.items():
 
         # TODO: make up my mind on a common standard to add data this way
         resultOut = None
@@ -29,29 +29,18 @@ def parseJson(jsonIn: dict) -> dict:
                 resultOut = Data("gameState", state = int(resultIn[1]))
 
 
+        text = value["text"]
+        menuType = globals()[value["object"]]
         color = globals()[value["color"]] if "color" in value else BLACK
         visibles = [getattr(GAMESTATE, x) for x in value["visibles"]]
         border = value["border"] if "border" in value else True
         fontSize = value["fontSize"] if "fontSize" in value else 20
+        coords = (value["coordinates"][0]*w, value["coordinates"][1]*h, value["coordinates"][2]*w, value["coordinates"][3]*h)
 
-        return {"text":textValue, "object":menuType, "coordinates":tuple(value["coordinates"]), "result":resultOut, "visibles":visibles, "color":color, "border":border, "fontSize":fontSize}
-    rv = {}
-    for key, value in jsonIn.items():
-        rv[key] = formatData(value)
-    return rv
-
-def parseMenuList(items:dict, screen:pygame.display) -> dict:
-    UIElements = {}
-    for key, item in items.items():
-        coords = (item["coordinates"][0]*w, item["coordinates"][1]*h, item["coordinates"][2]*w, item["coordinates"][3]*h)
-        item["result"] = None if not "result" in item else item["result"]
-        item["color"] = GRAY if not "color" in item else item["color"]
-        item["fontSize"] = 20 if not "fontSize" in item else item["fontSize"]
-        text = item["text"]
-
-        UIElements[key] = item["object"](screen = screen, coords = coords, text = text, result = item["result"], visibles = item["visibles"], color=item["color"], border = item["border"], textSize = item["fontSize"])
+        UIElements[key] = menuType(screen = screen, coords = coords, text = text, result = resultOut, visibles = visibles, color=color, border = border, fontSize = fontSize)
 
     return UIElements
+
 
 class MenuItem():
     def __init__(self, screen, coords: tuple = (40,40,w-40,h-40), visibles:list = [], **kw):
@@ -67,13 +56,13 @@ class MenuItem():
 
 
 class Text(MenuItem):
-    def __init__(self, text: str = "text box", border = True, textSize: int = 20, color: tuple = (0  ,0  ,0  ), backGround:bool = False, **kw):
+    def __init__(self, text: str = "text box", border = True, fontSize: int = 20, color: tuple = (0  ,0  ,0  ), backGround:bool = False, **kw):
         super().__init__(**kw)
         # We accept more kwargs to allow overflowing when using this interchangably with more complex UIElements
 
         self.text = text
         self.color = color
-        self.font = freetype.Font(None, textSize)
+        self.font = freetype.Font(None, fontSize)
         self.border = border
         self.backGround = backGround
 

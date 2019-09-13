@@ -97,7 +97,7 @@ def levelRelative(relative):
     UIElements["startLevel"].updateText(levelIndexName)
 
 
-UIElements = menu.parseMenuList(menu.parseJson(menu.loadJson("menuItems.json")), screen)
+UIElements = menu.parseJson(menu.loadJson("menuItems.json"), screen)
 UI = []
 # Calling a empty levelRelative to initiate the level select button text
 # This is obviously kind of clunky, but that whole button is kind of a hack

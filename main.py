@@ -36,13 +36,6 @@ def setGameState(state = GAMESTATE.MMENU):
         gameState = loadedStates[state]
         setGamestateUI(UIElements, gameState, UI)
 
-def isState(a,b):
-    if not type(a) == int:
-        a = a.value
-    if not type(b) == int:
-        b = b.value
-    return a == b
-
 def stopMainLoop():
     global done
     done = True

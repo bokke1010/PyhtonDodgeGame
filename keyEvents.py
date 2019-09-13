@@ -32,30 +32,19 @@ class EventManager():
                     # elif isinstance(UIElement, menu.sButton):
                     #     ret(UIElement.getClick(pos))
 
+            # TODO: Integrate this into gamestate classes somehow
             if event.type == pygame.KEYDOWN:
                 # Navigation keys
-                if gameState == GAMESTATE.MMENU: # All menu keyEvents
-                    if event.key == 275: # Right arrow
-                        ret(Data("gameState", state=GAMESTATE.ACTIVE))
-                    # if event.key == 27: # Esc. key
-                    #     stopMainLoop()
-                if gameState == GAMESTATE.ACTIVE: # All game keyEvents
-                    if event.key in [276, 27]: # Left arrow or Esc
-                        ret(Data("gameState", state=GAMESTATE.MMENU))
-                if gameState == GAMESTATE.HELP:
-                    if event.key in [276, 27]:
-                        ret(Data("gameState", state=GAMESTATE.MMENU))
+                if event.key in gameState.keyUp:
+                    ret(gameState.keyUp[event.key])
 
                 # Directional keys
-                # TODO: These should not be handled on a per_case basis
-                keyStr = str(event.key)
-                if keyStr in keyCodes:
-                    ret(Data("keySet", key=keyCodes[keyStr], value = True))
+                if event.key in keyCodes:
+                    ret(Data("keySet", key=keyCodes[event.key], value = True))
 
 
             # KeyUp events for directional keys
             if event.type == pygame.KEYUP:
-                keyStr = str(event.key)
-                if keyStr in keyCodes:
-                    ret(Data("keySet", key=keyCodes[keyStr], value = False))
+                if event.key in keyCodes:
+                    ret(Data("keySet", key=keyCodes[event.key], value = False))
         return que

@@ -12,10 +12,20 @@ def passClass(**kwargs):
             globals()[key] = value
 
 class Gamestate():
+    def __init__(self):
+        super().__init__()
+        self.keyUp = {}
+        self.keyDown = {}
+
     def update(self):
         pass
 
 class GamestateMenu(Gamestate):
+
+    def __init__(self):
+        super().__init__()
+        self.keyUp[275] = Data("gameState", state=GAMESTATE.ACTIVE)
+
     def update(self, **kwarg):
         super().update()
         clock.tick(20)
@@ -39,9 +49,12 @@ gameStates[GamestateHelp.value] = GamestateHelp
 
 class GamestateActive(Gamestate):
     value = GAMESTATE.ACTIVE
+
     def __init__(self, **kwarg):
         super().__init__()
         self.time = 0
+        self.keyUp[27] = Data("gameState", state=GAMESTATE.MMENU)
+        self.keyUp[276] = Data("gameState", state=GAMESTATE.MMENU)
 
     def update(self, **kwarg):
         super().update()

@@ -13,7 +13,7 @@ class GAMESTATE(Enum):
     MMENU = 1
     HELP = 2
 
-keyCodes = {"119":"w", "97":"a", "115":"s", "100":"d", "304":"shift"}
+keyCodes = {119:"w", 97:"a", 115:"s", 100:"d", 304:"shift"}
 
 # Some default colors:
 BLACK     = (0  ,0  ,0  )
@@ -39,6 +39,13 @@ distance = lambda p1, p2: ( ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) )**0.5
 
 clamp = lambda x, l, u: max(l, min(u, x))
 
+def isState(a,b):
+    if not type(a) == int:
+        a = a.value
+    if not type(b) == int:
+        b = b.value
+    return a == b
+
 def distanceLess(p1, p2, distance, inclusiveEqual: bool = False):
     if inclusiveEqual:
         return ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) <= distance**2
@@ -53,8 +60,7 @@ def activateUIElement(UI, UIElement):
     if not UIElement in UI:
         UI.append(UIElement)
 
-def sgn(a):
-    return (a > 0) - (a < 0)
+sgn = lambda a : (a > 0) - (a < 0)
 
 # Universal data type
 class Data():

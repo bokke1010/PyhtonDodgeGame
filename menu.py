@@ -32,8 +32,9 @@ def parseJson(jsonIn: dict) -> dict:
         color = globals()[value["color"]] if "color" in value else BLACK
         visibles = [getattr(GAMESTATE, x) for x in value["visibles"]]
         border = value["border"] if "border" in value else True
+        fontSize = value["fontSize"] if "fontSize" in value else 20
 
-        return {"text":textValue, "object":menuType, "coordinates":tuple(value["coordinates"]), "result":resultOut, "visibles":visibles, "color":color, "border":border}
+        return {"text":textValue, "object":menuType, "coordinates":tuple(value["coordinates"]), "result":resultOut, "visibles":visibles, "color":color, "border":border, "fontSize":fontSize}
     rv = {}
     for key, value in jsonIn.items():
         rv[key] = formatData(value)
@@ -45,10 +46,11 @@ def parseMenuList(items:dict, screen:pygame.display) -> dict:
         coords = (item["coordinates"][0]*w, item["coordinates"][1]*h, item["coordinates"][2]*w, item["coordinates"][3]*h)
         item["result"] = None if not "result" in item else item["result"]
         item["color"] = GRAY if not "color" in item else item["color"]
+        item["fontSize"] = 20 if not "fontSize" in item else item["fontSize"]
         text = item["text"]
 
-        UIElements[key] = item["object"](screen = screen, coords = coords, text = text, result = item["result"], visibles = item["visibles"], color=item["color"], border = item["border"])
-    # print(UIElements)
+        UIElements[key] = item["object"](screen = screen, coords = coords, text = text, result = item["result"], visibles = item["visibles"], color=item["color"], border = item["border"], textSize = item["fontSize"])
+
     return UIElements
 
 class MenuItem():
@@ -65,7 +67,7 @@ class MenuItem():
 
 
 class Text(MenuItem):
-    def __init__(self, text: str = "text box", border = True, textSize = 20, color: tuple = (0  ,0  ,0  ), backGround:bool = False, **kw):
+    def __init__(self, text: str = "text box", border = True, textSize: int = 20, color: tuple = (0  ,0  ,0  ), backGround:bool = False, **kw):
         super().__init__(**kw)
         # We accept more kwargs to allow overflowing when using this interchangably with more complex UIElements
 

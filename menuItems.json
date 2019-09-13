@@ -26,8 +26,9 @@
   "spawnGuide":{
     "text":"Add patterns",
     "object": "Text",
-    "coordinates":[0.1, 0.7, 0.9, 0.75],
-    "visibles":["MMENU"]
+    "coordinates":[0.1, 0.65, 0.9, 0.75],
+    "visibles":["MMENU"],
+    "border":false
   },
   "help":{
     "text":"How to play",
@@ -35,7 +36,8 @@
     "coordinates":[0.9,0,1,0.1],
     "result":"gameState:2",
     "visibles":["MMENU"],
-    "color":"BLUE"
+    "color":"BLUE",
+    "fontSize":8
   },
   "howToPlay":{
     "text":"this is a testing page",
@@ -45,11 +47,13 @@
     "color":"WHITE"
   },
   "prev":{
-    "text":"<--",
+    "text":"<",
     "object":"Button",
     "coordinates":[0.1, 0.75, 0.2, 0.85],
     "result":"level:-1",
-    "visibles":["MMENU"]
+    "visibles":["MMENU"],
+    "fontSize":50,
+    "border":false
   },
   "startLevel":{
     "text":"%levelIndexName",
@@ -59,10 +63,12 @@
     "visibles":["MMENU"]
   },
   "next":{
-    "text":"-->",
+    "text":">",
     "object":"Button",
     "coordinates":[0.8, 0.75, 0.9, 0.85],
     "result":"level:1",
-    "visibles":["MMENU"]
+    "visibles":["MMENU"],
+    "fontSize":50,
+    "border":false
   }
 }

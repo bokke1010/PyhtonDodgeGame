@@ -50,7 +50,7 @@ def parseMenuList(items:dict, screen:pygame.display) -> dict:
         text = item["text"]
 
         UIElements[key] = item["object"](screen = screen, coords = coords, text = text, result = item["result"], visibles = item["visibles"], color=item["color"], border = item["border"], textSize = item["fontSize"])
-    print(UIElements)
+
     return UIElements
 
 class MenuItem():

@@ -23,7 +23,7 @@
     {
       "spawner":{
         "revolvingCircle":{
-          "delay":20,
+          "delay":10,
           "size":"5",
           "bulletBorderWidth":"1",
           "bX":"0.5+0.32*cos((1/4)*pi*c)+0.32*cos(t*1*pi+c*(1/4)*pi+pi)",
@@ -33,7 +33,7 @@
       }
     },
     {
-      "wait":8000
+      "wait":2000
     },
     {
       "del":["revolvingCircle"]
@@ -42,7 +42,7 @@
   "pulse!":[
     {
       "pattern":{
-        "weirdGrid":{
+        "pulse":{
           "count":50,
           "size":"3",
           "bulletBorderWidth":"1",
@@ -50,26 +50,35 @@
           "bX":"0.5 + 0.5*cos(0.04*c*pi)*t*cos(0.5*t*pi)",
           "bY":"0.5 + 0.5*sin(0.04*c*pi)*t*cos(0.5*t*pi)",
           "bulletLifeTime":2000
+        },
+        "spiral":{
+          "count":120,
+          "size":"3",
+          "bulletBorderWidth":"1",
+          "preTime":500,
+          "bX":"0.5 + 0.5*cos(0.05*c*pi)*t*(c/240+0.8)*cos(0.5*t*pi)",
+          "bY":"0.5 + 0.5*sin(0.05*c*pi)*t*(c/240+0.8)*cos(0.5*t*pi)",
+          "bulletLifeTime":2000
         }
       }
     },
     {
-      "trigger":["weirdGrid"]
+      "trigger":["pulse"]
     },
     {
       "wait":500
     },
     {
-      "trigger":["weirdGrid"]
+      "trigger":["pulse"]
     },
     {
       "wait":500
     },
     {
-      "trigger":["weirdGrid"]
+      "trigger":["spiral"]
     },
     {
-      "del":["weirdGrid"]
+      "del":["pulse", "spiral"]
     }
   ],
   "predictable bullet hell":[
@@ -85,9 +94,9 @@
         "Intervention":{
           "delay":400,
           "size":"30",
-          "bX":"0.5 + (2**0.5)*cos(c*1.3*pi)*(1-t)",
-          "bY":"0.5 + (2**0.5)*sin(c*1.3*pi)*(1-t)",
-          "bulletLifeTime":2000
+          "bX":"0.5 + 0.5 * cos(c*1.19*pi)",
+          "bY":"t/4",
+          "bulletLifeTime":4000
         }
       }
     },
@@ -98,14 +107,14 @@
       "del":["microspiral", "Intervention"]
     }
   ],
-  "8-pointed sharp star":[
+  "6-pointed sharp star":[
     {
       "spawner":{
         "microspiral":{
-          "delay":10,
-          "size":"12",
-          "bX":"0.5 + t*(1/2)*cos(c*0.246*pi)",
-          "bY":"0.5 + t*(1/2)*sin(c*0.246*pi)",
+          "delay":20,
+          "size":"11",
+          "bX":"0.5 + t*(1/2)*cos(c*0.329*pi)",
+          "bY":"0.5 + t*(1/2)*sin(c*0.329*pi)",
           "bulletLifeTime":1500
         }
       }

@@ -16,10 +16,12 @@ class BulletManager():
         self.GX = x
         self.GY = y
 
+        self.damage = 1
         self.preTime = preTime #Passing down the bullet fuse
         self.lifeTime = lifeTime
         if self.lifeTime == -1:
             raise Exception("bullets must have a maximum lifetime")
+
 
         # Style related
         self.colorActive = color["active"]
@@ -71,14 +73,14 @@ class BulletManager():
                 self._drawBullet(item, self.bulletSize[i], borderWidth[i], color)
 
     def _drawBullet(self, coords, size, borderWidth, color):
-        pos = [int(n) for n in coords]
-        pygame.draw.circle(self.scr, color, pos, int(size), borderWidth)
+        pos = (int(coords[0]*w), int(coords[1]*h))
+        pygame.draw.circle(self.scr, color, pos, int(size*w), int(borderWidth*w))
 
 
     def update(self, dt, player):
         self.time += dt
         cleanupQue = set()
-        (px, py) = player.sPos()
+        (px, py) = player.pos()
         x, y = self.bulletX, self.bulletY
         tb = self.bulletTime
         tt = dt
@@ -101,9 +103,9 @@ class BulletManager():
         for i, bi in enumerate(self.bulletIndex):
             pos = (self.bulletX[i], self.bulletY[i])
             a = self.bulletActive[i] and self.bulletTime[i] > self.preTime
-            if distanceLess(pos, player.sPos(), self.bulletSize[i]+player.size) and a:
-                player.hit(1)
-                self.bulletActive[i] = False
+            if distanceLess(pos, player.pos(), self.bulletSize[i]+player.size) and a:
+                if player.hit(self.damage):
+                    self.bulletActive[i] = False
             # Bullet cleanup (out of bounds & movement check)
             # Bullets that exceed their lifetime get cleansed
             if self.bulletTime[i] > self.lifeTime:

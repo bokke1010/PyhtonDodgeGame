@@ -46,7 +46,7 @@ done = False
 deltaTime = 0
 time = 0
 
-playerCharacter = player.Player(playerSize, [w/2, h-playerSize], RED, acceleration, drag, playerLives, screen)
+playerCharacter = player.Player(playerSize, [0.5, 0.9], RED, acceleration, drag, playerLives, screen)
 patternManager = pattern_manager.PatternManager(screen)
 
 levelIndex = 0

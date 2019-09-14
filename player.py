@@ -1,46 +1,54 @@
 from base import *
-import menu
+import menu, particle
 
 class Player():
     """This class defines a player character, using general parameters and player input
     to function"""
 
-    def __init__(self, size, pos, color, acc, drag, lives, scr):
+    def __init__(self, size, pos, color, acc, drag, lives, screen):
         self.size = size
+
         (self.x, self.y) = pos
         self.dx, self.dy = 0, 0
         self.acc = acc
         self.drag = drag
-        self.color = color # Health bar color
+
         self.lives = lives
         self.mLives = lives
+
+        self.age = 0
+        self.hitTimer = 0
+
+        self.color = color # Health bar color
         self.secCol = DARKGREEN # Object's color
-        self.scr =  scr
-        self.healthMeter = menu.Text(screen = self.scr, coords = (0.02*h, 0.02*h, 0.12*h, 0.12*h), text = self._healthStr(), border = False, textSize = 18, color=self.color, backGround = True)
+
+        self.screen =  screen
+
+        self.healthMeter = menu.Text(screen = self.screen, coords = (0.02*h, 0.02*h, 0.12*h, 0.12*h), text = self._healthStr(), border = False, textSize = 18, color=self.color, backGround = True)
+        self.particle = particle.ParticleManager(screen = self.screen)
 
     def _healthStr(self):
         return str(self.lives)
 
     def draw(self):
-        # pygame.draw.circle(scr, self.color, self.sPos(), self.size)
-        dPos = self.sPos()
-        healthBarRad = self.size + 6
-        # rect = pygame.Rect(int(dPos[0]-healthBarRad),int(dPos[1]-healthBarRad),
-        #     int(2*healthBarRad),int(2*healthBarRad))
+        dPos = self._sPos()
+
         # This command uses topLeft and width/height, that's why we enter .1 instead of .12
         rect = pygame.Rect(0.02*h, 0.02*h, 0.1*h, 0.1*h)
 
         # Health bar
-        pygame.draw.arc(self.scr, self.color, rect, 0, 2*math.pi*self.lives / self.mLives, 2)
+        pygame.draw.arc(self.screen, self.color, rect, 0, 2*math.pi*self.lives / self.mLives, 2)
         # Drawing text and small background circle for contrast
         self.healthMeter.draw()
+        self.particle.draw()
         # Player draw/collision marker
-        pygame.draw.circle(self.scr, self.secCol, dPos, self.size)
+        pygame.draw.circle(self.screen, self.secCol, dPos, int(self.size*w))
 
 
     def update(self, xInp, yInp, sneak, dt):
         rtd = []
 
+        self.age += dt
         # Game implementation
         # The second part prevents diagonal input from being faster than horizontal
         # input
@@ -49,13 +57,14 @@ class Player():
         self.y += (self.acc * yInp * (2-sneak) * dt * 0.001) * diagMod
 
         # Prevent out-of-bounds character
-        self.x = clamp(self.x, 0, w)
-        self.y = clamp(self.y, 0, h)
+        self.x = clamp(self.x, 0, 1)
+        self.y = clamp(self.y, 0, 1)
 
         # Keep the UI updated
         # This part of the UI is integrated into the player instead of the
         # main UI storage, and doesn't get updated by the general UI loop as a result
         self.healthMeter.updateText(self._healthStr())
+        self.particle.update(dt)
 
         # End game when dead
         if self.lives <= 0:
@@ -63,8 +72,19 @@ class Player():
             rtd.append(Data("stop"))
         return rtd
 
-    def sPos(self):
-        return (int(self.x),int(self.y))
+    def _sPos(self):
+        return (int(self.x * w),int(self.y * h))
+
+    def pos(self):
+        return (self.x,self.y)
+
+    def _vulnerable(self):
+        return self.age > self.hitTimer
 
     def hit(self, damage):
-        self.lives -= damage
+        if self._vulnerable():
+            self.hitTimer = self.age + 1000
+            self.lives -= damage
+            self.particle.summon(self.pos(), 0.1, 1000, LIGHTGRAY)
+            return True
+        return False

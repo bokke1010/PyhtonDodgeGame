@@ -30,9 +30,9 @@ BLUE      = (0  ,0  ,255)
 
 
 # Player properties
-playerSize = 5
+playerSize = 0.01
 playerLives = 24
-acceleration = 160
+acceleration = 0.35
 drag = 0.5
 
 # Universal functions

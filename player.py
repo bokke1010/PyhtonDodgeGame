@@ -83,8 +83,8 @@ class Player():
 
     def hit(self, damage):
         if self._vulnerable():
-            self.hitTimer = self.age + 1000
+            self.hitTimer = self.age + 600
             self.lives -= damage
-            self.particle.summon(self.pos(), 0.1, 1000, LIGHTGRAY)
+            self.particle.summon(self.pos(), 0.1, 900, LIGHTGRAY, ds=-0.01)
             return True
         return False

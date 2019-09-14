@@ -109,8 +109,7 @@ class PatternManager():
         pt = command["preTime"] if "preTime" in command else 0
         bdw = command["borderWidth"] if "borderWidth" in command else "0.006"
 
-        x = "w*({})".format(command["bX"])
-        y = "h*({})".format(command["bY"])
+        x, y = command["bX"], command["bY"]
 
         pattern = projectile.BulletPattern(screen = self.screen, patternSize = command["count"], preTime = pt, lifeTime = lt, x = x, y = y, borderWidth = bdw, size = command["size"])
 

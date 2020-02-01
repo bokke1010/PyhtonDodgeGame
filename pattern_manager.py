@@ -96,22 +96,20 @@ class PatternManager():
     def parseSpawner(self, command):
         lt = command["bulletLifeTime"] if "bulletLifeTime" in command else -1
         pt = command["preTime"] if "preTime" in command else 0
-        bdw = command["borderWidth"] if "borderWidth" in command else "0.006"  # Borderwidth can be both a str as an int, so we assure the correct type is passed on later
 
         x, y = command["bX"], command["bY"]
 
-        spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"], lifeTime = lt, x = x, y = y, borderWidth = bdw, size = command["size"])
+        spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"], lifeTime = lt, x = x, y = y, size = command["size"])
 
         return spawner
 
     def parsePattern(self, command):
         lt = command["bulletLifeTime"] if "bulletLifeTime" in command else -1
         pt = command["preTime"] if "preTime" in command else 0
-        bdw = command["borderWidth"] if "borderWidth" in command else "0.006"
 
         x, y = command["bX"], command["bY"]
 
-        pattern = projectile.BulletPattern(screen = self.screen, patternSize = command["count"], preTime = pt, lifeTime = lt, x = x, y = y, borderWidth = bdw, size = command["size"])
+        pattern = projectile.BulletPattern(screen = self.screen, patternSize = command["count"], preTime = pt, lifeTime = lt, x = x, y = y, size = command["size"])
 
         return pattern
 

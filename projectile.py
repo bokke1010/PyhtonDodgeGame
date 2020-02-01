@@ -3,7 +3,7 @@ import numexpr as ne
 import numpy
 
 class BulletManager():
-    def __init__(self, screen: pygame.display, visible: bool = True, preTime: int = 0, lifeTime: int = 1, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", borderWidth: str = "1", x:str = "c", y:str = "t"):
+    def __init__(self, screen: pygame.display, visible: bool = True, preTime: int = 0, lifeTime: int = 1, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
         self.scr = screen
         self.visible = visible
         self.endOfLife = False # Managers with this set to true wil be removed as soon as all of their bullets are gone
@@ -11,7 +11,6 @@ class BulletManager():
         self.time = 0 # Time since this object is created in seconds
 
         self.size = size
-        self.borderWidth = borderWidth
 
         self.GX = x
         self.GY = y
@@ -58,23 +57,17 @@ class BulletManager():
         if self.visible:
             c = self.bulletIndex
             t = self.bulletTime
-            tmp = ne.evaluate(self.borderWidth)
-            try:
-                iter(tmp)
-            except TypeError:
-                tmp = [tmp] * len(self.bulletIndex)
-            borderWidth = list(tmp)
             for i, item in enumerate(zip(self.bulletX, self.bulletY)):
                 color = self.colorActive
                 if not self.bulletActive[i]:
                     color = self.colorFaded
                 if self.bulletTime[i] < self.preTime:
                     color = self.colorInactive
-                self._drawBullet(item, self.bulletSize[i], borderWidth[i], color)
+                self._drawBullet(item, self.bulletSize[i], color)
 
-    def _drawBullet(self, coords, size, borderWidth, color):
+    def _drawBullet(self, coords, size, color):
         pos = (int(coords[0]*w), int(coords[1]*h))
-        pygame.draw.circle(self.scr, color, pos, int(size*w), int(borderWidth*w))
+        pygame.draw.circle(self.scr, color, pos, int(size*w), 0)
 
 
     def update(self, dt, player):
@@ -132,8 +125,8 @@ class BulletManager():
         return self.endOfLife and len(self.bulletIndex) == 0
 
 class BulletSpawner(BulletManager):
-    def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = -1, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", borderWidth: str = "1", x:str = "c", y:str = "t"):
-        super().__init__(screen=screen, visible = visible, preTime = preTime, lifeTime = lifeTime, color = color, size = size, borderWidth = borderWidth, x = x, y = y)
+    def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = -1, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
+        super().__init__(screen=screen, visible = visible, preTime = preTime, lifeTime = lifeTime, color = color, size = size, x = x, y = y)
         # Spawning timing variables
         self.spawning = True
         self.delay = spawningDelay # Delay in ms between created bullets
@@ -157,9 +150,9 @@ class BulletSpawner(BulletManager):
         return super().setDelete()
 
 class BulletPattern(BulletManager):
-    def __init__(self, screen, visible: bool = True, patternSize: int = 10, preTime: int = 0, lifeTime: int = -1,  color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", borderWidth: str = "1", x:str = "c", y:str = "t"):
+    def __init__(self, screen, visible: bool = True, patternSize: int = 10, preTime: int = 0, lifeTime: int = -1,  color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
 
-        super().__init__(screen = screen, visible = visible, color = color, size = size, borderWidth = borderWidth, x = x, y = y)
+        super().__init__(screen = screen, visible = visible, color = color, size = size, x = x, y = y)
         self.patternSize = patternSize
         self.preTime = preTime
         self.lifeTime = lifeTime

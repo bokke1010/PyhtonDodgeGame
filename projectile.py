@@ -1,9 +1,9 @@
 from base import *
 import numexpr as ne
-import numpy
+# import numpy
 
 class BulletManager():
-    def __init__(self, screen: pygame.display, visible: bool = True, preTime: int = 0, lifeTime: int = 1, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
+    def __init__(self, screen: pygame.display, visible: bool = True, preTime: int = 0, lifeTime: int = 1000, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
         self.scr = screen
         self.visible = visible
         self.endOfLife = False # Managers with this set to true wil be removed as soon as all of their bullets are gone
@@ -18,8 +18,6 @@ class BulletManager():
         self.damage = 1
         self.preTime = preTime #Passing down the bullet fuse
         self.lifeTime = lifeTime
-        if self.lifeTime == -1:
-            raise Exception("bullets must have a maximum lifetime")
 
 
         # Style related
@@ -78,44 +76,48 @@ class BulletManager():
         x, y = self.bulletX, self.bulletY
         tb = self.bulletTime
         tt = dt
-        tb = list(ne.evaluate("tt+tb"))
-        t = list(ne.evaluate("0.001*tb"))
+        tb = list(ne.evaluate("tb + tt")) # time = time + deltatime
+        t = list(ne.evaluate("0.001 * tb")) # tb (timeBullet) is in microseconds, t is in seconds
         self.bulletTime = tb
         c = self.bulletIndex
         # ALL BULLET CALCULATIONS HERE
 
         self.bulletX = list(ne.evaluate(self.GX))
         self.bulletY = list(ne.evaluate(self.GY))
-        tmp = ne.evaluate(self.size)
+        bulletSize = ne.evaluate(self.size)
         try:
-            iter(tmp)
-        except TypeError:
-            tmp = [tmp] * len(self.bulletIndex)
-        self.bulletSize = list(tmp)
+            bulletSize = list(bulletSize)
+        except:
+            bulletSize = [float(bulletSize)] * len(self.bulletIndex)
+        self.bulletSize = bulletSize
 
 
         for i, bi in enumerate(self.bulletIndex):
             pos = (self.bulletX[i], self.bulletY[i])
             a = self.bulletActive[i] and self.bulletTime[i] > self.preTime
+
+            # Collisions here
             if distanceLess(pos, player.pos(), self.bulletSize[i]+player.size) and a:
-                # if player.hit(self.damage):
                 events.add(Data("hit", damage=self.damage))
-                    # self.bulletActive[i] = False
-            # Bullet cleanup (out of bounds & movement check)
             # Bullets that exceed their lifetime get cleansed
             if self.bulletTime[i] > self.lifeTime:
                 cleanupQue.add(i)
-        return list(events)
 
         # Got our list, now we just need to remove the bullets
         # TODO: clean up redundancy
-        for index in sorted(list(cleanupQue), reverse=True):
+        cleanupQue = list(cleanupQue)
+        while len(cleanupQue) > 0:
+            index = cleanupQue[-1]
             self.bulletIndex.pop(index)
             self.bulletX.pop(index)
             self.bulletY.pop(index)
             self.bulletSize.pop(index)
             self.bulletTime.pop(index)
             self.bulletActive.pop(index)
+            cleanupQue.pop()
+
+        return list(events)
+
 
 
     def setDelete(self):
@@ -128,7 +130,7 @@ class BulletManager():
         return self.endOfLife and len(self.bulletIndex) == 0
 
 class BulletSpawner(BulletManager):
-    def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = -1, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
+    def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = 1000, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
         super().__init__(screen=screen, visible = visible, preTime = preTime, lifeTime = lifeTime, color = color, size = size, x = x, y = y)
         # Spawning timing variables
         self.spawning = True

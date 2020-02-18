@@ -81,11 +81,7 @@ class PatternManager():
         elif command.type == "trg":
             self.bulletManagers[command.name].trigger()
         elif command.type == "del":
-            if self.bulletManagers[command.name].setDelete():
-                self.bulletManagers.pop(command.name, True)
-                return True
-            else:
-                return False
+            self.bulletManagers[command.name].setDelete()
         elif command.type == "end":
             self.bulletManagers = {}
             return True
@@ -99,7 +95,7 @@ class PatternManager():
 
         x, y = command["bX"], command["bY"]
 
-        spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"], lifeTime = lt, x = x, y = y, size = command["size"])
+        spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"], preTime = pt, lifeTime = lt, x = x, y = y, size = command["size"])
 
         return spawner
 
@@ -132,8 +128,8 @@ class PatternManager():
             manager.update(dt, player)
             if manager.getDelete():
                 deleteQue.add(key)
-        for item in deleteQue:
-            self.bulletManagers.pop(item, True)
+        for key in deleteQue:
+            self.bulletManagers.pop(key, True)
 
     def draw(self):
         for key, manager in self.bulletManagers.items():

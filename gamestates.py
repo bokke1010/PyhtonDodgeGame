@@ -14,7 +14,7 @@ def passClass(**kwargs):
 class Gamestate():
     def __init__(self):
         super().__init__()
-        self.keyUp = {}
+        self.keyDown = {}
         self.keyDown = {}
 
     def update(self):
@@ -24,7 +24,10 @@ class GamestateMenu(Gamestate):
 
     def __init__(self):
         super().__init__()
-        self.keyUp[275] = Data("gameState", state=GAMESTATE.ACTIVE)
+        # right and left arrow respectively
+        self.keyDown[275] = Data("level", deltaLevel=1)
+        self.keyDown[276] = Data("level", deltaLevel=-1)
+        self.keyDown[32] = Data("level")
 
     def update(self, **kwarg):
         super().update()
@@ -53,11 +56,11 @@ class GamestateActive(Gamestate):
     def __init__(self, **kwarg):
         super().__init__()
         self.time = 0
-        self.keyUp[27] = Data("gameState", state=GAMESTATE.MMENU)
-        self.keyUp[276] = Data("gameState", state=GAMESTATE.MMENU)
+        self.keyDown[27] = Data("gameState", state=GAMESTATE.MMENU)
 
     def update(self, **kwarg):
         super().update()
+        events = Que()
         # Time and game clock management
         deltaTime = clock.tick(60)
         self.time += deltaTime # time and deltatime in milliseconds
@@ -65,17 +68,17 @@ class GamestateActive(Gamestate):
         # Reset screen to start drawing frame
         screen.fill(BLACK)
 
-        patternManager.update(deltaTime, playerCharacter)
+        events.merge(patternManager.update(deltaTime, playerCharacter))
         patternManager.draw()
 
         # Player code
         kdf = kwarg["keyDownFlags"] # Keyword argument passed into update
-        pd = playerCharacter.update((kdf['d'] - kdf['a']),
-            (kdf['s'] - kdf['w']), kdf["shift"], deltaTime)
+        events.merge(playerCharacter.update((kdf['d'] - kdf['a']),
+            (kdf['s'] - kdf['w']), kdf["shift"], deltaTime))
         playerCharacter.draw()
 
         # The player can now also return data from it's update function which needs to be handled
-        return pd
+        return list(events)
 gameStates[GamestateActive.value] = GamestateActive
 
 def addState(state):

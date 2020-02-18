@@ -108,7 +108,7 @@ class Button(Text):
             return self.onClick()
 
     def onClick(self):
-        print("Button clicked once, returning: " + str(self.result))
+        # print("Button clicked once, returning: " + str(self.result))
         return self.result
 
     def __repr__(self):

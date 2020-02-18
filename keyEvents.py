@@ -10,17 +10,12 @@ class EventManager():
         self.UI = UI
 
     def mainLoopEvent(self, gameState):
-        """Returns a que with all actions that should happen according to game input"""
-        que = []
-        def ret(x: Data):
-            """Appends a data object to the return value"""
-            # Too lazy to do this inline
-            if not x == None:
-                que.append(x)
+        """Returns a events with all actions that should happen according to game input"""
+        events = Que()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                que.append(Data("stop"))
+                events.add(Data("stop"))
 
             # Evaluate menu items (callback/passback????)
             if event.type == pygame.MOUSEBUTTONUP:
@@ -28,23 +23,27 @@ class EventManager():
                 for UIElement in self.UI:
                     # print(type(UIElement))
                     if isinstance(UIElement, menu.Button):
-                        ret(UIElement.getClick(pos))
+                        events.add(UIElement.getClick(pos))
                     # elif isinstance(UIElement, menu.sButton):
                     #     ret(UIElement.getClick(pos))
 
-            # TODO: Integrate this into gamestate classes somehow
             if event.type == pygame.KEYDOWN:
-                # Navigation keys
-                if event.key in gameState.keyUp:
-                    ret(gameState.keyUp[event.key])
+                # KeyPressed events
+                # print(event.key)
+                if event.key in gameState.keyDown:
+                    events.add(gameState.keyDown[event.key])
 
-                # Directional keys
+                # KeyDown events
                 if event.key in keyCodes:
-                    ret(Data("keySet", key=keyCodes[event.key], value = True))
+                    events.add(Data("keySet", key=keyCodes[event.key], value = True))
 
 
-            # KeyUp events for directional keys
             if event.type == pygame.KEYUP:
+                # KeyReleased events
+                # if event.key in gameState.keyUp:
+                #     ret(gameState.keyUp[event.key])
+
+                # KeyUp events
                 if event.key in keyCodes:
-                    ret(Data("keySet", key=keyCodes[event.key], value = False))
-        return que
+                    events.add(Data("keySet", key=keyCodes[event.key], value = False))
+        return list(events)

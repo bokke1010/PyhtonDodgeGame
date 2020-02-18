@@ -22,16 +22,16 @@
     {
       "spawner":{
         "revolvingCircle":{
-          "delay":10,
+          "delay":12,
           "size":"0.01",
-          "bX":"0.5+0.32*cos((1/4)*pi*c)+0.32*cos(t*1*pi+c*(1/4)*pi+pi)",
-          "bY":"0.5+0.32*sin((1/4)*pi*c)+0.32*sin(t*1*pi+c*(1/4)*pi+pi)",
+          "bX":"0.5+0.32*cos(0.248*pi*c)+0.32*cos(t*pi+c*0.248*pi+pi)",
+          "bY":"0.5+0.32*sin(0.248*pi*c)+0.32*sin(t*pi+c*0.248*pi+pi)",
           "bulletLifeTime":2000
         }
       }
     },
     {
-      "wait":2000
+      "wait":5000
     },
     {
       "del":["revolvingCircle"]

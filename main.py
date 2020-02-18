@@ -10,6 +10,9 @@ from base import *
 
 # All initialization
 
+# Clearing logfile
+open('log.txt', 'w').close()
+
 pygame.init()
 
 screen = pygame.display.set_mode((w, h))
@@ -65,6 +68,7 @@ gamestates.passClass(screen = screen, clock = clock, patternManager = patternMan
 def handleReturnData(data):
     """Handle returned [Data()] objects with commands/information"""
     for action in data:
+        log(str(action))
         if action.type == "stop":
             stopMainLoop()
         elif action.type == "gameState":
@@ -82,6 +86,8 @@ def handleReturnData(data):
                 setGameState(GAMESTATE.ACTIVE)
         elif action.type == "keySet":
             keyDownFlags[action.key] = action.value
+        elif action.type == "hit":
+            playerCharacter.hit(action.damage)
 
 def levelRelative(relative):
     """Moves the level index according to the given value"""

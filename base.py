@@ -63,6 +63,25 @@ def activateUIElement(UI, UIElement):
 
 sgn = lambda a : (a > 0) - (a < 0)
 
+class Que():
+    """"""
+    def __init__(self):
+        self.value = []
+    def __iter__(self):
+        return iter(self.value)
+    def add(self, item):
+        if not item == None:
+            self.value.append(item)
+    def merge(self, value):
+        if value != None:
+            self.value += value
+
+def log(text):
+    with open("log.txt", "a") as logfile:
+        logfile.write(text)
+        logfile.write('\n')
+        logfile.close()
+
 # Universal data type
 class Data():
     def __init__(self, type: str, **data):

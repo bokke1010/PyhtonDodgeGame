@@ -71,6 +71,7 @@ class BulletManager():
 
 
     def update(self, dt, player):
+        events = Que()
         self.time += dt
         cleanupQue = set()
         (px, py) = player.pos()
@@ -97,12 +98,14 @@ class BulletManager():
             pos = (self.bulletX[i], self.bulletY[i])
             a = self.bulletActive[i] and self.bulletTime[i] > self.preTime
             if distanceLess(pos, player.pos(), self.bulletSize[i]+player.size) and a:
-                if player.hit(self.damage):
-                    self.bulletActive[i] = False
+                # if player.hit(self.damage):
+                events.add(Data("hit", damage=self.damage))
+                    # self.bulletActive[i] = False
             # Bullet cleanup (out of bounds & movement check)
             # Bullets that exceed their lifetime get cleansed
             if self.bulletTime[i] > self.lifeTime:
                 cleanupQue.add(i)
+        return list(events)
 
         # Got our list, now we just need to remove the bullets
         # TODO: clean up redundancy

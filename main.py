@@ -34,7 +34,7 @@ def setGamestateUI(UIElements, gameState, UI):
             deactivateUIElement(UI, item)
 
 def setGameState(state = GAMESTATE.MMENU):
-    global gameState, UIElements, UI
+    global gameState, UIElements, UI, loadedStates
     if (gameState == None) or (not gameState.value == state):
         gameState = loadedStates[state]
         setGamestateUI(UIElements, gameState, UI)

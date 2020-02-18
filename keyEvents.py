@@ -21,15 +21,11 @@ class EventManager():
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 for UIElement in self.UI:
-                    # print(type(UIElement))
                     if isinstance(UIElement, menu.Button):
                         events.add(UIElement.getClick(pos))
-                    # elif isinstance(UIElement, menu.sButton):
-                    #     ret(UIElement.getClick(pos))
 
             if event.type == pygame.KEYDOWN:
                 # KeyPressed events
-                # print(event.key)
                 if event.key in gameState.keyDown:
                     events.add(gameState.keyDown[event.key])
 

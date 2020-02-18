@@ -26,7 +26,7 @@ def parseJson(jsonIn: dict, screen) -> dict:
                 if len(resultIn) == 2:
                     resultOut.set("deltaLevel", int(resultIn[1]))
             elif resultIn[0] == "gameState": # gameState:1
-                resultOut = Data("gameState", state = int(resultIn[1]))
+                resultOut = Data("gameState", state = GAMESTATE(int(resultIn[1])))
 
 
         text = value["text"]

@@ -1,14 +1,14 @@
-from enum import Enum
+from enum import IntEnum
 import pygame, random, math
 from math import pi
 
 w, h = 500, 500
 
-class PROJECTILETYPE(Enum):
+class PROJECTILETYPE(IntEnum):
     BALL = 0
     BOX = 1
 
-class GAMESTATE(Enum):
+class GAMESTATE(IntEnum):
     ACTIVE = 0
     MMENU = 1
     HELP = 2
@@ -62,18 +62,14 @@ def activateUIElement(UI, UIElement):
 
 sgn = lambda a : (a > 0) - (a < 0)
 
-class Que():
-    """"""
-    def __init__(self):
-        self.value = []
-    def __iter__(self):
-        return iter(self.value)
+class Que(list):
+    """list fancifier"""
     def add(self, item):
-        if not item == None:
-            self.value.append(item)
+        if item != None:
+            self.append(item)
     def merge(self, value):
         if value != None:
-            self.value += value
+            self += value
 
 def log(text):
     with open("log.txt", "a") as logfile:

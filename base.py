@@ -32,8 +32,7 @@ BLUE      = (0  ,0  ,255)
 # Player properties
 playerSize = 0.01
 playerLives = 24
-acceleration = 0.35
-drag = 0.5
+speed = .3
 
 # Universal functions
 distance = lambda p1, p2: ( ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) )**0.5

@@ -5,13 +5,12 @@ class Player():
     """This class defines a player character, using general parameters and player input
     to function"""
 
-    def __init__(self, size, pos, color, acc, drag, lives, screen):
+    def __init__(self, size, pos, color, speed, lives, screen):
         self.size = size
 
         (self.x, self.y) = pos
         self.dx, self.dy = 0, 0
-        self.acc = acc
-        self.drag = drag
+        self.speed = speed
 
         self.lives = lives
         self.mLives = lives
@@ -53,8 +52,8 @@ class Player():
         # The second part prevents diagonal input from being faster than horizontal
         # input
         diagMod = 0.70710678118 if xInp != 0 and yInp != 0 else 1
-        self.x += (self.acc * xInp * (2-sneak) * dt * 0.001) * diagMod
-        self.y += (self.acc * yInp * (2-sneak) * dt * 0.001) * diagMod
+        self.x += (self.speed * xInp * (2-sneak) * dt * 0.001) * diagMod
+        self.y += (self.speed * yInp * (2-sneak) * dt * 0.001) * diagMod
 
         # Prevent out-of-bounds character
         self.x = clamp(self.x, 0, 1)

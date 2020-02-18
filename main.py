@@ -49,7 +49,7 @@ done = False
 deltaTime = 0
 time = 0
 
-playerCharacter = player.Player(playerSize, [0.5, 0.9], RED, acceleration, drag, playerLives, screen)
+playerCharacter = player.Player(playerSize, [0.5, 0.9], RED, speed, playerLives, screen)
 patternManager = pattern_manager.PatternManager(screen)
 
 levelIndex = 0
@@ -72,12 +72,7 @@ def handleReturnData(data):
         if action.type == "stop":
             stopMainLoop()
         elif action.type == "gameState":
-            if isState(action.state, GAMESTATE.ACTIVE):
-                setGameState(GAMESTATE.ACTIVE)
-            elif isState(action.state, GAMESTATE.MMENU):
-                setGameState(GAMESTATE.MMENU)
-            elif isState(action.state, GAMESTATE.HELP):
-                setGameState(GAMESTATE.HELP)
+            setGameState(action.state)
         elif action.type == "level":
             if action.hasattr("deltaLevel"):
                 levelRelative(action.deltaLevel)

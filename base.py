@@ -73,7 +73,7 @@ class Que(list):
 
 def log(text):
     with open("log.txt", "a") as logfile:
-        logfile.write(text)
+        logfile.write(str(text))
         logfile.write('\n')
         logfile.close()
 

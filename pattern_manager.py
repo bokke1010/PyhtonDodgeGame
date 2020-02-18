@@ -124,12 +124,15 @@ class PatternManager():
 
         # Since we decided to only remove bulletManagers once they have no more bullets left, we have to check for that
         deleteQue = set()
+        events = Que()
         for key, manager in self.bulletManagers.items():
-            manager.update(dt, player)
+            events.merge(manager.update(dt, player))
+            log(events)
             if manager.getDelete():
                 deleteQue.add(key)
         for key in deleteQue:
             self.bulletManagers.pop(key, True)
+        return events
 
     def draw(self):
         for key, manager in self.bulletManagers.items():

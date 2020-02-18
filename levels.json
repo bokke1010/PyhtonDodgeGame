@@ -42,24 +42,24 @@
       "pattern":{
         "pulse":{
           "count":50,
-          "size":"0.006",
+          "size":"0.01",
           "preTime":500,
-          "bX":"0.5 + 0.5*cos(0.04*c*pi)*t*cos((.2*(c%2)+.4)*t*pi)",
-          "bY":"0.5 + 0.5*sin(0.04*c*pi)*t*cos((.2*(c%2)+.4)*t*pi)",
+          "bX":"0.5 + 0.5*cos(0.04*c*pi)*t*cos((.1*(c%2)+.45)*t*pi)",
+          "bY":"0.2 + 0.5*sin(0.04*c*pi)*t*cos((.1*(c%2)+.45)*t*pi)",
           "bulletLifeTime":2000
         },
-        "spiral":{
-          "count":120,
-          "size":"0.006",
-          "preTime":500,
-          "bX":"0.5 + 0.5*cos(0.05*c*pi)*t*(c/240+0.8)*cos(0.5*t*pi)",
-          "bY":"0.5 + 0.5*sin(0.05*c*pi)*t*(c/240+0.8)*cos(0.5*t*pi)",
+        "wave":{
+          "count":80,
+          "size":"0.01",
+          "preTime":0,
+          "bX":"(c+0.5)/80",
+          "bY":"1 - 0.2 * (2-sin(pi*(c+0.5)/80)) * sin(t*pi)",
           "bulletLifeTime":2000
         }
       }
     },
     {
-      "trigger":["pulse"]
+      "trigger":["pulse", "wave"]
     },
     {
       "wait":500
@@ -71,10 +71,7 @@
       "wait":500
     },
     {
-      "trigger":["spiral"]
-    },
-    {
-      "del":["pulse", "spiral"]
+      "del":["pulse", "wave"]
     }
   ],
   "predictable bullet hell":[

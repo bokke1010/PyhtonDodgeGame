@@ -115,7 +115,6 @@ class BulletManager():
             self.bulletTime.pop(index)
             self.bulletActive.pop(index)
             cleanupQue.pop()
-
         return list(events)
 
 
@@ -148,7 +147,7 @@ class BulletSpawner(BulletManager):
                 # This function is defined in bulletManager, and uses internal variables
                 # That is the reason we don't pass many arguments
                 self._createBullet(time, lateFraction)
-        super().update(dt, player)
+        return super().update(dt, player)
 
     def setDelete(self):
         self.spawning = False

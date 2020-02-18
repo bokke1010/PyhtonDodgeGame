@@ -4,7 +4,7 @@ from math import pi
 
 w, h = 500, 500
 
-class PROJECTILETYPE(IntEnum):
+class BULLETSHAPE(IntEnum):
     BALL = 0
     BOX = 1
 

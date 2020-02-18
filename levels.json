@@ -55,11 +55,18 @@
           "bX":"(c+0.5)/80",
           "bY":"1 - 0.2 * (2-sin(pi*(c+0.5)/80)) * sin(t*pi)",
           "bulletLifeTime":2000
+        },
+        "follower":{
+          "count":5,
+          "size":".01",
+          "bX":"px + 0.1 * (1.5+sin(t*pi)) * cos((t+c*.2)*pi*2)",
+          "bY":"py + 0.1 * (1.5+sin(t*pi)) * sin((t+c*.2)*pi*2)",
+          "bulletLifeTime":10000
         }
       }
     },
     {
-      "trigger":["pulse", "wave"]
+      "trigger":["pulse", "wave","follower"]
     },
     {
       "wait":500

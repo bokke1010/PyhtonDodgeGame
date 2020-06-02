@@ -14,7 +14,6 @@ class BulletManager():
 
         self.GX = x
         self.GY = y
-        self.GD = direction
         self.size = size
 
         self.damage = 1
@@ -31,7 +30,6 @@ class BulletManager():
         self.bulletIndex = []
         self.bulletX = []
         self.bulletY = []
-        self.bulletDir = []
         self.bulletScale = []
         self.bulletActive = []
         self.bulletTime = [] # Time since creation
@@ -49,7 +47,6 @@ class BulletManager():
 
         self.bulletX.append(0)
         self.bulletY.append(0)
-        self.bulletDir.append(0)
         self.bulletScale.append(0)
 
         self.spawnCounter += 1
@@ -71,7 +68,7 @@ class BulletManager():
         pos = (int(coords[0]*w), int(coords[1]*h))
         pygame.draw.circle(self.scr, color, pos, int(size*w), 0)
 
-    def _collide(self, p1, p2, s1, s2, direction: float):
+    def _collide(self, p1, p2, s1, s2):
         # Bullet location, player location, bullet scale, player scale, bullet direction
         if self.shape == BULLETSHAPE.BALL:
             # pos, player.pos(), self.bulletScale[i]+player.size
@@ -98,12 +95,6 @@ class BulletManager():
         self.bulletX = list(ne.evaluate(self.GX))
         self.bulletY = list(ne.evaluate(self.GY))
         # TODO: add function to listify numpy 0d or 1d arrays to given lenght
-        bulletDir = ne.evaluate(self.GD)
-        try:
-            bulletDir = list(bulletDir)
-        except:
-            bulletDir = [float(bulletDir)] * len(self.bulletIndex)
-        self.bulletDir = bulletDir
         bulletScale = ne.evaluate(self.size)
         try:
             bulletScale = list(bulletScale)
@@ -152,7 +143,7 @@ class BulletManager():
 
 class BulletSpawner(BulletManager):
     def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = 1000, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
-        super().__init__(screen=screen, visible = visible, preTime = preTime, lifeTime = lifeTime, color = color, size = size, x = x, y = y, direction = direction)
+        super().__init__(screen=screen, visible = visible, preTime = preTime, lifeTime = lifeTime, color = color, size = size, x = x, y = y)
         # Spawning timing variables
         self.spawning = True
         self.delay = spawningDelay # Delay in ms between created bullets
@@ -178,7 +169,7 @@ class BulletSpawner(BulletManager):
 class BulletPattern(BulletManager):
     def __init__(self, screen, visible: bool = True, patternSize: int = 10, preTime: int = 0, lifeTime: int = -1,  color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
 
-        super().__init__(screen = screen, visible = visible, color = color, size = size, x = x, y = y, direction = direction)
+        super().__init__(screen = screen, visible = visible, color = color, size = size, x = x, y = y)
         self.patternSize = patternSize
         self.preTime = preTime
         self.lifeTime = lifeTime

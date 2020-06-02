@@ -3,7 +3,7 @@ import numexpr as ne
 # import numpy
 
 class BulletManager():
-    def __init__(self, screen: pygame.display, visible: bool = True, preTime: int = 0, lifeTime: int = 1000, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t", direction:str = "0"):
+    def __init__(self, screen: pygame.display, visible: bool = True, preTime: int = 0, lifeTime: int = 1000, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
         self.scr = screen
         self.visible = visible
         self.endOfLife = False # Managers with this set to true wil be removed as soon as all of their bullets are gone
@@ -151,7 +151,7 @@ class BulletManager():
         return self.endOfLife and len(self.bulletIndex) == 0
 
 class BulletSpawner(BulletManager):
-    def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = 1000, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t", direction:str = "0"):
+    def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = 1000, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
         super().__init__(screen=screen, visible = visible, preTime = preTime, lifeTime = lifeTime, color = color, size = size, x = x, y = y, direction = direction)
         # Spawning timing variables
         self.spawning = True
@@ -176,7 +176,7 @@ class BulletSpawner(BulletManager):
         return super().setDelete()
 
 class BulletPattern(BulletManager):
-    def __init__(self, screen, visible: bool = True, patternSize: int = 10, preTime: int = 0, lifeTime: int = -1,  color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t", direction:str = "0"):
+    def __init__(self, screen, visible: bool = True, patternSize: int = 10, preTime: int = 0, lifeTime: int = -1,  color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
 
         super().__init__(screen = screen, visible = visible, color = color, size = size, x = x, y = y, direction = direction)
         self.patternSize = patternSize

@@ -22,10 +22,8 @@ class Player():
         self.secCol = DARKGREEN # Object's color
         self.useSprite = True
         if self.useSprite:
-            self.offset = 1.5
-            self.imageSize = 11
-            self.image = pygame.transform.scale(pygame.image.load('heart-red.png'),(3,30))
-            # self.image = pygame.transform.scale(pygame.image.load('heart-red.png'),(int(2 * self.offset * self.imageSize),int(2 * self.offset * self.imageSize)))
+            self.spritescale = 0.05
+            self.image = pygame.transform.scale(pygame.image.load('heart-red.png'),(int(w*self.spritescale),int(h*self.spritescale)))
 
         self.screen =  screen
 
@@ -48,7 +46,8 @@ class Player():
         self.particle.draw()
         # Player draw/collision marker
         if self.useSprite :
-            cPos = (sPos[0] - self.offset * self.imageSize, sPos[1] - self.offset * self.imageSize)
+            iw, ih = self.image.get_size()
+            cPos = (sPos[0] - 0.5 * iw, sPos[1] - 0.5 * ih)
             self.screen.blit(self.image, cPos)
         else:
             pygame.draw.circle(self.screen, self.secCol, sPos, int(self.size*w))

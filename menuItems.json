@@ -1,6 +1,6 @@
 {
   "Resume":{
-    "text":"resume",
+    "text":"continue",
     "object":"Button",
     "coordinates":[0.1, 0.3, 0.9, 0.4],
     "result":"gameState:0",
@@ -8,7 +8,7 @@
     "color":"DARKGREEN"
   },
   "Exit":{
-    "text":"exit",
+    "text":"quit",
     "object":"Button",
     "coordinates":[0.1, 0.5, 0.9, 0.6],
     "result":"stop",
@@ -16,7 +16,7 @@
     "color":"RED"
   },
   "Title":{
-    "text":"Dodge something?",
+    "text":"Wanna have a bad time?",
     "object": "Text",
     "coordinates":[0.1, 0.15, 0.9, 0.25],
     "visibles":["MMENU"],
@@ -24,20 +24,20 @@
     "border":false
   },
   "spawnGuide":{
-    "text":"Add patterns",
+    "text":"Initialize attack",
     "object": "Text",
     "coordinates":[0.1, 0.65, 0.9, 0.75],
     "visibles":["MMENU"],
     "border":false
   },
   "help":{
-    "text":"How to play",
+    "text":"USELESS",
     "object":"Button",
     "coordinates":[0.9,0,1,0.1],
     "result":"gameState:2",
     "visibles":["MMENU"],
     "color":"BLUE",
-    "fontSize":8
+    "fontSize":11
   },
   "howToPlay":{
     "text":"this is a testing page",

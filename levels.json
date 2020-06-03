@@ -178,9 +178,9 @@
         "boneWaveTop":{
           "delay":50,
           "x":"t*2",
-          "y":"0.15 + 0.05 * cos(c*0.3*pi)",
+          "y":"0.1 + 0.05 * cos(c*0.3*pi)",
           "dx":"1/30",
-          "dy":"0.3 + 0.1 * cos(c*0.3*pi)",
+          "dy":"0.2 + 0.1 * cos(c*0.3*pi)",
           "lifeTime":500
         }
       }
@@ -215,6 +215,16 @@
           "dy":"1",
           "lifeTime":800,
           "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
+        },
+        "blaster3":{
+          "count":1,
+          "fadein":400,
+          "x":"0.5",
+          "y":"0.5",
+          "dx":"1",
+          "dy":"0.4",
+          "lifeTime":800,
+          "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
         }
       }
     },
@@ -226,6 +236,12 @@
     },
     {
       "trigger": ["blaster1", "blaster2"]
+    },
+    {
+      "wait": 800
+    },
+    {
+      "trigger": ["blaster3"]
     },
     {
       "wait": 800

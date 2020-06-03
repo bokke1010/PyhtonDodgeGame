@@ -3,9 +3,9 @@ import numexpr as ne
 import numpy as np
 
 class BulletManager():
-    def __init__(self, screen: pygame.display, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}):
+    def __init__(self, screen: pygame.display, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, **kwargs):
         self.scr = screen
-        self.visible = visible
+        self.visible = kwargs["visible"] if "visible" in kwargs else True
         self.endOfLife = False # Managers with this set to true wil be removed as soon as all of their bullets are gone
         self.spawnCounter = 0 # Amount of bullets this spawner has created in its lifetime
         self.bulletcount = 0
@@ -21,7 +21,6 @@ class BulletManager():
         self.bulletIndex = []
         self.bulletActive = []
         self.bulletTime = [] # Time since creation
-        return self
 
     def setBulletStyle(self, **kwargs):
         """setting constant characteristics of the bullet, like:
@@ -141,7 +140,7 @@ class BulletManager():
             self.bulletSize = self._setNPArrayShape(ne.evaluate(self.size), self.bulletcount)
         elif self.shape == BULLETSHAPE.BOX:
             self.bulletDX = self._setNPArrayShape(ne.evaluate(self.GDX), self.bulletcount)
-            self.bulletDY = self._setNPArrayShape(ne.evaluate(self.GDX), self.bulletcount)
+            self.bulletDY = self._setNPArrayShape(ne.evaluate(self.GDY), self.bulletcount)
 
 
 
@@ -214,9 +213,9 @@ class BulletPattern(BulletManager):
     def __init__(self, screen, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}):
         super().__init__(screen = screen, visible = visible, color = color)
 
-    def setBulletPattern(self, **kwargs):
+    def setBulletPattern(self, shape:BULLETSHAPE, **kwargs):
         self.count = kwargs["count"] if "count" in kwargs else 10
-        super.__init__(**kwargs)
+        return super().setBulletPattern(shape, **kwargs)
 
     def trigger(self):
         if not self.endOfLife:

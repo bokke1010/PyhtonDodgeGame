@@ -131,8 +131,8 @@
       "spawner":{
         "testspawner":{
           "delay":40,
-          "x":"(c/20)%1",
-          "y":"floor(c/20)/5",
+          "x":"t/2",
+          "y":"c/100",
           "dx":".05 * (2+sin(t*2*pi))",
           "dy":".05",
           "lifeTime":2000
@@ -144,6 +144,29 @@
     },
     {
       "del":["testspawner"]
+    }
+  ],
+  "complexattack":[
+    {
+      "pattern":{
+        "boneUp":{
+          "count":14,
+          "x":"c/13",
+          "y":"where(t>0.2, 0.8, 1 - t)",
+          "dx":"1/26",
+          "dy":"0.4",
+          "lifeTime":800
+        }
+      }
+    },
+    {
+      "trigger": ["boneUp"]
+    },
+    {
+      "wait":5000
+    },
+    {
+      "del":["boneUp"]
     }
   ]
 }

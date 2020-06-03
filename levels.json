@@ -5,9 +5,9 @@
         "vWave":{
           "delay":40,
           "size":"((c + 8)**(1/3))/500",
-          "bulletLifeTime":13000,
-          "bX":"0.5*(1+sin(t*pi))",
-          "bY":"0.1*t - 0.1*(1+cos((t+0.04*c)*pi*0.25))"
+          "lifeTime":13000,
+          "x":"0.5*(1+sin(t*pi))",
+          "y":"0.1*t - 0.1*(1+cos((t+0.04*c)*pi*0.25))"
         }
       }
     },
@@ -24,9 +24,9 @@
         "revolvingCircle":{
           "delay":12,
           "size":"0.01",
-          "bX":"0.5+0.32*cos(0.248*pi*c)+0.32*cos(t*pi+c*0.248*pi+pi)",
-          "bY":"0.5+0.32*sin(0.248*pi*c)+0.32*sin(t*pi+c*0.248*pi+pi)",
-          "bulletLifeTime":2000
+          "x":"0.5+0.32*cos(0.248*pi*c)+0.32*cos(t*pi+c*0.248*pi+pi)",
+          "y":"0.5+0.32*sin(0.248*pi*c)+0.32*sin(t*pi+c*0.248*pi+pi)",
+          "lifeTime":2000
         }
       }
     },
@@ -43,25 +43,25 @@
         "pulse":{
           "count":50,
           "size":"0.01",
-          "preTime":500,
-          "bX":"0.5 + 0.5*cos(0.04*c*pi)*t*cos((.1*(c%2)+.45)*t*pi)",
-          "bY":"0.2 + 0.5*sin(0.04*c*pi)*t*cos((.1*(c%2)+.45)*t*pi)",
-          "bulletLifeTime":2000
+          "fadein":500,
+          "x":"0.5 + 0.5*cos(0.04*c*pi)*t*cos((.1*(c%2)+.45)*t*pi)",
+          "y":"0.2 + 0.5*sin(0.04*c*pi)*t*cos((.1*(c%2)+.45)*t*pi)",
+          "lifeTime":2000
         },
         "wave":{
           "count":80,
           "size":"0.01",
-          "preTime":0,
-          "bX":"(c+0.5)/80",
-          "bY":"1 - 0.2 * (2-sin(pi*(c+0.5)/80)) * sin(t*pi)",
-          "bulletLifeTime":2000
+          "fadein":0,
+          "x":"(c+0.5)/80",
+          "y":"1 - 0.2 * (2-sin(pi*(c+0.5)/80)) * sin(t*pi)",
+          "lifeTime":2000
         },
         "follower":{
           "count":5,
           "size":".01",
-          "bX":"px + 0.1 * (1.5+sin(t*pi)) * cos((t+c*.2)*pi*2)",
-          "bY":"py + 0.1 * (1.5+sin(t*pi)) * sin((t+c*.2)*pi*2)",
-          "bulletLifeTime":10000
+          "x":"px + 0.1 * (1.5+sin(t*pi)) * cos((t+c*.2)*pi*2)",
+          "y":"py + 0.1 * (1.5+sin(t*pi)) * sin((t+c*.2)*pi*2)",
+          "lifeTime":10000
         }
       }
     },
@@ -87,16 +87,16 @@
         "microspiral":{
           "delay":50,
           "size":"0.012",
-          "bX":"0.5+0.5*sin(t*pi)",
-          "bY":"0.1*t+0.2*sin(t*2*pi)",
-          "bulletLifeTime":20000
+          "x":"0.5+0.5*sin(t*pi)",
+          "y":"0.1*t+0.2*sin(t*2*pi)",
+          "lifeTime":20000
         },
         "Intervention":{
           "delay":400,
           "size":"0.06",
-          "bX":"0.5 + 0.5 * cos(c*1.19*pi)",
-          "bY":"t/4",
-          "bulletLifeTime":4000
+          "x":"0.5 + 0.5 * cos(c*1.19*pi)",
+          "y":"t/4",
+          "lifeTime":4000
         }
       }
     },
@@ -113,9 +113,9 @@
         "microspiral":{
           "delay":40,
           "size":"0.022",
-          "bX":"0.5 + 0.2*sqrt(2*t+0.03)*cos(c*0.246*pi)",
-          "bY":"0.5 + 0.2*sqrt(2*t+0.03)*sin(c*0.246*pi)",
-          "bulletLifeTime":4000
+          "x":"0.5 + 0.2*sqrt(2*t+0.03)*cos(c*0.246*pi)",
+          "y":"0.5 + 0.2*sqrt(2*t+0.03)*sin(c*0.246*pi)",
+          "lifeTime":4000
         }
       }
     },
@@ -132,9 +132,9 @@
         "testspawner":{
           "delay":5,
           "size":"0.022",
-          "bX":"(c/20)%1",
-          "bY":"floor(c/20)/20",
-          "bulletLifeTime":20000
+          "x":"(c/20)%1",
+          "y":"floor(c/20)/20",
+          "lifeTime":20000
         }
       }
     },

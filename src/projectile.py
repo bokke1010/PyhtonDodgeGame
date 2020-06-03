@@ -1,24 +1,15 @@
 from base import *
 import numexpr as ne
-# import numpy
+import numpy as np
 
 class BulletManager():
-    def __init__(self, screen: pygame.display, visible: bool = True, preTime: int = 0, lifeTime: int = 1000, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
+    def __init__(self, screen: pygame.display, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}):
         self.scr = screen
         self.visible = visible
         self.endOfLife = False # Managers with this set to true wil be removed as soon as all of their bullets are gone
         self.spawnCounter = 0 # Amount of bullets this spawner has created in its lifetime
-        self.shape = BULLETSHAPE.BALL # TODO: User defined shapes in the future, maybe even dynamic shapes or axis scaling
+        self.bulletcount = 0
         self.time = 0 # Time since this object is created in seconds
-
-
-        self.GX = x
-        self.GY = y
-        self.size = size
-
-        self.damage = 1
-        self.preTime = preTime #Passing down the bullet fuse
-        self.lifeTime = lifeTime
 
 
         # Style related
@@ -28,11 +19,40 @@ class BulletManager():
 
         # bullet information
         self.bulletIndex = []
-        self.bulletX = []
-        self.bulletY = []
-        self.bulletScale = []
         self.bulletActive = []
         self.bulletTime = [] # Time since creation
+        return self
+
+    def setBulletStyle(self, **kwargs):
+        """setting constant characteristics of the bullet, like:
+        damage, lifetime and fade-in time"""
+        self.damage = kwargs["damage"] if "damage" in kwargs else 1
+        self.fadein = kwargs["fadein"] if "fadein" in kwargs else 0 #Passing down the bullet fuse
+        self.lifeTime = kwargs["lifeTime"] if "lifeTime" in kwargs else 1000
+        return self
+
+    def setBulletPattern(self, shape:BULLETSHAPE, **kwargs):
+        """setting expressed values of the bullet like shape, size and location"""
+        self.shape = shape
+        if (shape == BULLETSHAPE.BALL):
+            self.GX = kwargs["x"]
+            self.GY = kwargs["y"]
+            self.size = kwargs["size"] if "size" in kwargs else "0.01"
+
+            self.bulletX = []
+            self.bulletY = []
+            self.bulletSize = []
+        elif (shape == BULLETSHAPE.BOX):
+            self.GX = kwargs["x"]
+            self.GY = kwargs["y"]
+            self.GDX = kwargs["dx"]
+            self.GDY = kwargs["dy"]
+
+            self.bulletX = []
+            self.bulletY = []
+            self.bulletDX = []
+            self.bulletDY = []
+        return self
 
     def _createBullet(self, time: int = -1, lateFraction: int = 0):
         """Internal function that uses internal variables to create a bullet (NOT FOR EXTERNAL USE)"""
@@ -41,13 +61,20 @@ class BulletManager():
             time = self.time
 
         self.bulletIndex.append(self.spawnCounter)
+        self.bulletcount += 1
 
         self.bulletTime.append(lateFraction)
-        self.bulletActive.append(not self.preTime == -1)
+        self.bulletActive.append(not self.fadein == -1)
 
-        self.bulletX.append(0)
-        self.bulletY.append(0)
-        self.bulletScale.append(0)
+        if (self.shape == BULLETSHAPE.BALL):
+            self.bulletX.append(0)
+            self.bulletY.append(0)
+            self.bulletSize.append(0)
+        elif (self.shape == BULLETSHAPE.BOX):
+            self.bulletX.append(0)
+            self.bulletY.append(0)
+            self.bulletDX.append(0)
+            self.bulletDY.append(0)
 
         self.spawnCounter += 1
 
@@ -56,33 +83,46 @@ class BulletManager():
         if self.visible:
             c = self.bulletIndex
             t = self.bulletTime
-            for i, item in enumerate(zip(self.bulletX, self.bulletY)):
+            for i, loc in enumerate(zip(self.bulletX, self.bulletY)):
                 color = self.colorActive
                 if not self.bulletActive[i]:
                     color = self.colorFaded
-                if self.bulletTime[i] < self.preTime:
+                if self.bulletTime[i] < self.fadein:
                     color = self.colorInactive
-                self._drawBullet(item, self.bulletScale[i], self.bulletDir[i], color)
+                self._drawBullet(loc, color, i)
 
-    def _drawBullet(self, coords, size, direction, color):
-        pos = (int(coords[0]*w), int(coords[1]*h))
-        pygame.draw.circle(self.scr, color, pos, int(size*w), 0)
+    def _drawBullet(self, coords, color, i):
+        if (self.shape == BULLETSHAPE.BALL):
+            pos = (int(coords[0]*w), int(coords[1]*h))
+            pygame.draw.circle(self.scr, color, pos, int(self.bulletSize[i]*w), 0)
+        elif (self.shape == BULLETSHAPE.BOX):
+            dx, dy = self.bulletDX[i], self.bulletDY[i]
+            pos = (int((coords[0] - 0.5 * dx) * w), int((coords[1] - 0.5 * dy) * h))
+            pygame.draw.rect(self.scr, color, pygame.Rect(*pos, dx, dy))
 
     def _collide(self, p1, p2, s1, s2):
         # Bullet location, player location, bullet scale, player scale, bullet direction
         if self.shape == BULLETSHAPE.BALL:
-            # pos, player.pos(), self.bulletScale[i]+player.size
+            # pos, player.pos(), self.bulletSize[i]+player.size
             return distanceLess(p1, p2, s1 + s2)
         elif self.shape == BULLETSHAPE.BOX:
             # p1[0]
             pass
         return False
 
+    def _setNPArrayShape(self, array:np.ndarray, count):
+        if len(array.shape) == 0:
+            return [float(array)] * count
+        else:
+            return list(array)
+
+
     def update(self, dt, player):
         events = Que()
         self.time += dt
         cleanupQue = set()
         (px, py) = player.pos()
+        # TODO: possible future bulletshapes might not use x,y
         x, y = self.bulletX, self.bulletY
         tb = self.bulletTime
         tt = dt
@@ -95,21 +135,20 @@ class BulletManager():
         self.bulletX = list(ne.evaluate(self.GX))
         self.bulletY = list(ne.evaluate(self.GY))
         # TODO: add function to listify numpy 0d or 1d arrays to given lenght
-        bulletScale = ne.evaluate(self.size)
-        try:
-            bulletScale = list(bulletScale)
-        except:
-            bulletScale = [float(bulletScale)] * len(self.bulletIndex)
-        self.bulletScale = bulletScale
+        if self.shape == BULLETSHAPE.BALL:
+            self.bulletSize = self._setNPArrayShape(ne.evaluate(self.size), self.bulletcount)
+        elif self.shape == BULLETSHAPE.BOX:
+            bulletDX = self._setNPArrayShape(ne.evaluate(self.GDX), self.bulletcount)
+            bulletDY = self._setNPArrayShape(ne.evaluate(self.GDX), self.bulletcount)
+
 
 
         for i, bi in enumerate(self.bulletIndex):
             pos = (self.bulletX[i], self.bulletY[i])
-            direction = self.bulletDir[i]
-            a = self.bulletActive[i] and self.bulletTime[i] > self.preTime
+            a = self.bulletActive[i] and self.bulletTime[i] > self.fadein
 
             # Collisions here
-            if self._collide(pos, player.pos(), self.bulletScale[i], player.size, direction) and a:
+            if a and self._collide(pos, player.pos(), self.bulletSize[i], player.size):
                 events.add(Data("hit", damage=self.damage))
             # Bullets that exceed their lifetime get cleansed
             if self.bulletTime[i] > self.lifeTime:
@@ -119,14 +158,18 @@ class BulletManager():
         # TODO: clean up redundancy
         cleanupQue = list(cleanupQue)
         while len(cleanupQue) > 0:
+            self.bulletcount -= 1
             index = cleanupQue[-1]
             self.bulletIndex.pop(index)
             self.bulletX.pop(index)
             self.bulletY.pop(index)
-            self.bulletScale.pop(index)
+            if self.shape == BULLETSHAPE.BALL:
+                self.bulletSize.pop(index)
+            elif self.shape == BULLETSHAPE.BOX:
+                self.bulletDX.pop(index)
+                self.bulletDY.pop(index)
             self.bulletTime.pop(index)
             self.bulletActive.pop(index)
-            self.bulletDir.pop(index)
             cleanupQue.pop()
         return list(events)
 
@@ -142,8 +185,8 @@ class BulletManager():
         return self.endOfLife and len(self.bulletIndex) == 0
 
 class BulletSpawner(BulletManager):
-    def __init__(self, screen, spawningDelay: int = 90, preTime: int = 0, lifeTime: int = 1000, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
-        super().__init__(screen=screen, visible = visible, preTime = preTime, lifeTime = lifeTime, color = color, size = size, x = x, y = y)
+    def __init__(self, screen, spawningDelay: int = 90, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}):
+        super().__init__(screen=screen, visible = visible, color = color)
         # Spawning timing variables
         self.spawning = True
         self.delay = spawningDelay # Delay in ms between created bullets
@@ -167,17 +210,17 @@ class BulletSpawner(BulletManager):
         return super().setDelete()
 
 class BulletPattern(BulletManager):
-    def __init__(self, screen, visible: bool = True, patternSize: int = 10, preTime: int = 0, lifeTime: int = -1,  color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, size: str = "6", x:str = "c", y:str = "t"):
+    def __init__(self, screen, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}):
+        super().__init__(screen = screen, visible = visible, color = color)
 
-        super().__init__(screen = screen, visible = visible, color = color, size = size, x = x, y = y)
-        self.patternSize = patternSize
-        self.preTime = preTime
-        self.lifeTime = lifeTime
+    def setBulletPattern(self, **kwargs):
+        self.count = kwargs["count"] if "count" in kwargs else 10
+        super.__init__(**kwargs)
 
     def trigger(self):
         if not self.endOfLife:
             self.spawnCounter = 0
-            for i in range(self.patternSize):
+            for i in range(self.count):
                 self._createBullet()
         else:
             raise Warning("This pattern is waiting for removal, will not spawn bullets")

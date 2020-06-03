@@ -98,16 +98,18 @@ class BulletManager():
         elif (self.shape == BULLETSHAPE.BOX):
             dx, dy = self.bulletDX[i], self.bulletDY[i]
             pos = (int((coords[0] - 0.5 * dx) * w), int((coords[1] - 0.5 * dy) * h))
-            pygame.draw.rect(self.scr, color, pygame.Rect(*pos, dx, dy))
+            pygame.draw.rect(self.scr, color, pygame.Rect(*pos, int(dx * w), int(dy * h)))
 
-    def _collide(self, p1, p2, s1, s2):
+    def _collide(self, i, playerPos, playerSize):
         # Bullet location, player location, bullet scale, player scale, bullet direction
         if self.shape == BULLETSHAPE.BALL:
             # pos, player.pos(), self.bulletSize[i]+player.size
-            return distanceLess(p1, p2, s1 + s2)
+            return distanceLess(playerPos, (self.bulletX[i], self.bulletY[i]), self.bulletSize[i] + playerSize)
         elif self.shape == BULLETSHAPE.BOX:
-            # p1[0]
-            pass
+            x, y = self.bulletX[i], self.bulletY[i]
+            collideX = abs(playerPos[0] - x) < 0.5 * self.bulletDX[i] + playerSize
+            collideY = abs(playerPos[1] - y) < 0.5 * self.bulletDY[i] + playerSize
+            return collideX and collideY
         return False
 
     def _setNPArrayShape(self, array:np.ndarray, count):
@@ -138,17 +140,16 @@ class BulletManager():
         if self.shape == BULLETSHAPE.BALL:
             self.bulletSize = self._setNPArrayShape(ne.evaluate(self.size), self.bulletcount)
         elif self.shape == BULLETSHAPE.BOX:
-            bulletDX = self._setNPArrayShape(ne.evaluate(self.GDX), self.bulletcount)
-            bulletDY = self._setNPArrayShape(ne.evaluate(self.GDX), self.bulletcount)
+            self.bulletDX = self._setNPArrayShape(ne.evaluate(self.GDX), self.bulletcount)
+            self.bulletDY = self._setNPArrayShape(ne.evaluate(self.GDX), self.bulletcount)
 
 
 
         for i, bi in enumerate(self.bulletIndex):
-            pos = (self.bulletX[i], self.bulletY[i])
             a = self.bulletActive[i] and self.bulletTime[i] > self.fadein
 
             # Collisions here
-            if a and self._collide(pos, player.pos(), self.bulletSize[i], player.size):
+            if a and self._collide(i, player.pos(), player.size):
                 events.add(Data("hit", damage=self.damage))
             # Bullets that exceed their lifetime get cleansed
             if self.bulletTime[i] > self.lifeTime:

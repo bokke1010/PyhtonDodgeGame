@@ -126,20 +126,21 @@
       "del":["microspiral"]
     }
   ],
-  "testlevel":[
+  "boxTest":[
     {
       "spawner":{
         "testspawner":{
-          "delay":5,
-          "size":"0.022",
+          "delay":40,
           "x":"(c/20)%1",
-          "y":"floor(c/20)/20",
-          "lifeTime":20000
+          "y":"floor(c/20)/5",
+          "dx":".05 * (2+sin(t*2*pi))",
+          "dy":".05",
+          "lifeTime":2000
         }
       }
     },
     {
-      "wait":2000
+      "wait":5000
     },
     {
       "del":["testspawner"]

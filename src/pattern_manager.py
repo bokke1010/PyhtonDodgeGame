@@ -16,7 +16,6 @@ class PatternManager():
         self.time = 0
         self.lc = 0
 
-
     def loadJson(self, fileName):
         with open(fileName) as json_file:
             self.data = json.load(json_file)
@@ -90,12 +89,14 @@ class PatternManager():
 
 
     def parseSpawner(self, command):
-        spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"]).setBulletPattern(BULLETSHAPE.BALL, **command)
+        shape = BULLETSHAPE.BALL if "size" in command else BULLETSHAPE.BOX
+        spawner = projectile.BulletSpawner(screen=self.screen, spawningDelay=command["delay"]).setBulletPattern(shape, **command)
         spawner.setBulletStyle(**command)
         return spawner
 
     def parsePattern(self, command):
-        pattern = projectile.BulletPattern(screen = self.screen).setBulletPattern(BULLETSHAPE.BALL, **command)
+        shape = BULLETSHAPE.BALL if "size" in command else BULLETSHAPE.BOX
+        pattern = projectile.BulletPattern(screen = self.screen).setBulletPattern(shape, **command)
         pattern.setBulletStyle(**command)
         return pattern
 

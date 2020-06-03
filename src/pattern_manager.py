@@ -89,13 +89,25 @@ class PatternManager():
 
 
     def parseSpawner(self, command):
-        shape = BULLETSHAPE.BALL if "size" in command else BULLETSHAPE.BOX
+        shape = None
+        if "size" in command:
+            shape = BULLETSHAPE.BALL
+        elif "dx" in command:
+            shape = BULLETSHAPE.BOX
+        elif "y1" in command:
+            shape = BULLETSHAPE.LINE
         spawner = projectile.BulletSpawner(screen=self.screen, **command).setBulletPattern(shape, **command)
         spawner.setBulletStyle(**command)
         return spawner
 
     def parsePattern(self, command):
-        shape = BULLETSHAPE.BALL if "size" in command else BULLETSHAPE.BOX
+        shape = None
+        if "size" in command:
+            shape = BULLETSHAPE.BALL
+        elif "dx" in command:
+            shape = BULLETSHAPE.BOX
+        elif "y1" in command:
+            shape = BULLETSHAPE.LINE
         pattern = projectile.BulletPattern(screen = self.screen, **command).setBulletPattern(shape, **command)
         pattern.setBulletStyle(**command)
         return pattern

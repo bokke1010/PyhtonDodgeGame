@@ -1,4 +1,5 @@
 from base import *
+import collision
 import numexpr as ne
 import numpy as np
 
@@ -52,6 +53,17 @@ class BulletManager():
             self.bulletY = []
             self.bulletDX = []
             self.bulletDY = []
+        elif (shape == BULLETSHAPE.LINE):
+            self.invert = kwargs["invert"] if "invert" in kwargs else False
+            self.Y1 = kwargs["y1"]
+            self.Y2 = kwargs["y2"]
+            self.DX1 = kwargs["dx1"]
+            self.DX2 = kwargs["dx2"]
+
+            self.bulletY1 = []
+            self.bulletY2 = []
+            self.bulletDX1 = []
+            self.bulletDX2 = []
         return self
 
     def _createBullet(self, time: int = -1, lateFraction: int = 0):
@@ -75,6 +87,11 @@ class BulletManager():
             self.bulletY.append(0)
             self.bulletDX.append(0)
             self.bulletDY.append(0)
+        elif (self.shape == BULLETSHAPE.LINE):
+            self.bulletY1.append(0)
+            self.bulletY2.append(0)
+            self.bulletDX1.append(0)
+            self.bulletDX2.append(0)
 
         self.spawnCounter += 1
 
@@ -83,34 +100,27 @@ class BulletManager():
         if self.visible:
             c = self.bulletIndex
             t = self.bulletTime
-            for i, loc in enumerate(zip(self.bulletX, self.bulletY)):
+            for i in range(len(self.bulletIndex)):
                 color = self.colorActive
                 if not self.bulletActive[i]:
                     color = self.colorFaded
                 if self.bulletTime[i] < self.fadein:
                     color = self.colorInactive
-                self._drawBullet(loc, color, i)
+                self._drawBullet(color, i)
 
-    def _drawBullet(self, coords, color, i):
+    def _drawBullet(self, color, i):
         if (self.shape == BULLETSHAPE.BALL):
-            pos = (int(coords[0]*w), int(coords[1]*h))
+            pos = (int(self.bulletX[i]*w), int(self.bulletY[i]*h))
             pygame.draw.circle(self.scr, color, pos, int(self.bulletSize[i]*w), 0)
         elif (self.shape == BULLETSHAPE.BOX):
             dx, dy = self.bulletDX[i], self.bulletDY[i]
-            pos = (int((coords[0] - 0.5 * dx) * w), int((coords[1] - 0.5 * dy) * h))
+            pos = (int((self.bulletX[i] - 0.5 * dx) * w), int((self.bulletY[i] - 0.5 * dy) * h))
             pygame.draw.rect(self.scr, color, pygame.Rect(*pos, int(dx * w), int(dy * h)))
+        elif (self.shape == BULLETSHAPE.LINE):
+            y1, y2 = self.bulletY1[i], self.bulletY2[i]
+            y3, y4 = (self.bulletDX1[i] + y1)*h, (self.bulletDX2[i] + y2)*h
+            pygame.draw.polygon(self.scr, color, ((0,y1*h), (0,y2*h), (w,y4), (w,y3)))
 
-    def _collide(self, i, playerPos, playerSize):
-        # Bullet location, player location, bullet scale, player scale, bullet direction
-        if self.shape == BULLETSHAPE.BALL:
-            # pos, player.pos(), self.bulletSize[i]+player.size
-            return distanceLess(playerPos, (self.bulletX[i], self.bulletY[i]), self.bulletSize[i] + playerSize)
-        elif self.shape == BULLETSHAPE.BOX:
-            x, y = self.bulletX[i], self.bulletY[i]
-            collideX = abs(playerPos[0] - x) < 0.5 * self.bulletDX[i] + playerSize
-            collideY = abs(playerPos[1] - y) < 0.5 * self.bulletDY[i] + playerSize
-            return collideX and collideY
-        return False
 
     def _setNPArrayShape(self, array:np.ndarray, count):
         if len(array.shape) == 0:
@@ -125,7 +135,6 @@ class BulletManager():
         cleanupQue = set()
         (px, py) = player.pos()
         # TODO: possible future bulletshapes might not use x,y
-        x, y = self.bulletX, self.bulletY
         tb = self.bulletTime
         tt = dt
         tb = list(ne.evaluate("tb + tt")) # time = time + deltatime
@@ -134,22 +143,38 @@ class BulletManager():
         c = self.bulletIndex
         # ALL BULLET CALCULATIONS HERE
 
-        self.bulletX = self._setNPArrayShape(ne.evaluate(self.GX), self.bulletcount)
-        self.bulletY = self._setNPArrayShape(ne.evaluate(self.GY), self.bulletcount)
         # TODO: add function to listify numpy 0d or 1d arrays to given lenght
         if self.shape == BULLETSHAPE.BALL:
+            x, y = self.bulletX, self.bulletY
+            self.bulletX = self._setNPArrayShape(ne.evaluate(self.GX), self.bulletcount)
+            self.bulletY = self._setNPArrayShape(ne.evaluate(self.GY), self.bulletcount)
             self.bulletSize = self._setNPArrayShape(ne.evaluate(self.size), self.bulletcount)
         elif self.shape == BULLETSHAPE.BOX:
+            self.bulletX = self._setNPArrayShape(ne.evaluate(self.GX), self.bulletcount)
+            self.bulletY = self._setNPArrayShape(ne.evaluate(self.GY), self.bulletcount)
             self.bulletDX = self._setNPArrayShape(ne.evaluate(self.GDX), self.bulletcount)
             self.bulletDY = self._setNPArrayShape(ne.evaluate(self.GDY), self.bulletcount)
+        elif self.shape == BULLETSHAPE.LINE:
+            self.bulletY1 = self._setNPArrayShape(ne.evaluate(self.Y1), self.bulletcount)
+            self.bulletY2 = self._setNPArrayShape(ne.evaluate(self.Y2), self.bulletcount)
+            self.bulletDX1 = self._setNPArrayShape(ne.evaluate(self.DX1), self.bulletcount)
+            self.bulletDX2 = self._setNPArrayShape(ne.evaluate(self.DX2), self.bulletcount)
 
 
 
         for i, bi in enumerate(self.bulletIndex):
             a = self.bulletActive[i] and self.bulletTime[i] > self.fadein
 
+            touching = False
+            if self.shape == BULLETSHAPE.BALL:
+                touching = collision.collidecircir((px, py), playerSize, (self.bulletX[i], self.bulletY[i]), self.bulletSize[i])
+            elif self.shape == BULLETSHAPE.BOX:
+                touching = collision.collidecirrect((px, py), playerSize, (self.bulletX[i], self.bulletY[i]), (self.bulletDX[i], self.bulletDY[i]))
+            elif self.shape == BULLETSHAPE.LINE:
+                touching = self.invert != collision.collidepointbetweenlineline(self.bulletY1[i], self.bulletDX1[i], self.bulletY2[i], self.bulletDX2[i], (px, py))
+
             # Collisions here
-            if a and self._collide(i, player.pos(), player.size):
+            if a and touching:
                 events.add(Data("hit", damage=self.damage))
             # Bullets that exceed their lifetime get cleansed
             if self.bulletTime[i] > self.lifeTime:
@@ -162,13 +187,20 @@ class BulletManager():
             self.bulletcount -= 1
             index = cleanupQue[-1]
             self.bulletIndex.pop(index)
-            self.bulletX.pop(index)
-            self.bulletY.pop(index)
             if self.shape == BULLETSHAPE.BALL:
+                self.bulletX.pop(index)
+                self.bulletY.pop(index)
                 self.bulletSize.pop(index)
             elif self.shape == BULLETSHAPE.BOX:
+                self.bulletX.pop(index)
+                self.bulletY.pop(index)
                 self.bulletDX.pop(index)
                 self.bulletDY.pop(index)
+            elif self.shape == BULLETSHAPE.LINE:
+                self.bulletY1.pop(index)
+                self.bulletY2.pop(index)
+                self.bulletDX1.pop(index)
+                self.bulletDX2.pop(index)
             self.bulletTime.pop(index)
             self.bulletActive.pop(index)
             cleanupQue.pop()

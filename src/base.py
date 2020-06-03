@@ -7,6 +7,7 @@ w, h = 500, 500
 class BULLETSHAPE(IntEnum):
     BALL = 0
     BOX = 1
+    LINE = 2
 
 class GAMESTATE(IntEnum):
     ACTIVE = 0
@@ -35,7 +36,6 @@ playerLives = 24
 speed = .3
 
 # Universal functions
-distance = lambda p1, p2: ( ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) )**0.5
 
 clamp = lambda x, l, u: max(l, min(u, x))
 
@@ -45,12 +45,6 @@ def isState(a,b):
     if not type(b) == int:
         b = b.value
     return a == b
-
-def distanceLess(p1, p2, distance, inclusiveEqual: bool = False):
-    if inclusiveEqual:
-        return ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) <= distance**2
-    else:
-        return ( (p1[0]-p2[0])**2 ) + ( (p1[1]-p2[1])**2) < distance**2
 
 def deactivateUIElement(UI, UIElement):
     if UIElement in UI:

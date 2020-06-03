@@ -128,22 +128,25 @@
   ],
   "boxTest":[
     {
-      "spawner":{
-        "testspawner":{
-          "delay":40,
-          "x":"t/2",
-          "y":"c/100",
-          "dx":".05 * (2+sin(t*2*pi))",
-          "dy":".05",
-          "lifeTime":2000
+      "pattern":{
+        "boneUp":{
+          "count":14,
+          "x":"c/13",
+          "y":"where(t>0.1, 0.8, 1 - 2 * t)",
+          "dx":"1/30",
+          "dy":"0.4",
+          "lifeTime":8000
         }
       }
     },
     {
-      "wait":5000
+      "trigger": ["boneUp"]
     },
     {
-      "del":["testspawner"]
+      "wait":15000
+    },
+    {
+      "del":["boneUp"]
     }
   ],
   "complexattack":[
@@ -225,6 +228,17 @@
           "dy":"0.4 + 0.02 * sin(50*t*pi)",
           "lifeTime":800,
           "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
+        },
+        "blaster4":{
+          "count":2,
+          "fadein":400,
+          "y1":"c-.1 + 0.01 * cos(40*t*pi)",
+          "y2":"c+.1 + 0.01 * cos(40*t*pi)",
+          "dx1":"1-2*c",
+          "dx2":"1-2*c",
+          "lifeTime":800,
+          "invert":false,
+          "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
         }
       }
     },
@@ -232,7 +246,13 @@
       "trigger": ["blaster1", "blaster2"]
     },
     {
-      "wait": 1600
+      "wait": 800
+    },
+    {
+      "trigger": ["blaster4"]
+    },
+    {
+      "wait": 800
     },
     {
       "trigger": ["blaster1", "blaster2"]

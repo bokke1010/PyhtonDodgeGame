@@ -3,7 +3,7 @@ import numexpr as ne
 import numpy as np
 
 class BulletManager():
-    def __init__(self, screen: pygame.display, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}, **kwargs):
+    def __init__(self, screen: pygame.display, **kwargs):
         self.scr = screen
         self.visible = kwargs["visible"] if "visible" in kwargs else True
         self.endOfLife = False # Managers with this set to true wil be removed as soon as all of their bullets are gone
@@ -13,9 +13,10 @@ class BulletManager():
 
 
         # Style related
-        self.colorActive = color["active"]
-        self.colorInactive = color["inactive"]
-        self.colorFaded = color["faded"]
+        colors = kwargs["color"] if "color" in kwargs else {}
+        self.colorActive = colors["active"] if "active" in colors else PINK
+        self.colorInactive = colors["inactive"] if "inactive" in colors else DARKGRAY
+        self.colorFaded = colors["faded"] if "faded" in colors else DARKGRAY
 
         # bullet information
         self.bulletIndex = []
@@ -133,8 +134,8 @@ class BulletManager():
         c = self.bulletIndex
         # ALL BULLET CALCULATIONS HERE
 
-        self.bulletX = list(ne.evaluate(self.GX))
-        self.bulletY = list(ne.evaluate(self.GY))
+        self.bulletX = self._setNPArrayShape(ne.evaluate(self.GX), self.bulletcount)
+        self.bulletY = self._setNPArrayShape(ne.evaluate(self.GY), self.bulletcount)
         # TODO: add function to listify numpy 0d or 1d arrays to given lenght
         if self.shape == BULLETSHAPE.BALL:
             self.bulletSize = self._setNPArrayShape(ne.evaluate(self.size), self.bulletcount)
@@ -185,11 +186,11 @@ class BulletManager():
         return self.endOfLife and len(self.bulletIndex) == 0
 
 class BulletSpawner(BulletManager):
-    def __init__(self, screen, spawningDelay: int = 90, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}):
-        super().__init__(screen=screen, visible = visible, color = color)
+    def __init__(self, screen, delay: int = 90, **kwargs):
+        super().__init__(screen=screen, **kwargs)
         # Spawning timing variables
         self.spawning = True
-        self.delay = spawningDelay # Delay in ms between created bullets
+        self.delay = delay # Delay in ms between created bullets
 
     def update(self, dt, player):
         # Bullet creation
@@ -210,8 +211,8 @@ class BulletSpawner(BulletManager):
         return super().setDelete()
 
 class BulletPattern(BulletManager):
-    def __init__(self, screen, visible: bool = True, color: dict = {"active":PINK, "inactive":LIGHTGRAY, "faded":DARKGRAY}):
-        super().__init__(screen = screen, visible = visible, color = color)
+    def __init__(self, screen, **kwargs):
+        super().__init__(screen = screen, **kwargs)
 
     def setBulletPattern(self, shape:BULLETSHAPE, **kwargs):
         self.count = kwargs["count"] if "count" in kwargs else 10

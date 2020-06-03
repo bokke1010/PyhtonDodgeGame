@@ -18,13 +18,13 @@ class EventManager():
                 events.add(Data("stop"))
 
             # Evaluate menu items (callback/passback????)
-            if event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 for UIElement in self.UI:
                     if isinstance(UIElement, menu.Button):
                         events.add(UIElement.getClick(pos))
 
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 # KeyPressed events
                 if event.key in gameState.keyDown:
                     events.add(gameState.keyDown[event.key])
@@ -34,7 +34,7 @@ class EventManager():
                     events.add(Data("keySet", key=keyCodes[event.key], value = True))
 
 
-            if event.type == pygame.KEYUP:
+            elif event.type == pygame.KEYUP:
                 # KeyReleased events
                 # if event.key in gameState.keyUp:
                 #     ret(gameState.keyUp[event.key])

@@ -158,7 +158,8 @@
           "y":"where(t>0.1, 0.8, 1 - 2 * t)",
           "dx":"1/30",
           "dy":"0.4",
-          "lifeTime":800
+          "lifeTime":800,
+          "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
         }
       }
     },
@@ -171,20 +172,22 @@
     {
       "spawner":{
         "boneWaveBottom":{
-          "delay":50,
+          "delay":25,
           "x":"t*2",
-          "y":"0.8 + 0.05 * cos(c*0.3*pi)",
-          "dx":"1/30",
-          "dy":"0.4 - 0.1 * cos(c*0.3*pi)",
-          "lifeTime":500
+          "y":"0.8 + 0.05 * cos(c*0.2*pi)",
+          "dx":"1/32",
+          "dy":"0.4 - 0.1 * cos(c*0.2*pi)",
+          "lifeTime":500,
+          "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
         },
         "boneWaveTop":{
-          "delay":50,
+          "delay":25,
           "x":"t*2",
-          "y":"0.1 + 0.05 * cos(c*0.3*pi)",
-          "dx":"1/30",
-          "dy":"0.2 + 0.1 * cos(c*0.3*pi)",
-          "lifeTime":500
+          "y":"0.1 + 0.05 * cos(c*0.2*pi)",
+          "dx":"1/32",
+          "dy":"0.2 + 0.1 * cos(c*0.2*pi)",
+          "lifeTime":500,
+          "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
         }
       }
     },
@@ -205,7 +208,7 @@
           "x":".5",
           "y":"0.15+0.7*c",
           "dx":"1",
-          "dy":".2 + 0.01 * sin(50*t*pi)",
+          "dy":".2 + where(t>0.5, 0.01 , 0.002) * sin(50*t*pi)",
           "lifeTime":800,
           "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
         },
@@ -214,7 +217,7 @@
           "fadein":400,
           "x":"0.15+0.7*c",
           "y":".5",
-          "dx":"0.2 + 0.01 * sin(50*t*pi)",
+          "dx":"0.2 + where(t>0.5, 0.01, 0.002)* sin(50*t*pi)",
           "dy":"1",
           "lifeTime":800,
           "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
@@ -223,17 +226,17 @@
           "count":1,
           "fadein":400,
           "x":"0.5",
-          "y":"0.5 + 0.01 * cos(40*t*pi)",
+          "y":"0.5 + where(t>0.5, 0.01, 0.002) * cos(40*t*pi)",
           "dx":"1",
-          "dy":"0.4 + 0.02 * sin(50*t*pi)",
+          "dy":"0.4 + where(t>0.5, 0.02, 0.01) * sin(50*t*pi)",
           "lifeTime":800,
           "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
         },
         "blaster4":{
           "count":2,
           "fadein":400,
-          "y1":"c-.1 + 0.01 * cos(40*t*pi)",
-          "y2":"c+.1 + 0.01 * cos(40*t*pi)",
+          "y1":"c-.1 + where(t>0.5, 0.01, 0.001) * cos(40*t*pi)",
+          "y2":"c+.1 + where(t>0.5, 0.01, 0.001) * cos(40*t*pi)",
           "dx1":"1-2*c",
           "dx2":"1-2*c",
           "lifeTime":800,

@@ -2,7 +2,7 @@ from enum import IntEnum
 import pygame, random, math
 from math import pi
 
-w, h = 500, 500
+w, h = 640, 640
 
 class BULLETSHAPE(IntEnum):
     BALL = 0

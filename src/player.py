@@ -20,6 +20,12 @@ class Player():
 
         self.color = color # Health bar color
         self.secCol = DARKGREEN # Object's color
+        self.useSprite = True
+        if self.useSprite:
+            self.offset = 1.5
+            self.imageSize = 11
+            self.image = pygame.transform.scale(pygame.image.load('heart-red.png'),(3,30))
+            # self.image = pygame.transform.scale(pygame.image.load('heart-red.png'),(int(2 * self.offset * self.imageSize),int(2 * self.offset * self.imageSize)))
 
         self.screen =  screen
 
@@ -30,7 +36,7 @@ class Player():
         return str(self.lives)
 
     def draw(self):
-        dPos = self._sPos()
+        sPos = self._sPos()
 
         # This command uses topLeft and width/height, that's why we enter .1 instead of .12
         rect = pygame.Rect(0.02*h, 0.02*h, 0.1*h, 0.1*h)
@@ -41,7 +47,11 @@ class Player():
         self.healthMeter.draw()
         self.particle.draw()
         # Player draw/collision marker
-        pygame.draw.circle(self.screen, self.secCol, dPos, int(self.size*w))
+        if self.useSprite :
+            cPos = (sPos[0] - self.offset * self.imageSize, sPos[1] - self.offset * self.imageSize)
+            self.screen.blit(self.image, cPos)
+        else:
+            pygame.draw.circle(self.screen, self.secCol, sPos, int(self.size*w))
 
 
     def update(self, xInp, yInp, sneak, dt):

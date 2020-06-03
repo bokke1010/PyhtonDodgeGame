@@ -9,12 +9,13 @@ from collections import deque
 
 class PatternManager():
 
-    def __init__(self, screen):
+    def __init__(self, screen, player):
         self.screen = screen
         self.bulletManagers = {}
         self.que = deque()
         self.time = 0
         self.lc = 0
+        self.player = player
 
     def loadJson(self, fileName):
         with open(fileName) as json_file:
@@ -115,7 +116,7 @@ class PatternManager():
     def add_pattern(self, pattern, name):
         bulletManagers[name] = pattern
 
-    def update(self, dt, player):
+    def update(self, dt):
         self.time += dt
         while len(self.que) > 0:
             if self.que[0].time <= self.time:
@@ -129,7 +130,7 @@ class PatternManager():
         deleteQue = set()
         events = Que()
         for key, manager in self.bulletManagers.items():
-            events.merge(manager.update(dt, player))
+            events.merge(manager.update(dt, self.player))
             log(events)
             if manager.getDelete():
                 deleteQue.add(key)

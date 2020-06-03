@@ -174,25 +174,25 @@
         "boneWaveBottom":{
           "delay":25,
           "x":"t*2",
-          "y":"0.8 + 0.05 * cos(c*0.2*pi)",
+          "y":"0.7 + 0.05 * cos(c*0.125*pi)",
           "dx":"1/32",
-          "dy":"0.4 - 0.1 * cos(c*0.2*pi)",
+          "dy":"0.6 - 0.1 * cos(c*0.125*pi)",
           "lifeTime":500,
           "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
         },
         "boneWaveTop":{
           "delay":25,
           "x":"t*2",
-          "y":"0.1 + 0.05 * cos(c*0.2*pi)",
+          "y":"0.1 + 0.05 * cos(c*0.125*pi)",
           "dx":"1/32",
-          "dy":"0.2 + 0.1 * cos(c*0.2*pi)",
+          "dy":"0.2 + 0.1 * cos(c*0.125*pi)",
           "lifeTime":500,
           "color":{"active": [255,255,255], "inactive": [63,63,63], "faded": [0,0,0]}
         }
       }
     },
     {
-      "wait":1000
+      "wait":1200
     },
     {
       "del":["boneUp", "boneWaveTop", "boneWaveBottom"]

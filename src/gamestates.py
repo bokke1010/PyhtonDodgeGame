@@ -68,7 +68,7 @@ class GamestateActive(Gamestate):
         # Reset screen to start drawing frame
         screen.fill(BLACK)
 
-        events.merge(patternManager.update(deltaTime, playerCharacter))
+        events.merge(patternManager.update(deltaTime))
         patternManager.draw()
 
         # Player code

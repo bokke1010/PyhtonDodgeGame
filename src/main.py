@@ -50,7 +50,7 @@ deltaTime = 0
 time = 0
 
 playerCharacter = player.Player(playerSize, [0.5, 0.9], RED, speed, playerLives, screen)
-patternManager = pattern_manager.PatternManager(screen)
+patternManager = pattern_manager.PatternManager(screen, playerCharacter)
 
 levelIndex = 0
 levels = patternManager.loadJson("levels.json")
